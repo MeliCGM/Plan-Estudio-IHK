@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LF 1 — Elektrische Grundgrößen: Elektrotechnik para el FAB</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,Arial,sans-serif;background:#f0f4f8;color:#1e293b;line-height:1.6}
+header{background:linear-gradient(135deg,#1e3a5f,#1a56db);color:#fff;padding:24px 32px}
+header h1{font-size:1.4rem;margin-bottom:4px}
+header p{opacity:.85;font-size:.9rem}
+.meta{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
+.badge{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 12px;font-size:.8rem}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:16px}
+.progress-fill{background:#34d399;height:100%;border-radius:3px;transition:width .5s}
+main{max-width:900px;margin:0 auto;padding:24px 16px}
+.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{color:#1e3a5f;font-size:1.2rem;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;display:flex;align-items:center;gap:8px}
+h3{color:#1a56db;font-size:1rem;margin:16px 0 8px}
+p{margin-bottom:10px}
+.highlight{background:#eff6ff;border-left:4px solid #1a56db;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0}
+.chem-bridge{background:#fef3c7;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0}
+.formula-box{background:#1e3a5f;color:#fff;padding:20px;border-radius:10px;text-align:center;margin:16px 0;font-size:1.4rem;letter-spacing:1px}
+.formula-box small{display:block;font-size:.8rem;opacity:.8;margin-top:4px}
+.formula-vars{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.var-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center}
+.var-symbol{font-size:1.8rem;font-weight:700;color:#1a56db}
+.var-name{font-size:.8rem;color:#475569;margin-top:2px}
+.var-unit{font-size:.85rem;color:#0e9f6e;font-weight:600}
+.var-de{font-size:.75rem;color:#94a3b8;margin-top:2px}
+
+/* Circuit SVG */
+.circuit-container{text-align:center;margin:16px 0}
+svg text{font-family:system-ui,Arial}
+
+/* Ohm calculator */
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.calc-input{text-align:center}
+.calc-input label{display:block;font-size:.85rem;font-weight:600;color:#1e3a5f;margin-bottom:4px}
+.calc-input input{width:100%;padding:10px;border:2px solid #cbd5e1;border-radius:8px;font-size:1rem;text-align:center}
+.calc-input input:focus{outline:none;border-color:#1a56db}
+.calc-input input.result{background:#ecfdf5;border-color:#0e9f6e;font-weight:700;color:#065f46}
+.calc-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.btn-calc{background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.85rem}
+.btn-calc:hover{background:#1e40af}
+.btn-reset{background:#e2e8f0;color:#475569;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.85rem}
+
+/* Kirchhoff */
+.kirchhoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.kirchhoff-card{border:2px solid #e2e8f0;border-radius:10px;padding:16px}
+.kirchhoff-card h4{color:#1e3a5f;margin-bottom:8px;font-size:.95rem}
+.kirchhoff-card .law{font-size:1.1rem;font-weight:700;color:#1a56db;text-align:center;padding:8px;background:#eff6ff;border-radius:6px;margin:8px 0}
+.kirchhoff-card p{font-size:.85rem}
+
+/* Passive components */
+.component-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}
+.comp-card{border:1px solid #e2e8f0;border-radius:10px;padding:14px;text-align:center}
+.comp-symbol{font-size:2rem;margin-bottom:6px}
+.comp-name-de{font-weight:700;color:#1e3a5f;font-size:.9rem}
+.comp-name-es{font-size:.8rem;color:#64748b}
+.comp-unit{font-size:.85rem;color:#0e9f6e;font-weight:600;margin-top:4px}
+.comp-fab{font-size:.78rem;color:#94a3b8;margin-top:6px;font-style:italic}
+
+/* Signals */
+.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.signal-card{border:2px solid #e2e8f0;border-radius:10px;padding:16px}
+.signal-card h4{margin-bottom:8px;font-size:.95rem}
+
+/* Flip cards vocab */
+.flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:12px 0}
+.flip-card{height:120px;perspective:800px;cursor:pointer}
+.flip-inner{width:100%;height:100%;position:relative;transition:transform .5s;transform-style:preserve-3d}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-front,.flip-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center}
+.flip-front{background:#1e3a5f;color:#fff}
+.flip-back{background:#ecfdf5;color:#065f46;transform:rotateY(180deg)}
+.flip-front .term{font-size:.95rem;font-weight:700}
+.flip-front .hint{font-size:.7rem;opacity:.7;margin-top:4px}
+.flip-back .def{font-size:.82rem;font-weight:600}
+.flip-back .example{font-size:.72rem;margin-top:4px;opacity:.8}
+.flip-counter{text-align:center;margin-top:8px;font-size:.85rem;color:#64748b}
+.flip-btns{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.btn-correct{background:#0e9f6e;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem}
+.btn-repeat{background:#e02424;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem}
+
+/* Quiz */
+.quiz-q{margin-bottom:18px}
+.quiz-q p{font-weight:600;margin-bottom:8px}
+.quiz-opt{display:block;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:.88rem;transition:.2s;user-select:none}
+.quiz-opt:hover{border-color:#1a56db;background:#eff6ff}
+.quiz-opt.correct{border-color:#0e9f6e;background:#ecfdf5}
+.quiz-opt.wrong{border-color:#e02424;background:#fef2f2}
+.quiz-score{text-align:center;padding:16px;font-size:1.1rem;font-weight:700;display:none}
+
+/* IHK Writing */
+.de-exercise{background:#f8fafc;border-radius:8px;padding:16px}
+.de-question{font-weight:700;color:#1e3a5f;font-size:.95rem;margin-bottom:10px;font-style:italic}
+textarea{width:100%;height:90px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-size:.88rem;resize:vertical;font-family:inherit}
+textarea:focus{outline:none;border-color:#1a56db}
+.btn{background:#1a56db;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.88rem;margin-top:8px}
+.btn:hover{background:#1e40af}
+.btn-outline{background:transparent;color:#1a56db;border:2px solid #1a56db}
+.btn-outline:hover{background:#eff6ff}
+.answer-box{display:none;margin-top:12px;padding:12px;background:#ecfdf5;border-radius:8px;font-size:.88rem;line-height:1.7}
+
+@media(max-width:600px){
+  .kirchhoff-grid,.signal-grid,.component-grid{grid-template-columns:1fr}
+  .calc-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LF 1 — Elektrische Grundgrößen: Elektrotechnik para el FAB</h1>
+  <p>Lernfeld 1 · 1. Ausbildungsjahr · IHK Mikrotechnologe · Fase 1 de preparación autónoma</p>
+  <div class="meta">
+    <span class="badge">⏱ ~60 min</span>
+    <span class="badge">📐 Ley de Ohm + Kirchhoff</span>
+    <span class="badge">🧪 Analogías con química</span>
+    <span class="badge">🇩🇪 Vocabulario: 15 términos</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+</header>
+
+<main>
+
+<!-- SECCIÓN 1: Las 4 magnitudes -->
+<div class="card">
+  <h2>⚡ 1. Las 4 magnitudes eléctricas fundamentales</h2>
+
+  <div class="chem-bridge">
+    <strong>🧪 Analogía con química:</strong> Piensa en un sistema de fluido. La <em>tensión (U)</em> es como la presión que impulsa el flujo. La <em>corriente (I)</em> es el caudal de carga. La <em>resistencia (R)</em> es la obstrucción del tubo. La <em>potencia (P)</em> es la energía disipada por unidad de tiempo.
+  </div>
+
+  <div class="formula-vars">
+    <div class="var-card">
+      <div class="var-symbol">U</div>
+      <div class="var-name">Tensión / Voltaje</div>
+      <div class="var-unit">Volt [V]</div>
+      <div class="var-de">die Spannung</div>
+      <div style="font-size:.72rem;color:#dc2626;margin-top:4px;font-weight:600">⚠ EN/ES: <em>V</em> (Boylestad usa V)</div>
+    </div>
+    <div class="var-card">
+      <div class="var-symbol">I</div>
+      <div class="var-name">Corriente / Intensidad</div>
+      <div class="var-unit">Ampere [A]</div>
+      <div class="var-de">die Stromstärke</div>
+      <div style="font-size:.72rem;color:#0e9f6e;margin-top:4px">✓ ES/EN: <em>I</em> (igual)</div>
+    </div>
+    <div class="var-card">
+      <div class="var-symbol">R</div>
+      <div class="var-name">Resistencia</div>
+      <div class="var-unit">Ohm [Ω]</div>
+      <div class="var-de">der Widerstand</div>
+      <div style="font-size:.72rem;color:#0e9f6e;margin-top:4px">✓ ES/EN: <em>R</em> (igual)</div>
+    </div>
+    <div class="var-card">
+      <div class="var-symbol">P</div>
+      <div class="var-name">Potencia</div>
+      <div class="var-unit">Watt [W]</div>
+      <div class="var-de">die Leistung</div>
+      <div style="font-size:.72rem;color:#0e9f6e;margin-top:4px">✓ ES/EN: <em>P</em> (igual)</div>
+    </div>
+  </div>
+
+  <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px;font-size:.82rem;margin-top:4px">
+    <strong>⚠ La diferencia clave DE ↔ EN/ES:</strong> En Alemania (norma IEC/DIN) se usa <strong>U</strong> para tensión. En los libros anglosajones (Boylestad, Nilsson, Hayt) y en muchos textos en español se usa <strong>V</strong>. La física es idéntica — solo cambia la letra. En la IHK <strong>debes escribir U</strong>.
+  </div>
+
+  <h3>Unidades derivadas importantes</h3>
+  <table style="font-size:.85rem">
+    <thead><tr><th>Magnitud</th><th>DE</th><th>ES</th><th>EN</th><th>Unidad</th><th>Nombre DE</th><th>Relación</th></tr></thead>
+    <tbody>
+      <tr><td>Carga eléctrica</td><td>Q</td><td>Q</td><td>Q</td><td>Coulomb [C]</td><td>die elektrische Ladung</td><td>Q = I × <strong>t</strong> <span style="color:#6b7280;font-size:.8em">(t = Zeit/tiempo [s])</span></td></tr>
+      <tr><td>Energía</td><td>W</td><td style="color:#dc2626"><strong>E o W</strong></td><td style="color:#dc2626"><strong>E o W</strong></td><td>Joule [J] = Ws</td><td>die Energie</td><td>W = P × <strong>t</strong> <span style="color:#6b7280;font-size:.8em">(t = Zeit/tiempo [s])</span></td></tr>
+      <tr><td>Frecuencia</td><td>f</td><td>f</td><td>f</td><td>Hertz [Hz]</td><td>die Frequenz</td><td>f = 1/<strong>T</strong> <span style="color:#6b7280;font-size:.8em">(T = Periodendauer/período [s], ≠ temperatura)</span></td></tr>
+      <tr><td>Conductancia</td><td>G</td><td>G</td><td>G</td><td>Siemens [S]</td><td>der Leitwert</td><td>G = 1/R</td></tr>
+      <tr><td>Tensión</td><td style="color:#dc2626"><strong>U</strong></td><td style="color:#dc2626"><strong>V</strong></td><td style="color:#dc2626"><strong>V</strong></td><td>Volt [V]</td><td>die Spannung</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div style="background:#fef9c3;border-radius:6px;padding:8px;font-size:.79rem;margin-top:6px;border-left:3px solid #ca8a04">
+    <strong>⚠ Símbolos ambiguos:</strong>
+    &nbsp;<strong>t</strong> = Zeit / tiempo [s] &nbsp;|&nbsp;
+    <strong>T</strong> = Periodendauer / período [s] (en f = 1/T) &nbsp;|&nbsp;
+    <strong>T</strong> = Temperatur / temperatura [K o °C] — mismo símbolo, distinto contexto. En Boylestad verás además <em>E</em> para energía de fuente y <em>V</em> para tensión.
+  </div>
+
+  <div class="highlight" style="margin-top:14px">
+    <strong>Relevancia en el FAB:</strong> Cada proceso tiene parámetros eléctricos críticos: la potencia RF en plasma etching [W], la tensión de aceleración en ion implantation [kV], la corriente en electrodeposición de cobre [A/cm²].
+  </div>
+</div>
+
+<!-- SECCIÓN 2: Ley de Ohm -->
+<div class="card">
+  <h2>📐 2. Ley de Ohm — das Ohmsche Gesetz</h2>
+
+  <div class="formula-box">
+    U = R × I
+    <small>die Spannung [V] = der Widerstand [Ω] × die Stromstärke [A]</small>
+    <small style="opacity:.75;font-size:.72rem;margin-top:2px">ES (Boylestad): V = R · I &nbsp;|&nbsp; EN (Hayt/Nilsson): V = I · R &nbsp;|&nbsp; DE (IHK): U = R · I</small>
+  </div>
+
+  <p>Las tres formas equivalentes:</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0">
+    <div style="background:#f8fafc;border-radius:8px;padding:12px;text-align:center;border:1px solid #e2e8f0">
+      <strong style="font-size:1.1rem;color:#1a56db">U = R × I</strong><br>
+      <small>calcular tensión</small><br>
+      <small style="color:#94a3b8;font-size:.72rem">ES/EN: V = R × I</small>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:12px;text-align:center;border:1px solid #e2e8f0">
+      <strong style="font-size:1.1rem;color:#1a56db">R = U / I</strong><br>
+      <small>calcular resistencia</small><br>
+      <small style="color:#94a3b8;font-size:.72rem">ES/EN: R = V / I</small>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:12px;text-align:center;border:1px solid #e2e8f0">
+      <strong style="font-size:1.1rem;color:#1a56db">I = U / R</strong><br>
+      <small>calcular corriente</small><br>
+      <small style="color:#94a3b8;font-size:.72rem">ES/EN: I = V / R</small>
+    </div>
+  </div>
+
+  <h3>🔢 Calculadora interactiva</h3>
+  <p style="font-size:.85rem;color:#64748b">Introduce dos valores y calcula el tercero:</p>
+  <div class="calc-grid">
+    <div class="calc-input">
+      <label>U — Spannung [V]</label>
+      <input type="number" id="calcU" placeholder="?" step="any" oninput="resetCalcColors()">
+    </div>
+    <div class="calc-input">
+      <label>R — Widerstand [Ω]</label>
+      <input type="number" id="calcR" placeholder="?" step="any" oninput="resetCalcColors()">
+    </div>
+    <div class="calc-input">
+      <label>I — Stromstärke [A]</label>
+      <input type="number" id="calcI" placeholder="?" step="any" oninput="resetCalcColors()">
+    </div>
+  </div>
+  <div class="calc-btns">
+    <button class="btn-calc" onclick="calcOhm('U')">Calcular U</button>
+    <button class="btn-calc" onclick="calcOhm('R')">Calcular R</button>
+    <button class="btn-calc" onclick="calcOhm('I')">Calcular I</button>
+    <button class="btn-reset" onclick="resetCalc()">Limpiar</button>
+  </div>
+  <div id="calcResult" style="text-align:center;font-size:.9rem;color:#64748b;min-height:20px;margin-top:6px"></div>
+
+  <h3>Ejemplos del FAB</h3>
+  <table style="font-size:.85rem;margin-top:8px">
+    <thead><tr><th>Situación en el FAB</th><th>U [V]</th><th>R [Ω]</th><th>I [A]</th></tr></thead>
+    <tbody>
+      <tr><td>Sensor de temperatura de un horno de oxidación</td><td>5</td><td>250</td><td>0.02</td></tr>
+      <tr><td>Medición de resistencia de una pista de metal en wafer</td><td>0.1</td><td>10</td><td>0.01</td></tr>
+      <tr><td>Alimentación de una válvula solenoide en el FAB</td><td>24</td><td>48</td><td>0.5</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECCIÓN 3: Kirchhoff -->
+<div class="card">
+  <h2>🔗 3. Leyes de Kirchhoff — Kirchhoffsche Gesetze</h2>
+
+  <div class="kirchhoff-grid">
+    <div class="kirchhoff-card">
+      <h4>1ª Ley — der Knotenpunktsatz (KCL)</h4>
+      <div style="font-size:.75rem;color:#6b7280;margin-bottom:4px">ES: Ley de nodos &nbsp;|&nbsp; EN: Kirchhoff's Current Law (KCL)</div>
+      <div class="law">ΣI = 0</div>
+      <div style="font-size:.75rem;color:#6b7280;margin-top:4px">EN: ΣI = 0 &nbsp;(mismo símbolo)</div>
+      <p>En cualquier nodo (punto de unión) del circuito, la suma de las corrientes que entran es igual a la suma de las que salen.</p>
+      <div class="chem-bridge" style="margin-top:10px;font-size:.82rem">🧪 Analogía: como la conservación de masa en un proceso de flujo — lo que entra debe salir.</div>
+    </div>
+    <div class="kirchhoff-card">
+      <h4>2ª Ley — der Maschensatz (KVL)</h4>
+      <div style="font-size:.75rem;color:#6b7280;margin-bottom:4px">ES: Ley de mallas &nbsp;|&nbsp; EN: Kirchhoff's Voltage Law (KVL)</div>
+      <div class="law">ΣU = 0</div>
+      <div style="font-size:.75rem;color:#6b7280;margin-top:4px">EN: ΣV = 0 &nbsp;(V en lugar de U)</div>
+      <p>En cualquier malla (lazo cerrado) del circuito, la suma algebraica de todas las tensiones es igual a cero.</p>
+      <div class="chem-bridge" style="margin-top:10px;font-size:.82rem">🧪 Analogía: como la conservación de energía en un ciclo termodinámico cerrado.</div>
+    </div>
+  </div>
+
+  <h3>Circuito simple — ejemplo visual</h3>
+  <div class="circuit-container">
+    <svg width="380" height="160" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Battery -->
+      <rect x="20" y="60" width="30" height="40" fill="#1e3a5f" rx="4"/>
+      <text x="35" y="52" text-anchor="middle" font-size="11" fill="#64748b">U=12V</text>
+      <text x="35" y="108" text-anchor="middle" font-size="9" fill="#fff">Quelle</text>
+      <!-- Wires -->
+      <line x1="50" y1="70" x2="140" y2="70" stroke="#1a56db" stroke-width="2.5"/>
+      <line x1="50" y1="90" x2="140" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+      <!-- R1 -->
+      <rect x="140" y="55" width="60" height="30" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" rx="4"/>
+      <text x="170" y="73" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">R₁=200Ω</text>
+      <!-- U_R1 label above R1 -->
+      <text x="170" y="48" text-anchor="middle" font-size="9" fill="#dc2626">U_R1 = 4V</text>
+      <line x1="200" y1="70" x2="250" y2="70" stroke="#1a56db" stroke-width="2.5"/>
+      <!-- R2 -->
+      <rect x="250" y="55" width="60" height="30" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" rx="4"/>
+      <text x="280" y="73" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">R₂=400Ω</text>
+      <!-- U_R2 label above R2 -->
+      <text x="280" y="48" text-anchor="middle" font-size="9" fill="#dc2626">U_R2 = 8V</text>
+      <line x1="310" y1="70" x2="360" y2="70" stroke="#1a56db" stroke-width="2.5"/>
+      <line x1="360" y1="70" x2="360" y2="90" stroke="#1a56db" stroke-width="2.5"/>
+      <line x1="360" y1="90" x2="50" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+      <!-- Current arrow -->
+      <text x="95" y="63" text-anchor="middle" font-size="10" fill="#1a56db">→ I = 20mA</text>
+      <!-- Calculation -->
+      <text x="190" y="125" text-anchor="middle" font-size="11" fill="#1e3a5f">R_total = R₁+R₂ = 200+400 = 600Ω</text>
+      <text x="190" y="143" text-anchor="middle" font-size="11" fill="#0e9f6e">I = U / R_total = 12V / 600Ω = 0,02A = 20mA</text>
+    </svg>
+  </div>
+
+  <!-- Verificación KVL separada del SVG -->
+  <div style="background:#f8fafc;border-radius:8px;padding:12px;margin-top:10px;font-size:.85rem;border:1px solid #e2e8f0">
+    <strong>Verificación KVL (Maschensatz) — ΣU = 0:</strong>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;text-align:center">
+      <div style="background:#fef3c7;border-radius:6px;padding:8px">
+        <div style="font-size:.78rem;color:#6b7280">Caída en R₁</div>
+        <div style="font-weight:700;color:#92400e">U<sub>R1</sub> = I × R₁</div>
+        <div style="font-size:.82rem">= 20mA × 200Ω = <strong>4V</strong></div>
+        <div style="font-size:.75rem;color:#6b7280;margin-top:2px">U<sub>R1</sub> = Spannung an R₁<br>(tensión en R₁ / voltage across R₁)</div>
+      </div>
+      <div style="background:#fef3c7;border-radius:6px;padding:8px">
+        <div style="font-size:.78rem;color:#6b7280">Caída en R₂</div>
+        <div style="font-weight:700;color:#92400e">U<sub>R2</sub> = I × R₂</div>
+        <div style="font-size:.82rem">= 20mA × 400Ω = <strong>8V</strong></div>
+        <div style="font-size:.75rem;color:#6b7280;margin-top:2px">U<sub>R2</sub> = Spannung an R₂<br>(tensión en R₂ / voltage across R₂)</div>
+      </div>
+      <div style="background:#dcfce7;border-radius:6px;padding:8px;border:2px solid #0e9f6e">
+        <div style="font-size:.78rem;color:#6b7280">Comprobación KVL</div>
+        <div style="font-weight:700;color:#065f46">U<sub>R1</sub> + U<sub>R2</sub> = U</div>
+        <div style="font-size:.82rem">4V + 8V = <strong>12V ✓</strong></div>
+        <div style="font-size:.75rem;color:#6b7280;margin-top:2px">La energía de la fuente es igual a la suma de caídas → KVL cumplida</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Circuitos en serie vs. paralelo</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+    <div style="background:#f8fafc;border-radius:8px;padding:14px;border:1px solid #e2e8f0">
+      <strong style="color:#1e3a5f">Reihenschaltung (Serie)</strong>
+      <ul style="list-style:disc;padding-left:18px;margin-top:8px;font-size:.85rem">
+        <li>Rtotal = R₁ + R₂ + ...</li>
+        <li>I es la misma en todos</li>
+        <li>U se reparte: U = U₁ + U₂</li>
+      </ul>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:14px;border:1px solid #e2e8f0">
+      <strong style="color:#1e3a5f">Parallelschaltung (Paralelo)</strong>
+      <ul style="list-style:disc;padding-left:18px;margin-top:8px;font-size:.85rem">
+        <li>1/Rtotal = 1/R₁ + 1/R₂ + ...</li>
+        <li>U es la misma en todos</li>
+        <li>I se reparte: I = I₁ + I₂</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECCIÓN 4: Componentes pasivos -->
+<div class="card">
+  <h2>🔌 4. Bauteile — Componentes básicos del circuito</h2>
+
+  <div class="component-grid">
+    <div class="comp-card">
+      <div class="comp-symbol">⬛</div>
+      <div class="comp-name-de">der Widerstand (R)</div>
+      <div class="comp-name-es">Resistencia / Resistor</div>
+      <div class="comp-unit">Ohm [Ω]</div>
+      <div class="comp-fab">Usado en: divisores de tensión, limitadores de corriente en circuitos de prueba de wafer</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-symbol">⚡</div>
+      <div class="comp-name-de">der Kondensator (C)</div>
+      <div class="comp-name-es">Condensador / Capacitor</div>
+      <div class="comp-unit">Farad [F]</div>
+      <div class="comp-fab">Crucial: cada gate MOSFET ES un condensador — capacidad de gate = parámetro clave del transistor</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-symbol">🌀</div>
+      <div class="comp-name-de">die Spule (L)</div>
+      <div class="comp-name-es">Bobina / Inductor</div>
+      <div class="comp-unit">Henry [H]</div>
+      <div class="comp-fab">Relevante en: fuentes de alimentación del FAB, filtros EMI en equipos de proceso</div>
+    </div>
+  </div>
+
+  <h3>Señales: Analog vs. Digital — die Signale</h3>
+  <div class="signal-grid">
+    <div class="signal-card">
+      <h4 style="color:#1e3a5f">📈 Analoges Signal</h4>
+      <p style="font-size:.85rem">Valor continuo, varía suavemente con el tiempo. Puede tomar infinitos valores entre un mínimo y máximo.</p>
+      <p style="font-size:.85rem;margin-top:6px"><strong>Ejemplos FAB:</strong> señal de sensor de presión (0–10V proporcional a presión), temperatura de horno, flujo de gas.</p>
+      <svg width="180" height="60" style="margin-top:8px">
+        <polyline points="0,50 20,35 40,20 60,25 80,40 100,15 120,30 140,45 160,20 180,35" fill="none" stroke="#1a56db" stroke-width="2"/>
+        <line x1="0" y1="55" x2="180" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="signal-card">
+      <h4 style="color:#1e3a5f">🔲 Digitales Signal</h4>
+      <p style="font-size:.85rem">Solo dos estados: HIGH (1) y LOW (0). Corresponde a 5V/0V o 3.3V/0V según el sistema.</p>
+      <p style="font-size:.85rem;margin-top:6px"><strong>Ejemplos FAB:</strong> señal de fin de carrera de robot, apertura/cierre de válvula, estado de alarma.</p>
+      <svg width="180" height="60" style="margin-top:8px">
+        <polyline points="0,50 0,15 40,15 40,50 80,50 80,15 120,15 120,50 160,50 160,15 180,15" fill="none" stroke="#0e9f6e" stroke-width="2"/>
+        <line x1="0" y1="55" x2="180" y2="55" stroke="#94a3b8" stroke-width="1"/>
+        <text x="5" y="10" font-size="9" fill="#0e9f6e">HIGH (1)</text>
+        <text x="5" y="48" font-size="9" fill="#94a3b8">LOW (0)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:12px">
+    <strong>En el FAB:</strong> Los sensores de proceso (temperatura, presión, flujo) generan señales analógicas. Los sistemas de control convierten estas señales a digital mediante ADC (Analog-Digital-Converter / <em>der Analog-Digital-Wandler</em>) para procesarlas en el PLC (<em>die speicherprogrammierbare Steuerung, SPS</em>).
+  </div>
+</div>
+
+<!-- SECCIÓN 5: Schutzmaßnahmen + Messgeräte -->
+<div class="card">
+  <h2>🛡 5. Schutzmaßnahmen &amp; Messgeräte — Seguridad y medición</h2>
+
+  <!-- Schutzmaßnahmen -->
+  <h3 style="margin-bottom:.6rem">Elektrische Schutzmaßnahmen (Medidas de protección eléctrica)</h3>
+  <div style="background:#fff1f2;border-radius:8px;padding:.9rem;margin-bottom:1rem;border-left:4px solid #dc2626;font-size:.84rem">
+    <strong>¿Por qué es importante?</strong> La corriente eléctrica es peligrosa incluso a tensiones bajas. Ya desde 30 mA puede causar fibrilación cardíaca. El cuerpo humano tiene una resistencia de 1.000–100.000 Ω según la humedad de la piel — en el FAB (con químicos y humedad) el riesgo aumenta.
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem">
+    <div style="background:#f8fafc;border-radius:8px;padding:.9rem;border:1px solid #e2e8f0">
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:.5rem;color:#1e3a5f">Schutzklassen (Clases de protección)</div>
+      <dl style="font-size:.8rem;display:flex;flex-direction:column;gap:.35rem">
+        <dt style="font-weight:600">Klasse I</dt><dd style="color:#475569;margin-left:.8rem">Toma de tierra obligatoria (Schutzleiter, conductor PE amarillo-verde). Si falla el aislamiento, la corriente va a tierra, no al operario.</dd>
+        <dt style="font-weight:600">Klasse II (⬛)</dt><dd style="color:#475569;margin-left:.8rem">Doble aislamiento — sin toma de tierra. El símbolo es un cuadrado dentro de un cuadrado.</dd>
+        <dt style="font-weight:600">Klasse III</dt><dd style="color:#475569;margin-left:.8rem">Tensión de seguridad ≤ 50V AC / ≤ 120V DC (SELV). Típico en electrónica de señal del FAB.</dd>
+      </dl>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:.9rem;border:1px solid #e2e8f0">
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:.5rem;color:#1e3a5f">Schutzeinrichtungen (Dispositivos de protección)</div>
+      <dl style="font-size:.8rem;display:flex;flex-direction:column;gap:.35rem">
+        <dt style="font-weight:600">die Sicherung (Fusible)</dt><dd style="color:#475569;margin-left:.8rem">Interrumpe el circuito por sobrecorriente. Protege el cable, no al operario.</dd>
+        <dt style="font-weight:600">der FI-Schalter / RCD</dt><dd style="color:#475569;margin-left:.8rem">Fehlerstrom-Schutzschalter — detecta corriente de fuga ≥ 30mA y corta en &lt;0,2s. Protege personas.</dd>
+        <dt style="font-weight:600">der Leitungsschutzschalter (LS)</dt><dd style="color:#475569;margin-left:.8rem">Disyuntor automático — protege contra sobrecarga y cortocircuito.</dd>
+        <dt style="font-weight:600">die Erdung / Schutzleiter (PE)</dt><dd style="color:#475569;margin-left:.8rem">Conductor verde-amarillo que conecta la carcasa metálica a tierra.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div style="background:#fef9c3;border-radius:8px;padding:.8rem;font-size:.82rem;border-left:4px solid #ca8a04;margin-bottom:1.2rem">
+    <strong>🏭 En el FAB:</strong> La norma aplicable es <strong>VDE 0100</strong> (equivale a IEC 60364). Todos los equipos deben tener <em>Schutzleiter</em>. El <em>FI-Schalter</em> es obligatorio en zonas húmedas. Además: <em>die Potenzialausgleichsschiene</em> (barra de equipotencialidad) evita diferencias de tensión entre equipos metálicos.
+  </div>
+
+  <!-- Messgeräte -->
+  <h3 style="margin-bottom:.6rem">Messgeräte — Instrumentos de medición</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+    <div style="background:#f0f9ff;border-radius:8px;padding:.9rem;border-left:4px solid #1a56db">
+      <div style="font-weight:700;font-size:.9rem;color:#1e3a5f;margin-bottom:.5rem">📟 das Multimeter</div>
+      <p style="font-size:.82rem;margin-bottom:.5rem">Instrumento que mide en un mismo dispositivo: tensión (U/V), corriente (I/A) y resistencia (R/Ω). En el FAB es la herramienta de diagnóstico más básica.</p>
+      <dl style="font-size:.8rem;display:flex;flex-direction:column;gap:.3rem">
+        <dt style="font-weight:600">Spannungsmessung (medir tensión)</dt><dd style="color:#475569;margin-left:.8rem">Se conecta <strong>en paralelo</strong> al componente. Resistencia interna muy alta (MΩ) para no perturbar el circuito.</dd>
+        <dt style="font-weight:600">Strommessung (medir corriente)</dt><dd style="color:#475569;margin-left:.8rem">Se conecta <strong>en serie</strong> — hay que abrir el circuito. Resistencia interna muy baja (mΩ).</dd>
+        <dt style="font-weight:600">Widerstandsmessung (medir resistencia)</dt><dd style="color:#475569;margin-left:.8rem">Siempre con el componente <strong>sin tensión</strong> (fuera del circuito activo).</dd>
+      </dl>
+      <div style="margin-top:.5rem;font-size:.79rem;color:#0891b2"><strong>FAB:</strong> Medir sheet resistance (R□) de capas metálicas en wafer con sonda de 4 puntas (Vier-Punkt-Messung).</div>
+    </div>
+    <div style="background:#f0f9ff;border-radius:8px;padding:.9rem;border-left:4px solid #7c3aed">
+      <div style="font-weight:700;font-size:.9rem;color:#1e3a5f;margin-bottom:.5rem">📺 das Oszilloskop</div>
+      <p style="font-size:.82rem;margin-bottom:.5rem">Instrumento que visualiza la forma de onda de una señal eléctrica en función del tiempo. Indispensable para señales AC y diagnóstico de equipos.</p>
+      <dl style="font-size:.8rem;display:flex;flex-direction:column;gap:.3rem">
+        <dt style="font-weight:600">die Zeitachse (X) — Zeitbasis</dt><dd style="color:#475569;margin-left:.8rem">Eje horizontal = tiempo [s, ms, µs]. Permite medir el período T y calcular f = 1/T.</dd>
+        <dt style="font-weight:600">die Spannungsachse (Y)</dt><dd style="color:#475569;margin-left:.8rem">Eje vertical = tensión [V/div]. Permite medir la amplitud (Amplitude) de la señal.</dd>
+        <dt style="font-weight:600">der Trigger</dt><dd style="color:#475569;margin-left:.8rem">Sincroniza la captura de la señal para que la imagen sea estable en pantalla.</dd>
+      </dl>
+      <div style="margin-top:.5rem;font-size:.79rem;color:#7c3aed"><strong>FAB:</strong> Diagnóstico de señal RF en plasma etch (13,56 MHz), verificación de formas de onda de equipos. También: <em>das digitale Speicheroszilloskop (DSO)</em>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECCIÓN 6: Flashcards vocabulario -->
+<div class="card">
+  <h2>🃏 5. Vokabeln LF1 — Flipkarten (click para voltear)</h2>
+  <p style="font-size:.85rem;color:#64748b;margin-bottom:12px">Haz click en cada tarjeta para ver la traducción y ejemplo FAB.</p>
+  <div class="flip-grid" id="flipGrid">
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">die Spannung (U)</span><span class="hint">Einheit: Volt [V]</span></div><div class="flip-back"><span class="def">Tensión / Voltaje</span><span class="example">En FAB: tensión de aceleración de iones en implantación [kV]</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">die Stromstärke (I)</span><span class="hint">Einheit: Ampere [A]</span></div><div class="flip-back"><span class="def">Corriente eléctrica</span><span class="example">En FAB: corriente de haz en ion implantation [mA]</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">der Widerstand (R)</span><span class="hint">Einheit: Ohm [Ω]</span></div><div class="flip-back"><span class="def">Resistencia eléctrica</span><span class="example">En FAB: medición de sheet resistance de capas conductoras</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">die Leistung (P)</span><span class="hint">Einheit: Watt [W]</span></div><div class="flip-back"><span class="def">Potencia eléctrica</span><span class="example">En FAB: RF power en plasma etch [W] → controla velocidad de grabado</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">das Ohmsche Gesetz</span><span class="hint">U = R × I</span></div><div class="flip-back"><span class="def">Ley de Ohm</span><span class="example">Base de todos los cálculos de circuitos en el FAB</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">der Knotenpunktsatz</span><span class="hint">1. Kirchhoffsches Gesetz</span></div><div class="flip-back"><span class="def">Ley de nodos (KCL)</span><span class="example">ΣI = 0 en cada nodo del circuito</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">der Maschensatz</span><span class="hint">2. Kirchhoffsches Gesetz</span></div><div class="flip-back"><span class="def">Ley de mallas (KVL)</span><span class="example">ΣU = 0 en cada malla cerrada</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">der Kondensator (C)</span><span class="hint">Einheit: Farad [F]</span></div><div class="flip-back"><span class="def">Condensador / Capacitor</span><span class="example">¡El MOSFET gate ES un condensador MOS!</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">die Reihenschaltung</span><span class="hint">Rtotal = R1+R2+...</span></div><div class="flip-back"><span class="def">Circuito en serie</span><span class="example">Misma corriente I en todos los componentes</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">die Parallelschaltung</span><span class="hint">1/R = 1/R1+1/R2+...</span></div><div class="flip-back"><span class="def">Circuito en paralelo</span><span class="example">Misma tensión U en todos los componentes</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">das analoge Signal</span><span class="hint">kontinuierliche Werte</span></div><div class="flip-back"><span class="def">Señal analógica</span><span class="example">Sensor de temperatura de horno → 0–10V = 0–1200°C</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">das digitale Signal</span><span class="hint">HIGH / LOW (1 / 0)</span></div><div class="flip-back"><span class="def">Señal digital</span><span class="example">Estado de válvula: abierta=1, cerrada=0</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">die Schutzmaßnahmen</span><span class="hint">LF1 — Sicherheit</span></div><div class="flip-back"><span class="def">Medidas de protección eléctrica</span><span class="example">VDE normas: aislamiento, equipotencialización, disyuntores</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">das Multimeter</span><span class="hint">Messinstrument</span></div><div class="flip-back"><span class="def">Multímetro</span><span class="example">Mide U, I, R — herramienta básica del Mikrotechnologe</span></div></div></div>
+    <div class="flip-card" onclick="flip(this)"><div class="flip-inner"><div class="flip-front"><span class="term">das Oszilloskop</span><span class="hint">Messinstrument AC</span></div><div class="flip-back"><span class="def">Osciloscopio</span><span class="example">Visualiza señales AC — imprescindible para diagnóstico RF en etch</span></div></div></div>
+  </div>
+  <div class="flip-counter" id="flipCounter">Tarjetas estudiadas: 0 / 15</div>
+</div>
+
+<!-- SECCIÓN 7: Quiz -->
+<div class="card">
+  <h2>✅ 6. Quiz LF1 — Selbstüberprüfung</h2>
+  <div id="quiz">
+    <div class="quiz-q" id="qq1">
+      <p>1. Ein Widerstand von 100 Ω liegt an einer Spannung von 12 V. Wie groß ist die Stromstärke?</p>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq1')">120 mA</label>
+      <label class="quiz-opt" onclick="qa(this,'correct','qq1')">120 mA — warte: I = U/R = 12/100 = 0,12 A = 120 mA ✓</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq1')">1,2 A</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq1')">8,3 mA</label>
+      <div id="qfb-qq1" style="display:none;margin-top:6px;padding:8px;background:#ecfdf5;border-radius:6px;font-size:.85rem;color:#065f46">✓ I = U/R = 12V / 100Ω = 0,12 A = 120 mA</div>
+    </div>
+    <div class="quiz-q" id="qq2">
+      <p>2. Was gilt für die Stromstärke in einer Reihenschaltung?</p>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq2')">Sie teilt sich auf alle Widerstände auf</label>
+      <label class="quiz-opt" onclick="qa(this,'correct','qq2')">Sie ist in allen Bauteilen gleich groß</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq2')">Sie ist Null, wenn alle Widerstände gleich sind</label>
+      <div id="qfb-qq2" style="display:none;margin-top:6px;padding:8px;background:#ecfdf5;border-radius:6px;font-size:.85rem;color:#065f46">✓ In der Reihenschaltung fließt durch alle Bauteile derselbe Strom I.</div>
+    </div>
+    <div class="quiz-q" id="qq3">
+      <p>3. Welche Aussage zum Knotenpunktsatz ist korrekt?</p>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq3')">Die Summe aller Spannungen in einer Masche ist Null</label>
+      <label class="quiz-opt" onclick="qa(this,'correct','qq3')">Die Summe aller zufließenden Ströme gleicht der Summe aller abfließenden Ströme</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq3')">Der Widerstand ist gleich Spannung geteilt durch Leistung</label>
+      <div id="qfb-qq3" style="display:none;margin-top:6px;padding:8px;background:#ecfdf5;border-radius:6px;font-size:.85rem;color:#065f46">✓ 1. Kirchhoffscher Satz: ΣI_zu = ΣI_ab (Ladungserhaltung am Knoten)</div>
+    </div>
+    <div class="quiz-q" id="qq4">
+      <p>4. Welches passive Bauelement ist am direktesten mit dem MOSFET-Gate in der Halbleitertechnologie verwandt?</p>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq4')">Die Spule (Induktivität)</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq4')">Der Widerstand</label>
+      <label class="quiz-opt" onclick="qa(this,'correct','qq4')">Der Kondensator — das Gate ist ein MOS-Kondensator</label>
+      <div id="qfb-qq4" style="display:none;margin-top:6px;padding:8px;background:#ecfdf5;border-radius:6px;font-size:.85rem;color:#065f46">✓ Der MOSFET-Gate besteht aus Metal-Oxid-Halbleiter (MOS) = ein Kondensator. Die Gate-Kapazität ist ein zentraler MOSFET-Parameter.</div>
+    </div>
+    <div class="quiz-q" id="qq5">
+      <p>5. Ein Temperatursensor liefert eine Ausgangsspannung zwischen 0V und 10V proportional zur Temperatur (0–500°C). Um welche Art von Signal handelt es sich?</p>
+      <label class="quiz-opt" onclick="qa(this,'correct','qq5')">Ein analoges Signal</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq5')">Ein digitales Signal</label>
+      <label class="quiz-opt" onclick="qa(this,'wrong','qq5')">Ein binäres Signal</label>
+      <div id="qfb-qq5" style="display:none;margin-top:6px;padding:8px;background:#ecfdf5;border-radius:6px;font-size:.85rem;color:#065f46">✓ Kontinuierliche Werte zwischen 0V und 10V → analoges Signal. Erst ein ADC wandelt es in ein digitales Signal um.</div>
+    </div>
+    <div class="quiz-score" id="quiz-result"></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 8: IHK Writing -->
+<div class="card">
+  <h2>🇩🇪 7. IHK-Schreibübung — Schreiben auf Deutsch</h2>
+  <div class="de-exercise">
+    <div class="de-question">„Erläutern Sie das Ohmsche Gesetz und nennen Sie die drei elektrischen Grundgrößen mit ihren Formelzeichen und Einheiten. Geben Sie ein Beispiel aus der Halbleiterfertigung."</div>
+    <p style="font-size:.82rem;color:#64748b;margin-bottom:8px">💡 Escribe en alemán 4–6 oraciones. Intenta sin ver la respuesta modelo primero.</p>
+    <textarea id="deAns" placeholder="Das Ohmsche Gesetz besagt, dass..."></textarea>
+    <br>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn" onclick="korrigieren()">✏ Korrigieren &amp; Feedback</button>
+      <button class="btn btn-outline" onclick="document.getElementById('ansModel').style.display='block'">📄 Musterlösung</button>
+    </div>
+    <div id="korrekturBox" style="display:none;margin-top:14px;font-size:.85rem"></div>
+    <div class="answer-box" id="ansModel">
+      <strong>Antwort (Musterantwort):</strong><br><br>
+      Das Ohmsche Gesetz beschreibt den Zusammenhang zwischen den drei elektrischen Grundgrößen: der Spannung <em>U</em> (in Volt [V]), der Stromstärke <em>I</em> (in Ampere [A]) und dem Widerstand <em>R</em> (in Ohm [Ω]).<br>
+      Es gilt: <strong>U = R × I</strong> — die Spannung ist gleich dem Produkt aus Widerstand und Stromstärke.<br>
+      In der Halbleiterfertigung wird das Ohmsche Gesetz beispielsweise bei der Messung des Schichtwiderstands (<em>Schichtwiderstand</em>) von metallischen Leiterbahnen auf dem Wafer angewendet. Durch Anlegen einer bekannten Spannung und Messen der Stromstärke kann der elektrische Widerstand der Schicht bestimmt werden, um die Prozessqualität zu beurteilen.
+      <br><br>
+      <strong>Schlüsselwörter DE:</strong> das Ohmsche Gesetz · die Spannung · die Stromstärke · der Widerstand · die Einheit · der Schichtwiderstand · anlegen · messen · bestimmen
+    </div>
+  </div>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="card">
+  <h2>📚 Quellen &amp; Bibliografía — LF 1</h2>
+  <p style="font-size:.83rem;color:#64748b;margin-bottom:1rem">Fuentes ordenadas por prioridad para LF1. Los capítulos indicados son exactamente los que cubren el contenido de esta FASE.</p>
+
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- Boylestad -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #1a56db">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.9rem">📘 Boylestad &amp; Nashelsky — Electronic Devices and Circuit Theory</div>
+          <div style="font-size:.8rem;color:#475569;margin-top:.2rem">11ª ed. Pearson. ISBN 978-0-13-262226-4</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/02_Electronica_y_Dispositivos/Electronic_Devices_Circuit_Theory_Boylestad_Nashelsky.pdf" style="background:#1a56db;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">📂 Abrir PDF local</a>
+      </div>
+      <div style="margin-top:.6rem;font-size:.82rem">
+        <strong>Capítulos para LF1:</strong>
+        <ul style="margin:.3rem 0 0 1.2rem;display:flex;flex-direction:column;gap:.2rem">
+          <li><strong>Cap. 1</strong> — Semiconductor Diode: introducción a materiales, semiconductor basics</li>
+          <li><strong>Cap. 2</strong> — Diode Applications: circuitos con diodos</li>
+          <li><strong>Apéndice A</strong> — Algebra y unidades: repaso de U/V, I, R, P</li>
+        </ul>
+        <div style="margin-top:.4rem;color:#6b7280">⚠ Boylestad usa <strong>V</strong> para tensión (no U). Recuerda: V (Boylestad) = U (IHK).</div>
+      </div>
+    </div>
+
+
+    <!-- Webresourcen -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid #0e9f6e">
+      <div style="font-weight:700;font-size:.9rem">🌐 Recursos online gratuitos</div>
+      <ul style="margin:.4rem 0 0 1.2rem;font-size:.82rem;display:flex;flex-direction:column;gap:.4rem">
+        <li>
+          <a href="https://es.khanacademy.org/science/physics/circuits-topic" target="_blank" style="font-weight:600;color:#059669">Khan Academy ES — Circuitos eléctricos</a>
+          <span style="color:#475569"> — Ley de Ohm, KCL, KVL con ejercicios interactivos. Gratis, en español.</span>
+        </li>
+        <li>
+          <a href="https://www.leifiphysik.de/elektrizitaetslehre" target="_blank" style="font-weight:600;color:#059669">leifiphysik.de (DE) — Elektrizitätslehre</a>
+          <span style="color:#475569"> — Portal de física alemán, nivel IHK exacto. Busca «Ohmsches Gesetz» y «Kirchhoffsche Gesetze» en el menú lateral.</span>
+        </li>
+        <li>
+          <a href="https://www.elektronik-kompendium.de/sites/grd/0201141.htm" target="_blank" style="font-weight:600;color:#059669">elektronik-kompendium.de (DE) — Ohmsches Gesetz</a>
+          <span style="color:#475569"> — Referencia técnica en alemán. Terminología exacta IHK, fórmulas y ejemplos.</span>
+        </li>
+        <li>
+          <a href="https://www.allaboutcircuits.com/textbook/direct-current/" target="_blank" style="font-weight:600;color:#059669">All About Circuits (EN) — DC Circuits Vol. 1</a>
+          <span style="color:#475569"> — Cubre todo LF1 en inglés con simuladores online incluidos.</span>
+        </li>
+        <li>
+          <strong style="color:#059669">The Organic Chemistry Tutor (EN) — Basic Electricity</strong>
+          <span style="color:#475569"> — Busca en YouTube: <em>«The Organic Chemistry Tutor Ohm's Law»</em>. Playlist con Ohm's Law, Kirchhoff, series/parallel. Explicaciones muy claras.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- IHK -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="font-weight:700;font-size:.9rem">📋 Rahmenlehrplan KMK — LF 1 oficial</div>
+      <div style="font-size:.82rem;margin-top:.4rem">
+        Lernfeld 1: <em>«Elektrische Grundgrößen analysieren und berechnen»</em> — 80 h.<br>
+        Contenidos oficiales: Grundgrößen, Ohmsches Gesetz, Kirchhoffsche Gesetze, Gleich- und Wechselstrom, Schutzmaßnahmen, Schaltungsanalyse.<br>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="color:#d97706;font-size:.8rem">📂 Carpeta IHK local</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE1_LF1_Elektrotechnik_Grundlagen.html</strong> · Siguiente: <a href="FASE2_LF2_Chemie_LF4_Reinraum.html" style="color:#1a56db">Fase 2 — LF2+LF3+LF4+LF9</a>
+</div>
+
+</main>
+
+<script>
+// Progress tracking
+let progress={calc:false,kirchhoff:false,flips:0,quiz:0,writing:false};
+function updateProg(){
+  let score=0;
+  if(progress.calc) score+=15;
+  score+=Math.min(30,progress.flips*2);
+  score+=progress.quiz*5;
+  if(progress.writing) score+=15;
+  document.getElementById('prog').style.width=Math.min(100,score)+'%';
+}
+
+// Ohm calculator
+function calcOhm(target){
+  const u=parseFloat(document.getElementById('calcU').value);
+  const r=parseFloat(document.getElementById('calcR').value);
+  const i=parseFloat(document.getElementById('calcI').value);
+  const res=document.getElementById('calcResult');
+  let val,msg;
+  if(target==='U'&&!isNaN(r)&&!isNaN(i)){val=(r*i).toFixed(4);document.getElementById('calcU').value=val;document.getElementById('calcU').className='result';msg=`U = R × I = ${r} × ${i} = ${val} V`;}
+  else if(target==='R'&&!isNaN(u)&&!isNaN(i)&&i!==0){val=(u/i).toFixed(4);document.getElementById('calcR').value=val;document.getElementById('calcR').className='result';msg=`R = U / I = ${u} / ${i} = ${val} Ω`;}
+  else if(target==='I'&&!isNaN(u)&&!isNaN(r)&&r!==0){val=(u/r).toFixed(6);document.getElementById('calcI').value=val;document.getElementById('calcI').className='result';msg=`I = U / R = ${u} / ${r} = ${val} A`;}
+  else{res.textContent='⚠ Introduce los dos valores necesarios.';return;}
+  res.textContent=msg;res.style.color='#0e9f6e';
+  progress.calc=true;updateProg();
+}
+function resetCalc(){['calcU','calcR','calcI'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).className='';});document.getElementById('calcResult').textContent='';}
+function resetCalcColors(){['calcU','calcR','calcI'].forEach(id=>{if(document.getElementById(id).className==='result'){document.getElementById(id).className='';}}); }
+
+// Flip cards
+let flipped=new Set();
+function flip(card){card.classList.toggle('flipped');const id=Array.from(card.parentElement.children).indexOf(card);flipped.add(id);progress.flips=flipped.size;document.getElementById('flipCounter').textContent='Tarjetas estudiadas: '+flipped.size+' / 15';updateProg();}
+
+// Quiz
+let qscores={};
+function qa(el,type,qid){
+  if(document.getElementById(qid).classList.contains('done')) return;
+  document.getElementById(qid).classList.add('done');
+  el.parentElement.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  el.classList.add(type);
+  document.getElementById('qfb-'+qid).style.display='block';
+  qscores[qid]=type==='correct'?1:0;
+  if(type==='wrong') el.parentElement.querySelectorAll('.quiz-opt').forEach(o=>{if(o.onclick.toString().includes("'correct'")) o.classList.add('correct');});
+  progress.quiz=Object.values(qscores).reduce((a,b)=>a+b,0);
+  if(Object.keys(qscores).length===5){
+    const tot=progress.quiz;
+    const r=document.getElementById('quiz-result');
+    r.style.display='block';r.style.color=tot>=4?'#065f46':tot>=3?'#1e3a5f':'#991b1b';
+    r.textContent=`Ergebnis: ${tot}/5 — ${tot===5?'Ausgezeichnet! 🏆':tot>=4?'Sehr gut! ✓':tot>=3?'Gut — noch mal üben':'Wiederholen empfohlen'}`;
+  }
+  updateProg();
+}
+
+document.getElementById('deAns').addEventListener('input',function(){progress.writing=this.value.length>20;updateProg();});
+
+function korrigieren(){
+  const text=document.getElementById('deAns').value.trim();
+  const box=document.getElementById('korrekturBox');
+  if(!text){box.style.display='block';box.innerHTML='<div style="color:#991b1b;padding:8px;background:#fef2f2;border-radius:6px">⚠ Bitte schreiben Sie zuerst Ihre Antwort.</div>';return;}
+  const fach=[
+    {r:/ohm(?:sche[sr]?)?(?:\s+gesetz)?/i, label:'Ohmsches Gesetz'},
+    {r:/spannung/i,   label:'die Spannung (U)'},
+    {r:/stromst[äa]rke|strom\b/i, label:'die Stromstärke (I)'},
+    {r:/widerstand/i, label:'der Widerstand (R)'},
+    {r:/\bvolt\b|\[V\]/i, label:'Einheit Volt [V]'},
+    {r:/ampere|\[A\]/i, label:'Einheit Ampere [A]'},
+    {r:/ohm|\[Ω\]|\[Ohm\]/i, label:'Einheit Ohm [Ω]'},
+    {r:/halbleiter|wafer|leiterbahn|schichtwiderstand/i, label:'FAB-Bezug'},
+  ];
+  _korrekturEngine(text, fach, box);
+}
+</script>
+<script src="korrektur_engine.js"></script>
+</body>
+</html>
+<!-- Guardar como: Plan_Estudio_IHK/FASE1_LF1_Elektrotechnik_Grundlagen.html -->

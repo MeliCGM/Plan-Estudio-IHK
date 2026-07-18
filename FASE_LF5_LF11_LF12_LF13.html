@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LF5 · LF11 · LF12 · LF13 — Standardsoftware, Qualität, MEMS & Anlagen</title>
+<style>
+:root {
+  --primary: #1a56db;
+  --primary-dark: #1e429f;
+  --success: #0e9f6e;
+  --warning: #e3a008;
+  --danger: #e02424;
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --lf5: #0891b2;
+  --lf11: #d97706;
+  --lf12: #7c3aed;
+  --lf13: #059669;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+header { background: linear-gradient(135deg, var(--lf5), var(--lf12)); color: white; padding: 2rem 1.5rem; text-align: center; }
+header h1 { font-size: 1.6rem; font-weight: 700; }
+header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.95rem; }
+.badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+.badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem; }
+.progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 8px; margin-top: 1rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+.progress-bar { background: white; height: 8px; border-radius: 999px; width: 0%; transition: width 0.5s; }
+main { max-width: 860px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+h3 { font-size: 1rem; font-weight: 700; margin: 1.2rem 0 0.6rem; color: var(--text); }
+.lf-tag { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; color: white; font-weight: 600; }
+.lf5 { background: var(--lf5); }
+.lf11 { background: var(--lf11); }
+.lf12 { background: var(--lf12); }
+.lf13 { background: var(--lf13); }
+
+/* concept box */
+.concept-box { background: #f0f9ff; border-left: 4px solid var(--lf5); border-radius: 0 8px 8px 0; padding: 1rem 1.2rem; margin-bottom: 1.2rem; font-size: 0.9rem; }
+.concept-box.lf11-box { background: #fffbeb; border-left-color: var(--lf11); }
+.concept-box.lf12-box { background: #faf5ff; border-left-color: var(--lf12); }
+.concept-box.lf13-box { background: #f0fdf4; border-left-color: var(--lf13); }
+.concept-box p { margin-bottom: 0.5rem; }
+.concept-box p:last-child { margin-bottom: 0; }
+.concept-box strong { color: #0c4a6e; }
+.concept-box.lf11-box strong { color: #92400e; }
+.concept-box.lf12-box strong { color: #4c1d95; }
+.concept-box.lf13-box strong { color: #064e3b; }
+
+/* vocab table */
+.vocab-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+.vocab-table th { background: #f3f4f6; padding: 0.5rem 0.7rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+.vocab-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.vocab-table tr:hover td { background: #f9fafb; }
+.vocab-table .de { font-weight: 600; color: #1e40af; }
+.vocab-table .es { color: #065f46; }
+.vocab-table .en { color: var(--muted); font-style: italic; }
+
+/* flip cards */
+.flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin: 12px 0; }
+.flip-card { height: 100px; cursor: pointer; perspective: 600px; }
+.flip-inner { width: 100%; height: 100%; position: relative; transition: transform .5s; transform-style: preserve-3d; }
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; }
+.flip-back { transform: rotateY(180deg); }
+.flip-front { color: white; }
+.flip-back { background: #f8fafc; color: var(--text); border: 2px solid var(--border); }
+.flip-front .term { font-size: 0.85rem; font-weight: 700; }
+.flip-front .hint { font-size: 0.68rem; opacity: 0.85; margin-top: 4px; }
+.flip-back .translation { font-size: 0.82rem; font-weight: 600; color: #1e40af; margin-bottom: 4px; }
+.flip-back .definition { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+.flip-hint { font-size: 0.76rem; color: var(--muted); margin-bottom: 6px; text-align: center; }
+
+/* quiz */
+.quiz-question { background: #f8fafc; border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; border-left: 4px solid var(--primary); }
+.quiz-question p { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.6rem; }
+.quiz-tag { font-size: 0.7rem; color: white; border-radius: 4px; padding: 0.1rem 0.4rem; margin-right: 0.4rem; font-weight: 600; }
+.quiz-options { display: flex; flex-direction: column; gap: 0.4rem; }
+.quiz-option { background: white; border: 2px solid var(--border); border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.85rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+.quiz-option:hover:not(:disabled) { border-color: var(--primary); background: #eff6ff; }
+.quiz-option.correct { background: #dcfce7; border-color: var(--success); color: #065f46; }
+.quiz-option.wrong { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
+.quiz-feedback { font-size: 0.82rem; margin-top: 0.4rem; padding: 0.4rem 0.6rem; border-radius: 6px; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: #dcfce7; color: #065f46; }
+.quiz-feedback.ko { background: #fee2e2; color: #7f1d1d; }
+.quiz-score { text-align: center; font-weight: 600; margin-top: 1rem; padding: 0.8rem; background: #eff6ff; border-radius: 8px; display: none; }
+
+/* writing */
+textarea { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 0.7rem; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 120px; }
+textarea:focus { outline: none; border-color: var(--primary); }
+.btn { padding: 0.5rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: opacity 0.2s; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: #e5e7eb; color: var(--text); }
+.btn-row { display: flex; gap: 0.6rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.musterloesung { display: none; margin-top: 1rem; background: #f0fdf4; border-radius: 8px; padding: 1rem; font-size: 0.85rem; border-left: 4px solid var(--success); }
+.musterloesung.show { display: block; }
+.musterloesung h4 { color: #065f46; margin-bottom: 0.4rem; }
+.musterloesung p { margin-bottom: 0.4rem; }
+.musterloesung ul { padding-left: 1.2rem; }
+.musterloesung li { margin-bottom: 0.2rem; }
+#korrekturBox { margin-top: 0.8rem; padding: 0.8rem 1rem; background: #fffbeb; border-radius: 8px; border-left: 4px solid var(--warning); font-size: 0.85rem; display: none; }
+#korrekturBox.show { display: block; }
+
+/* SPC visual */
+.spc-visual { background: #f8fafc; border-radius: 10px; padding: 1.2rem; margin: 1rem 0; border: 1px solid var(--border); }
+.spc-visual svg { display: block; margin: 0 auto; max-width: 100%; }
+.spc-labels { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 0.8rem; font-size: 0.8rem; }
+.spc-label { padding: 0.4rem 0.6rem; border-radius: 6px; }
+.spc-label.spec { background: #fef3c7; border-left: 3px solid #f59e0b; }
+.spc-label.ctrl { background: #dbeafe; border-left: 3px solid #3b82f6; }
+.spc-label.mean { background: #dcfce7; border-left: 3px solid #16a34a; }
+.cp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.8rem; }
+.cp-table th { background: #f3f4f6; padding: 0.4rem 0.6rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+.cp-table td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border); }
+.cp-good { color: #065f46; font-weight: 600; }
+.cp-warn { color: #92400e; font-weight: 600; }
+.cp-bad { color: #7f1d1d; font-weight: 600; }
+
+/* control loop diagram */
+.regelkreis-diagram { display: flex; align-items: center; justify-content: center; gap: 0; margin: 1rem 0; flex-wrap: wrap; overflow-x: auto; padding: 0.5rem 0; }
+.rk-box { background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.78rem; font-weight: 600; text-align: center; min-width: 90px; color: #1e3a5f; }
+.rk-box.highlight { background: #dcfce7; border-color: #16a34a; color: #064e3b; }
+.rk-arrow { font-size: 1.2rem; color: var(--muted); padding: 0 4px; }
+.rk-return { text-align: center; margin-top: 0.4rem; font-size: 0.75rem; color: var(--muted); font-style: italic; }
+
+/* IQ/OQ/PQ */
+.qualification-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.qual-card { border-radius: 10px; padding: 1rem; border: 2px solid; }
+.qual-iq { background: #eff6ff; border-color: #3b82f6; }
+.qual-oq { background: #f0fdf4; border-color: #16a34a; }
+.qual-pq { background: #faf5ff; border-color: #9333ea; }
+.qual-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.qual-iq h4 { color: #1e3a8a; }
+.qual-oq h4 { color: #14532d; }
+.qual-pq h4 { color: #4c1d95; }
+.qual-card p { font-size: 0.82rem; color: var(--muted); }
+.qual-card .qual-example { font-size: 0.78rem; margin-top: 0.5rem; font-style: italic; background: rgba(255,255,255,0.7); border-radius: 4px; padding: 0.3rem 0.5rem; }
+
+/* MEMS application cards */
+.mems-app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.mems-app-card { border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s; }
+.mems-app-card:hover { transform: translateY(-2px); }
+.mems-app-header { padding: 0.8rem 1rem; color: white; font-weight: 700; font-size: 0.9rem; }
+.mems-app-body { padding: 0.8rem 1rem; font-size: 0.82rem; background: white; }
+.mems-app-body .vocab-tag { display: inline-block; background: #f3f4f6; border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.75rem; margin: 2px; color: #1e40af; font-weight: 600; }
+.mems-app-detail { display: none; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); color: var(--muted); }
+.mems-app-card.open .mems-app-detail { display: block; }
+
+/* analogy box */
+.analogy-box { background: linear-gradient(135deg, #fef3c7, #fffbeb); border: 1px solid #fcd34d; border-radius: 10px; padding: 1rem; margin: 1rem 0; font-size: 0.85rem; }
+.analogy-box .analogy-icon { font-size: 1.3rem; margin-right: 0.5rem; }
+.analogy-box strong { color: #92400e; }
+
+/* FAB software section */
+.software-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+.software-item { background: #f8fafc; border-radius: 8px; padding: 0.8rem; border: 1px solid var(--border); font-size: 0.82rem; }
+.software-item h4 { font-weight: 700; color: #0c4a6e; margin-bottom: 0.3rem; font-size: 0.85rem; }
+
+/* nav */
+.nav-bottom { text-align: center; padding: 1rem; }
+.nav-bottom a { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.nav-bottom a:hover { text-decoration: underline; }
+
+/* section header collapsible */
+.section-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.section-toggle { font-size: 1rem; color: var(--muted); transition: transform 0.3s; }
+.section-header.collapsed .section-toggle { transform: rotate(-90deg); }
+.section-content { overflow: hidden; }
+
+/* progress label */
+.progress-label { text-align: center; font-size: 0.8rem; opacity: 0.9; margin-top: 0.3rem; color: white; }
+
+  /* Citas en línea */
+  a.ref { display:inline-block; font-size:.68rem; font-weight:700; text-decoration:none; background:#dbeafe; color:var(--primary); border-radius:3px; padding:0 4px; vertical-align:super; line-height:1.5; white-space:nowrap; margin-left:2px; }
+  a.ref:hover { background:var(--primary); color:white; }
+  a.ref.wolf { background:#ede9fe; color:#7c3aed; }
+  a.ref.wolf:hover { background:#7c3aed; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LF5 · LF11 · LF12 · LF13</h1>
+  <p>Standardsoftware · Qualität &amp; SPC · MEMS · Verfahrenstechnische Anlagen</p>
+  <div class="badges">
+    <span class="badge">LF5 — 60h</span>
+    <span class="badge">LF11 — 40h</span>
+    <span class="badge">LF12 — 60h</span>
+    <span class="badge">LF13 — 60h</span>
+    <span class="badge">IHK Mikrotechnologe</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <p class="progress-label" id="progressLabel">0 / 8 Aktivitäten abgeschlossen</p>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════
+     LF 5 — STANDARDSOFTWARE & DOKUMENTATION
+═══════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="lf-tag lf5">LF5</span> Standardsoftware &amp; Dokumentation (60h)</h2>
+
+  <div class="concept-box">
+    <p><strong>¿Por qué importa esto?</strong> En una FAB de semiconductores, el software no se usa solo para hacer presentaciones bonitas. Cada máquina, cada lote de obleas y cada resultado de medición debe quedar registrado digitalmente. El principio fundamental del IHK (y de cualquier FAB certificada bajo ISO 9001 o IATF) es:</p>
+    <p style="text-align:center; font-size:1.05rem; font-weight:700; color:#0c4a6e; margin: 0.6rem 0;">
+      "Wenn es nicht dokumentiert ist, hat es nicht stattgefunden."
+    </p>
+    <p style="text-align:center; font-size:0.82rem; color:#6b7280; font-style:italic; margin-bottom:0.6rem;">("Si no está documentado, no ocurrió.")
+    </p>
+    <p>Esto significa que como Mikrotechnologe deberás usar software específico de FAB (MES, LIMS, SPC) y herramientas de oficina (Excel, Word, PowerPoint) para crear, actualizar y archivar documentos de producción, calidad y mantenimiento.</p>
+  </div>
+
+  <h3>📋 Schlüsselvokabular — Dokumentation &amp; Software</h3>
+  <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.6rem;">Tabla completa: Alemán · Español · Inglés · Explicación en español</p>
+  <div style="overflow-x:auto;">
+  <table class="vocab-table">
+    <thead>
+      <tr><th>Deutsch</th><th>Español</th><th>English</th><th>Erklärung (ES)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="de">die Arbeitsanweisung (AA)</td><td class="es">instrucción de trabajo</td><td class="en">work instruction</td><td>Documento paso a paso que describe cómo realizar una tarea concreta en la FAB. Es obligatoria en cada puesto.</td></tr>
+      <tr><td class="de">das Prüfprotokoll</td><td class="es">protocolo de inspección</td><td class="en">inspection record</td><td>Registro de los resultados de una medición o control de calidad. Debe firmarse y archivarse.</td></tr>
+      <tr><td class="de">der Produktionsauftrag</td><td class="es">orden de producción</td><td class="en">work order</td><td>Documento que autoriza y describe un lote de producción: número de obleas, proceso, especificaciones.</td></tr>
+      <tr><td class="de">das Fehlerprotokoll</td><td class="es">registro de fallos</td><td class="en">failure log</td><td>Donde se registran defectos, paradas de equipo o incidencias. Base para análisis de causas.</td></tr>
+      <tr><td class="de">das Batch-Protokoll</td><td class="es">historial del lote</td><td class="en">batch record</td><td>Registro completo de TODAS las operaciones realizadas sobre un lote de obleas (quién, cuándo, qué resultado).</td></tr>
+      <tr><td class="de">das MES (Manufacturing Execution System)</td><td class="es">sistema de ejecución de manufactura</td><td class="en">MES</td><td>Software que controla y registra la producción en tiempo real. Sabe en qué paso está cada lote.</td></tr>
+      <tr><td class="de">das LIMS (Labor Information Management System)</td><td class="es">sistema de gestión de laboratorio</td><td class="en">LIMS</td><td>Software específico para gestionar datos de mediciones, análisis y resultados de caracterización.</td></tr>
+      <tr><td class="de">die Tabellenkalkulation</td><td class="es">hoja de cálculo</td><td class="en">spreadsheet</td><td>Excel — esencial para análisis Cp/Cpk, histogramas, gráficas de tendencia, Regelkarten manuales.</td></tr>
+      <tr><td class="de">die Präsentation</td><td class="es">presentación</td><td class="en">presentation</td><td>PowerPoint — para informes de proceso, revisiones de ingeniería, ECO reviews y comunicación técnica.</td></tr>
+      <tr><td class="de">die Datenbank</td><td class="es">base de datos</td><td class="en">database</td><td>Almacenamiento estructurado de datos de proceso y calidad. Consultable para análisis histórico.</td></tr>
+      <tr><td class="de">die Vorlage (Template)</td><td class="es">plantilla</td><td class="en">template</td><td>Documento preformateado para garantizar uniformidad. Todos los protocolos tienen una Vorlage.</td></tr>
+      <tr><td class="de">der Bericht</td><td class="es">informe</td><td class="en">report</td><td>Documento formal que resume resultados, incidencias o análisis. Firmado y archivado con fecha.</td></tr>
+      <tr><td class="de">die Spezifikation (Spec)</td><td class="es">especificación</td><td class="en">specification</td><td>Documento que define los límites aceptables de un parámetro (p. ej., grosor de capa = 500 ± 10 nm).</td></tr>
+      <tr><td class="de">das Änderungsmanagement</td><td class="es">gestión de cambios</td><td class="en">change management</td><td>Proceso formal para modificar documentos o procesos. Se gestiona mediante ECO (Engineering Change Order) o DCR (Document Change Request).</td></tr>
+      <tr><td class="de">die Revision</td><td class="es">revisión (versión)</td><td class="en">revision</td><td>Versión actualizada de un documento (Rev A → Rev B). Nunca se borra la versión anterior.</td></tr>
+      <tr><td class="de">das Freigabe-Dokument</td><td class="es">documento de autorización</td><td class="en">release document</td><td>Documento firmado que autoriza el uso de un proceso, equipo o lote. Sin Freigabe, no se produce.</td></tr>
+      <tr><td class="de">die Dokumentenlenkung</td><td class="es">control de documentos</td><td class="en">document control</td><td>Sistema que gestiona qué versión de cada documento es la vigente y quién puede modificarla.</td></tr>
+      <tr><td class="de">das Auditprotokoll</td><td class="es">acta de auditoría</td><td class="en">audit record</td><td>Registro de una inspección de calidad (interna o externa). Evidencia de cumplimiento normativo.</td></tr>
+      <tr><td class="de">der Schulungsnachweis</td><td class="es">certificado de formación</td><td class="en">training record</td><td>Documento que certifica que un operario ha sido formado y autorizado para usar un equipo o proceso.</td></tr>
+      <tr><td class="de">die Stückliste (BOM)</td><td class="es">lista de materiales</td><td class="en">bill of materials</td><td>Lista de todos los componentes o materiales necesarios para fabricar un producto. Gestionada en MES o ERP.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>💻 FAB-spezifische Software</h3>
+  <div class="software-grid">
+    <div class="software-item">
+      <h4>MES (z.B. WorkStream, Promis)</h4>
+      <p>Rastrea en qué paso del proceso está cada lote. Registra quién realizó cada operación y cuándo. Genera el Batch-Protokoll automáticamente.</p>
+    </div>
+    <div class="software-item">
+      <h4>SPC-Software (z.B. JMP, SPC-IV)</h4>
+      <p>Crea Regelkarten (cartas de control) en tiempo real. Calcula Cp, Cpk automáticamente. Genera alarmas si UCL/LCL se superan.</p>
+    </div>
+    <div class="software-item">
+      <h4>CAD / Layout (KLayout, Cadence)</h4>
+      <p>Para diseño de máscaras fotolitográficas. KLayout es de código abierto. Cadence Virtuoso para diseño integrado completo.</p>
+    </div>
+    <div class="software-item">
+      <h4>Excel / Tabellenkalkulation</h4>
+      <p>Messkurven (curvas de medición), Histogramme, Regelkarten manuales, análisis Cp/Cpk, tendencias de proceso y presentación de datos de caracterización.</p>
+    </div>
+    <div class="software-item">
+      <h4>LIMS (z.B. Labvantage)</h4>
+      <p>Gestiona resultados de análisis de laboratorio: mediciones de espesor, resistividad, rugosidad. Vincula cada resultado al lote correspondiente.</p>
+    </div>
+    <div class="software-item">
+      <h4>ERP (z.B. SAP)</h4>
+      <p>Gestión de materiales, compras, inventario y costes. El Produktionsauftrag suele crearse en SAP y ejecutarse en el MES.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FLIP CARDS LF5 -->
+<section>
+  <h2><span class="lf-tag lf5">LF5</span> Lernkarten — Dokumentation</h2>
+  <p class="flip-hint">Haz clic en cada tarjeta para ver la traducción y explicación</p>
+  <div class="flip-grid">
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">
+          <span class="term">Arbeitsanweisung</span>
+          <span class="hint">¿qué es?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Instrucción de trabajo</span>
+          <span class="definition">Documento paso a paso para una tarea en la FAB. Obligatoria en cada puesto.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">
+          <span class="term">Batch-Protokoll</span>
+          <span class="hint">¿qué contiene?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Historial del lote</span>
+          <span class="definition">Registro completo de TODAS las operaciones sobre un lote de obleas.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">
+          <span class="term">MES</span>
+          <span class="hint">¿qué hace?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Sist. Ejec. Manufactura</span>
+          <span class="definition">Controla y registra la producción en tiempo real. Sabe dónde está cada lote.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">
+          <span class="term">die Revision</span>
+          <span class="hint">en documentos</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Revisión / Versión</span>
+          <span class="definition">Rev A → Rev B. La versión anterior se archiva, nunca se elimina.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">
+          <span class="term">Freigabe</span>
+          <span class="hint">autorización formal</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Autorización / Liberación</span>
+          <span class="definition">Documento firmado que permite usar un equipo, proceso o lote. Sin Freigabe = no se produce.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">
+          <span class="term">Vorlage</span>
+          <span class="hint">formato estándar</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Plantilla / Template</span>
+          <span class="definition">Documento preformateado para garantizar uniformidad en todos los protocolos.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     LF 11 — QUALITÄTSSTANDARDS & SPC
+═══════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="lf-tag lf11">LF11</span> Qualitätsstandards &amp; SPC (40h)</h2>
+
+  <div class="concept-box lf11-box">
+    <p><strong>Concepto desde cero:</strong> En química, controlas la calidad al final del experimento — analizas el producto y ves si salió bien. En una FAB, eso es inaceptable: si esperas al final para detectar defectos en obleas de 300mm con 500+ pasos de proceso, habrás perdido 3 meses y miles de euros.</p>
+    <p><strong>SPC (Statistische Prozesskontrolle)</strong> monitorea el proceso en tiempo real, paso a paso. Detecta la deriva (Drift) ANTES de que un parámetro salga de especificación y produzca chatarra (Ausschuss).</p>
+    <p><strong>Analogía química:</strong> Es como monitorear la temperatura de un reactor en tiempo real con alarmas a ±2σ. Si la temperatura empieza a subir sistemáticamente, paras el proceso antes de que la reacción se descontrole — no esperas a que explote.</p>
+  </div>
+
+  <h3>📊 Schlüsselvokabular — Qualität &amp; SPC</h3>
+  <div style="overflow-x:auto;">
+  <table class="vocab-table">
+    <thead>
+      <tr><th>Deutsch</th><th>Español</th><th>English</th><th>Erklärung (ES)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="de">die Qualitätssicherung (QS)</td><td class="es">aseguramiento de calidad</td><td class="en">quality assurance</td><td>Sistema completo para garantizar que productos y procesos cumplen especificaciones. No es solo inspección final.</td></tr>
+      <tr><td class="de">die Prozesskontrolle</td><td class="es">control de proceso</td><td class="en">process control</td><td>Monitoreo continuo de parámetros críticos (temperatura, presión, grosor) para mantener el proceso dentro de spec.</td></tr>
+      <tr><td class="de">die Regelkarte (SPC-Chart)</td><td class="es">carta de control</td><td class="en">control chart</td><td>Gráfico temporal de un parámetro con límites UCL/LCL. Detecta visualmente cuándo el proceso se desvía.</td></tr>
+      <tr><td class="de">der Mittelwert (x̄)</td><td class="es">valor medio / promedio</td><td class="en">mean</td><td>Promedio de todas las mediciones. Centro de la distribución del proceso.</td></tr>
+      <tr><td class="de">die Standardabweichung (σ)</td><td class="es">desviación estándar</td><td class="en">standard deviation</td><td>Medida de la dispersión del proceso. Un proceso "estrecho" tiene σ pequeño.</td></tr>
+      <tr><td class="de">der Prozessfähigkeitsindex Cp</td><td class="es">índice de capacidad del proceso</td><td class="en">process capability index</td><td>Cp = (USL − LSL) / (6σ). Mide si el proceso "cabe" dentro de los límites, sin considerar el centrado.</td></tr>
+      <tr><td class="de">der Cpk</td><td class="es">índice de rendimiento (centrado)</td><td class="en">process performance index</td><td>Cpk = min[(USL−μ)/(3σ), (μ−LSL)/(3σ)]. Considera tanto la dispersión como el centrado. Siempre Cpk ≤ Cp.</td></tr>
+      <tr><td class="de">die Spezifikationsgrenze USL/LSL</td><td class="es">límite sup./inf. de especificación</td><td class="en">upper/lower spec limit</td><td>Límites definidos por el diseño del producto. Definen lo que es "aceptable" para el cliente.</td></tr>
+      <tr><td class="de">die Regelgrenze UCL/LCL</td><td class="es">límite sup./inf. de control</td><td class="en">upper/lower control limit</td><td>Límites estadísticos = μ ± 3σ de la carta de control. Son más estrechos que USL/LSL.</td></tr>
+      <tr><td class="de">die Ausbeute (Yield)</td><td class="es">rendimiento / tasa de aprovechamiento</td><td class="en">yield</td><td>% de obleas o chips que pasan la inspección final. Yield = 95% significa 5% de chatarra.</td></tr>
+      <tr><td class="de">die Defektdichte</td><td class="es">densidad de defectos</td><td class="en">defect density</td><td>Número de defectos por unidad de área [cm⁻²]. Crítico para calcular el Yield esperado.</td></tr>
+      <tr><td class="de">der Ausschuss</td><td class="es">rechazo / chatarra</td><td class="en">scrap</td><td>Producto que no cumple especificación y no puede corregirse. Se descarta definitivamente.</td></tr>
+      <tr><td class="de">die Nacharbeit (Rework)</td><td class="es">reproceso</td><td class="en">rework</td><td>Proceso de corrección de un producto fuera de especificación cuando aún es recuperable (p. ej., re-etch).</td></tr>
+      <tr><td class="de">das Ishikawa-Diagramm</td><td class="es">diagrama de Ishikawa / espina de pescado</td><td class="en">fishbone diagram</td><td>Herramienta visual para identificar causas de un defecto. Las 6M: Mensch, Maschine, Methode, Material, Milieu, Messung.</td></tr>
+      <tr><td class="de">der 8D-Report</td><td class="es">informe 8D</td><td class="en">8D report</td><td>Metodología de 8 pasos para resolver problemas recurrentes: D1 Team, D2 Problembeschreibung, D3 Sofortmaßnahmen... D8 Abschluss.</td></tr>
+      <tr><td class="de">die FMEA</td><td class="es">análisis modos de fallo y efectos</td><td class="en">FMEA</td><td>Evaluación sistemática de qué puede fallar, con qué probabilidad, qué impacto tiene y cómo detectarlo.</td></tr>
+      <tr><td class="de">die ISO 9001</td><td class="es">ISO 9001</td><td class="en">ISO 9001</td><td>Norma internacional de sistemas de gestión de calidad. FABs de semiconductores suelen tener ISO 9001 + IATF 16949.</td></tr>
+      <tr><td class="de">der KVP (Kontinuierlicher Verbesserungsprozess)</td><td class="es">mejora continua</td><td class="en">continuous improvement / Kaizen</td><td>Filosofía de mejora incremental permanente. En japonés: Kaizen. Nunca se deja de mejorar.</td></tr>
+      <tr><td class="de">der Drift</td><td class="es">deriva / desviación gradual</td><td class="en">drift</td><td>Tendencia sistemática de un parámetro a alejarse del valor objetivo. Detectable en la Regelkarte antes de salir de spec.</td></tr>
+      <tr><td class="de">der Kontrollplan</td><td class="es">plan de control</td><td class="en">control plan</td><td>Documento que define qué parámetros se miden, con qué frecuencia, con qué instrumento y cuáles son los límites.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>📈 Normalverteilung &amp; Regelkarte — Visual</h3>
+  <div class="spc-visual">
+    <svg viewBox="0 0 500 200" width="500" height="200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <rect width="500" height="200" fill="#f8fafc" rx="8"/>
+      <!-- USL/LSL zone (spec) -->
+      <rect x="60" y="10" width="380" height="180" fill="#fef3c7" opacity="0.5"/>
+      <!-- UCL/LCL zone (control) -->
+      <rect x="120" y="10" width="260" height="180" fill="#dbeafe" opacity="0.6"/>
+      <!-- Normal distribution curve -->
+      <path d="M 60,170 Q 100,165 130,145 Q 160,120 180,90 Q 200,60 250,40 Q 300,60 320,90 Q 340,120 370,145 Q 400,165 440,170" stroke="#1e40af" stroke-width="2.5" fill="none"/>
+      <!-- Mean line -->
+      <line x1="250" y1="10" x2="250" y2="190" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,3"/>
+      <!-- UCL line -->
+      <line x1="120" y1="10" x2="120" y2="190" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,4"/>
+      <!-- LCL line -->
+      <line x1="380" y1="10" x2="380" y2="190" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,4"/>
+      <!-- USL line -->
+      <line x1="60" y1="10" x2="60" y2="190" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- LSL line -->
+      <line x1="440" y1="10" x2="440" y2="190" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- Labels -->
+      <text x="250" y="198" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="bold">x̄ (μ)</text>
+      <text x="120" y="198" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="bold">UCL</text>
+      <text x="380" y="198" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="bold">LCL</text>
+      <text x="60" y="198" text-anchor="middle" font-size="10" fill="#d97706" font-weight="bold">USL</text>
+      <text x="440" y="198" text-anchor="middle" font-size="10" fill="#d97706" font-weight="bold">LSL</text>
+      <!-- Sigma labels -->
+      <text x="185" y="25" text-anchor="middle" font-size="9" fill="#64748b">−3σ (UCL)</text>
+      <text x="315" y="25" text-anchor="middle" font-size="9" fill="#64748b">+3σ (LCL)</text>
+      <!-- Area shading for Cp=1 -->
+      <text x="250" y="65" text-anchor="middle" font-size="9" fill="#1e40af" font-weight="bold">Cp = 1.33</text>
+      <text x="250" y="78" text-anchor="middle" font-size="8" fill="#64748b">6σ &lt; (USL−LSL)</text>
+    </svg>
+    <div class="spc-labels">
+      <div class="spc-label spec">
+        <strong>USL / LSL</strong> — Spezifikationsgrenzen<br>
+        <span style="font-size:0.75rem">Límites del diseño del producto. Definidos por ingeniería. La pieza es "buena" si queda entre USL y LSL.</span>
+      </div>
+      <div class="spc-label ctrl">
+        <strong>UCL / LCL</strong> — Regelgrenzen (±3σ)<br>
+        <span style="font-size:0.75rem">Límites estadísticos de la carta de control. Si un punto cae fuera, el proceso está "fuera de control" — investigar inmediatamente.</span>
+      </div>
+      <div class="spc-label mean">
+        <strong>x̄ (Mittelwert)</strong> — Prozessmittelwert<br>
+        <span style="font-size:0.75rem">El valor promedio del proceso. Cp solo mide ancho; Cpk también mide si está centrado respecto a USL/LSL.</span>
+      </div>
+      <div class="spc-label spec" style="background:#f0fdf4; border-left-color:#16a34a;">
+        <strong>Cp vs. Cpk — Faustregel</strong><br>
+        <span style="font-size:0.75rem">Si Cp ≈ Cpk: proceso centrado. Si Cpk ≪ Cp: proceso descentrado → ajustar setpoint.</span>
+      </div>
+    </div>
+    <table class="cp-table">
+      <thead><tr><th>Cp / Cpk</th><th>Bedeutung</th><th>FAB-Bewertung</th></tr></thead>
+      <tbody>
+        <tr><td class="cp-bad">&lt; 1.0</td><td>Prozess "passt nicht" in die Spec</td><td>Nicht akzeptabel — Ausschuss wird produziert</td></tr>
+        <tr><td class="cp-warn">1.0 – 1.33</td><td>Prozess gerade akzeptabel</td><td>Grenzwertig — Verbesserung erforderlich</td></tr>
+        <tr><td class="cp-good">≥ 1.33</td><td>Prozess fähig</td><td>Standard in der Halbleiterfertigung</td></tr>
+        <tr><td class="cp-good">≥ 1.67</td><td>Prozess sehr fähig</td><td>Six Sigma (3.4 ppm Defektrate)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="analogy-box">
+    <span class="analogy-icon">🧪</span>
+    <strong>Analogía con la química:</strong> Imagina que tienes un reactor que debe operar a 250 ± 5 °C (eso son tus USL/LSL). Defines UCL = 253°C y LCL = 247°C (±3σ estadísticos). Si el sensor registra 254°C — está fuera de UCL pero todavía dentro de spec. La SPC te avisa para que corrijas ANTES de llegar a 255°C (fuera de spec = Ausschuss). El Cp = 10/(6·σ_temp). Si σ_temp = 1°C → Cp = 1.67 → Six Sigma process.
+  </div>
+</section>
+
+<!-- FLIP CARDS LF11 -->
+<section>
+  <h2><span class="lf-tag lf11">LF11</span> Lernkarten — Qualität &amp; SPC</h2>
+  <p class="flip-hint">Haz clic en cada tarjeta para girarla</p>
+  <div class="flip-grid">
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+          <span class="term">Regelkarte</span>
+          <span class="hint">SPC-Chart</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Carta de control</span>
+          <span class="definition">Gráfico temporal con UCL/LCL para detectar desviaciones del proceso en tiempo real.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+          <span class="term">Cp vs. Cpk</span>
+          <span class="hint">¿cuál es la diferencia?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Capacidad vs. Rendimiento</span>
+          <span class="definition">Cp = ancho (¿cabe?). Cpk = ancho + centrado (¿cabe Y está centrado?). Siempre Cpk ≤ Cp.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+          <span class="term">Ausbeute (Yield)</span>
+          <span class="hint">¿qué mide?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Rendimiento / Tasa de aprovechamiento</span>
+          <span class="definition">% de obleas/chips que pasan la inspección. Yield 95% = 5% de chatarra (Ausschuss).</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+          <span class="term">Ishikawa</span>
+          <span class="hint">las 6M</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Diagrama de espina de pescado</span>
+          <span class="definition">6M: Mensch · Maschine · Methode · Material · Milieu · Messung. Identifica causas de defectos.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+          <span class="term">Defektdichte</span>
+          <span class="hint">unidad</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Densidad de defectos</span>
+          <span class="definition">Número de defectos por cm². Directamente relacionada con el Yield del proceso.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+          <span class="term">KVP / Kaizen</span>
+          <span class="hint">filosofía</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Mejora continua</span>
+          <span class="definition">Kaizen en japonés = cambio para mejor. Mejora incremental permanente de procesos y calidad.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     LF 12 — MIKROSYSTEMTECHNIK / MEMS
+═══════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="lf-tag lf12">LF12</span> Mikrosystemtechnik / MEMS (60h)</h2>
+
+  <div class="concept-box lf12-box">
+    <p><strong>Concepto desde cero:</strong> MEMS (Mikro-Elektro-Mechanische Systeme) son dispositivos miniaturizados que combinan electrónica con partes mecánicas móviles, fabricados con las mismas técnicas que los chips de silicio.</p>
+    <p><strong>¿Dónde los encuentras?</strong> En tu smartphone hay al menos 10 sensores MEMS: acelerómetro, giroscopio, micrófono, barómetro... En el coche: sensor de airbag (aceleración), sensor de presión de neumáticos. En medicina: sensores de presión sanguínea, glucómetros, lab-on-chip.</p>
+    <p><strong>Analogía con la química:</strong> Un MEMS es como un laboratorio analítico completo (con reactor, sensores, sistema de análisis) pero miniaturizado al tamaño de un grano de polvo. El mismo proceso de fotolitografía que fabrica transistores fabrica membranas flexibles, vigas de cantilever y microbombas.</p>
+  </div>
+
+  <h3>🔬 Schlüsselvokabular — MEMS &amp; Mikrosysteme</h3>
+  <div style="overflow-x:auto;">
+  <table class="vocab-table">
+    <thead>
+      <tr><th>Deutsch</th><th>Español</th><th>English</th><th>Erklärung (ES)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="de">das Mikrosystem (MEMS)</td><td class="es">microsistema / MEMS</td><td class="en">MEMS</td><td>Sistema que integra componentes mecánicos, eléctricos y ópticos en escala micrométrica sobre un chip de silicio.</td></tr>
+      <tr><td class="de">der Sensor</td><td class="es">sensor</td><td class="en">sensor</td><td>Convierte una magnitud física (presión, aceleración, temperatura) en señal eléctrica medible.</td></tr>
+      <tr><td class="de">der Aktor (Aktuator)</td><td class="es">actuador</td><td class="en">actuator</td><td>Convierte señal eléctrica en movimiento mecánico. Ej: microbomba, espejo MEMS (DLP), válvula de microfluidica.</td></tr>
+      <tr><td class="de">die Membran</td><td class="es">membrana</td><td class="en">membrane / diaphragm</td><td>Lámina delgada flexible — elemento sensible en sensores de presión. Se deforma bajo presión y genera señal piezorresistiva.</td></tr>
+      <tr><td class="de">die Biegebalken (Cantilever)</td><td class="es">viga en voladizo</td><td class="en">cantilever beam</td><td>Estructura anclada por un extremo que se dobla bajo carga o atracción molecular. Base del AFM y sensores MEMS de gas/masa.</td></tr>
+      <tr><td class="de">die Bulk-Mikromechanik</td><td class="es">micromecánica de volumen</td><td class="en">bulk micromachining</td><td>Estructuración del sustrato de silicio en profundidad mediante grabado anisótropo (KOH o DRIE). Produce membranas y canales profundos.</td></tr>
+      <tr><td class="de">die Oberflächen-Mikromechanik</td><td class="es">micromecánica de superficie</td><td class="en">surface micromachining</td><td>Estructuración de capas delgadas depositadas sobre el sustrato. Permite fabricar estructuras suspendidas sobre el chip.</td></tr>
+      <tr><td class="de">das Opferschicht-Verfahren</td><td class="es">proceso de capa sacrificial</td><td class="en">sacrificial layer process</td><td>Se deposita una capa (SiO₂ o poliimida) que luego se elimina selectivamente para liberar estructuras mecánicas móviles.</td></tr>
+      <tr><td class="de">die Opferschicht</td><td class="es">capa sacrificial</td><td class="en">sacrificial layer</td><td>Material depositado temporalmente (p.ej. SiO₂ sobre Si). Al grabarlo con HF, deja espacio libre bajo la estructura funcional.</td></tr>
+      <tr><td class="de">das DRIE (Deep Reactive Ion Etching)</td><td class="es">grabado iónico reactivo profundo</td><td class="en">DRIE</td><td>Variante del RIE con pasivación alternada (proceso Bosch). Crea estructuras verticales profundas con alta relación de aspecto (hasta 50:1).</td></tr>
+      <tr><td class="de">die Bondtechnik</td><td class="es">tecnología de unión (wafer bonding)</td><td class="en">wafer bonding</td><td>Unión de dos obleas por adhesión directa (fusión), anódica (Si-Glas) o con adhesivo. Esencial para encapsular cavidades MEMS.</td></tr>
+      <tr><td class="de">das anodische Bonden</td><td class="es">unión anódica</td><td class="en">anodic bonding</td><td>Unión Si-Glas a ~400°C con campo eléctrico externo (≈1000V). Crea unión hermética. Muy común para encapsular sensores de presión.</td></tr>
+      <tr><td class="de">der Drucksensor</td><td class="es">sensor de presión</td><td class="en">pressure sensor</td><td>Membrana de Si que se deforma bajo presión. La deformación cambia la resistencia (piezorresistencia) o la capacitancia entre electrodos.</td></tr>
+      <tr><td class="de">der Beschleunigungssensor</td><td class="es">sensor de aceleración / acelerómetro</td><td class="en">accelerometer</td><td>Masa sísmica suspendida sobre resortes de Si. La aceleración desplaza la masa → cambio de capacitancia. En airbags y smartphones.</td></tr>
+      <tr><td class="de">der Kreiselsensor (Gyroskop)</td><td class="es">giroscopio MEMS</td><td class="en">MEMS gyroscope</td><td>Detecta velocidad angular mediante el efecto Coriolis sobre una masa vibratoria de Si. En navegación inercial y smartphones.</td></tr>
+      <tr><td class="de">das Lab-on-Chip</td><td class="es">laboratorio en chip</td><td class="en">lab-on-chip</td><td>Dispositivo MEMS que integra en un solo chip: mezcla de reactivos, separación, detección. Análisis de DNA, glucosa o patógenos en minutos.</td></tr>
+      <tr><td class="de">die Piezoresistenz</td><td class="es">piezorresistencia</td><td class="en">piezoresistance</td><td>Propiedad del silicio por la que su resistividad cambia con la deformación mecánica. Base del funcionamiento de muchos sensores MEMS.</td></tr>
+      <tr><td class="de">die kapazitive Messung</td><td class="es">medición capacitiva</td><td class="en">capacitive sensing</td><td>Detecta desplazamiento midiendo el cambio en capacitancia entre dos electrodos. Muy sensible y de bajo consumo.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>📱 MEMS-Anwendungen — Klick für Details</h3>
+  <div class="mems-app-grid">
+    <div class="mems-app-card" onclick="toggleMemsCard(this)">
+      <div class="mems-app-header" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+        📱 Smartphone MEMS
+      </div>
+      <div class="mems-app-body">
+        <span class="vocab-tag">Beschleunigungssensor</span>
+        <span class="vocab-tag">Gyroskop</span>
+        <span class="vocab-tag">Drucksensor</span>
+        <div class="mems-app-detail">
+          <strong>Función:</strong> El Beschleunigungssensor detecta la orientación de la pantalla (vertikal/horizontal) y los pasos al caminar. El Gyroskop mide la rotación para estabilización de imagen y realidad aumentada. El Drucksensor mide altitud para GPS de precisión.<br><br>
+          <strong>Fabricación:</strong> Oberflächen-Mikromechanik en Si. Masa sísmica suspendida sobre resortes. Encapsulada por anodisches Bonden con cubierta de vidrio.
+        </div>
+      </div>
+    </div>
+    <div class="mems-app-card" onclick="toggleMemsCard(this)">
+      <div class="mems-app-header" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+        🚗 Automotive MEMS
+      </div>
+      <div class="mems-app-body">
+        <span class="vocab-tag">Airbag-Sensor</span>
+        <span class="vocab-tag">Drucksensor</span>
+        <span class="vocab-tag">Bulk-Mikromechanik</span>
+        <div class="mems-app-detail">
+          <strong>Airbag:</strong> Beschleunigungssensor detecta deceleración brusca (>25g) en milisegundos y activa el airbag. Fabricado con Bulk-Mikromechanik.<br><br>
+          <strong>TPMS (Reifendrucksensor):</strong> Drucksensor capacitivo en cada rueda. Membrana de Si de 10-30 µm de grosor. Comunicación inalámbrica con el cuadro de mandos.
+        </div>
+      </div>
+    </div>
+    <div class="mems-app-card" onclick="toggleMemsCard(this)">
+      <div class="mems-app-header" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+        🔬 Lab-on-Chip / Medizin
+      </div>
+      <div class="mems-app-body">
+        <span class="vocab-tag">Lab-on-Chip</span>
+        <span class="vocab-tag">Mikropumpe</span>
+        <span class="vocab-tag">Mikrokanal</span>
+        <div class="mems-app-detail">
+          <strong>Funktion:</strong> Una gota de sangre entra por un microkanal grabado por DRIE en Si o PDMS. Se mezcla con reactivos, se separa por electroforesis y se detecta ópticamente — todo en un chip del tamaño de una uña.<br><br>
+          <strong>Ejemplo clínico:</strong> Glucómetros desechables, test de COVID rápido, análisis genético en urgencias.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLIP CARDS LF12 -->
+<section>
+  <h2><span class="lf-tag lf12">LF12</span> Lernkarten — MEMS</h2>
+  <p class="flip-hint">Haz clic para girar las tarjetas</p>
+  <div class="flip-grid">
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+          <span class="term">Opferschicht</span>
+          <span class="hint">proceso MEMS</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Capa sacrificial</span>
+          <span class="definition">Material (SiO₂) depositado temporalmente y luego grabado con HF para liberar estructuras mecánicas móviles.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+          <span class="term">DRIE</span>
+          <span class="hint">tipo de grabado</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Grabado iónico reactivo profundo</span>
+          <span class="definition">Proceso Bosch: pasivación alternada con grabado para crear paredes verticales profundas en Si (relación aspecto hasta 50:1).</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+          <span class="term">Cantilever</span>
+          <span class="hint">Biegebalken</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Viga en voladizo</span>
+          <span class="definition">Estructura anclada por un extremo que se dobla bajo carga. Base del AFM y sensores de masa/gas MEMS.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+          <span class="term">Anodisches Bonden</span>
+          <span class="hint">wafer bonding</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Unión anódica</span>
+          <span class="definition">Une Si con vidrio Pyrex a 400°C + ≈1000V. Crea sello hermético para encapsular cavidades MEMS.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+          <span class="term">Membran (MEMS)</span>
+          <span class="hint">sensor de presión</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Membrana flexible de Si</span>
+          <span class="definition">Lámina de Si de 10-50 µm que se deforma bajo presión. Genera señal piezorresistiva o capacitiva.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+          <span class="term">Lab-on-Chip</span>
+          <span class="hint">aplicación médica</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Laboratorio en chip</span>
+          <span class="definition">Análisis clínico completo (mezcla + separación + detección) integrado en un chip del tamaño de una uña.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     LF 13 — VERFAHRENSTECHNISCHE ANLAGEN
+═══════════════════════════════════════════════════ -->
+
+<section>
+  <h2><span class="lf-tag lf13">LF13</span> Verfahrenstechnische Anlagen (60h)</h2>
+
+  <div class="concept-box lf13-box">
+    <p><strong>Concepto desde cero:</strong> En una FAB, "encender una máquina" no existe. Todo equipo debe estar: (1) <strong>qualifiziert</strong> (calificado formalmente), (2) <strong>kalibriert</strong> (calibrado), y (3) <strong>gewartet</strong> (mantenido). Cada operación se documenta en el MES. Un equipo no cualificado = producción parada.</p>
+    <p><strong>El ciclo de vida de un equipo en la FAB:</strong> Instalación (IQ) → Qualifizierung (OQ/PQ) → Produktion → Präventive Wartung (PM) → Re-Qualifizierung → ... La automatización (AMHS, SPS) conecta todos los equipos en un flujo continuo sin intervención humana entre pasos.</p>
+  </div>
+
+  <h3>⚙️ Schlüsselvokabular — Anlagen &amp; Automatisierung</h3>
+  <div style="overflow-x:auto;">
+  <table class="vocab-table">
+    <thead>
+      <tr><th>Deutsch</th><th>Español</th><th>English</th><th>Erklärung (ES)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="de">die Fertigungsanlage</td><td class="es">equipo de fabricación</td><td class="en">manufacturing tool</td><td>Máquina de producción en la FAB (litógrafo, horno CVD, implantador de iones, grabador RIE...).</td></tr>
+      <tr><td class="de">die Einzelanlage</td><td class="es">equipo individual</td><td class="en">standalone tool</td><td>Equipo que opera de forma independiente, sin estar integrado en un cluster.</td></tr>
+      <tr><td class="de">das Cluster-Tool</td><td class="es">herramienta cluster</td><td class="en">cluster tool</td><td>Varios módulos de proceso conectados a un robot central. Las obleas nunca se exponen al aire entre pasos.</td></tr>
+      <tr><td class="de">die Prozesskammer</td><td class="es">cámara de proceso</td><td class="en">process chamber</td><td>Recinto donde se realiza el proceso (deposición, grabado, implantación). Normalmente a baja presión o vacío.</td></tr>
+      <tr><td class="de">der Loadlock</td><td class="es">exclusa de carga</td><td class="en">loadlock</td><td>Cámara intermediaria que se bombea a vacío antes de abrir a la cámara de proceso. Evita contaminar el vacío principal.</td></tr>
+      <tr><td class="de">das FOUP (Front Opening Unified Pod)</td><td class="es">contenedor de obleas (FOUP)</td><td class="en">FOUP</td><td>Caja hermética estándar (SEMI E47) para transporte y almacenamiento de hasta 25 obleas de 300mm en la FAB.</td></tr>
+      <tr><td class="de">das AMHS (Automated Material Handling System)</td><td class="es">sistema automatizado de transporte</td><td class="en">AMHS</td><td>Sistema de raíles aéreos (OHT - Overhead Hoist Transport) y robots que transportan FOUPs entre equipos automáticamente.</td></tr>
+      <tr><td class="de">die SPS (Speicherprogrammierbare Steuerung)</td><td class="es">PLC (Controlador Lógico Programable)</td><td class="en">PLC</td><td>Controlador industrial que automatiza secuencias del equipo: abre válvulas, controla temperatura, activa interbloqueos.</td></tr>
+      <tr><td class="de">der Regelkreis</td><td class="es">lazo de control (bucle de retroalimentación)</td><td class="en">control loop</td><td>Sistema que mide un parámetro, lo compara con el Sollwert y actúa para corregir diferencias. Base de todo control automático.</td></tr>
+      <tr><td class="de">der Sollwert (Setpoint)</td><td class="es">valor de consigna</td><td class="en">setpoint</td><td>Valor objetivo de un parámetro (temperatura, presión, flujo de gas). El Regler trabaja para mantener el Istwert = Sollwert.</td></tr>
+      <tr><td class="de">der Istwert</td><td class="es">valor real / valor actual</td><td class="en">process value (PV)</td><td>El valor que mide el sensor en cada instante. El Regler minimiza (Istwert − Sollwert).</td></tr>
+      <tr><td class="de">die Kalibrierung</td><td class="es">calibración</td><td class="en">calibration</td><td>Verificación y ajuste de un instrumento de medición frente a un estándar trazable (NIST). Garantiza la exactitud de las mediciones.</td></tr>
+      <tr><td class="de">die präventive Wartung (PM)</td><td class="es">mantenimiento preventivo</td><td class="en">preventive maintenance (PM)</td><td>Mantenimiento programado para evitar fallos: limpieza de cámara, cambio de sellos, calibración de sensores. PM diario, semanal, mensual, anual.</td></tr>
+      <tr><td class="de">die Qualifizierung</td><td class="es">calificación</td><td class="en">qualification</td><td>Proceso formal de verificar que un equipo funciona dentro de especificación. Obligatorio antes de producción.</td></tr>
+      <tr><td class="de">IQ (Installations-Qualifizierung)</td><td class="es">calificación de instalación</td><td class="en">installation qualification (IQ)</td><td>Verificar que el equipo está instalado correctamente: conexiones eléctricas, gases, agua de refrigeración, nivel.</td></tr>
+      <tr><td class="de">OQ (Betriebs-Qualifizierung)</td><td class="es">calificación de operación</td><td class="en">operational qualification (OQ)</td><td>Verificar que el equipo opera dentro de parámetros especificados con wafers de prueba (dummy wafers).</td></tr>
+      <tr><td class="de">PQ (Leistungs-Qualifizierung)</td><td class="es">calificación de rendimiento</td><td class="en">performance qualification (PQ)</td><td>Verificar que el equipo produce resultados dentro de especificación con wafers de producción reales y en condiciones normales de trabajo.</td></tr>
+      <tr><td class="de">die Sicherheitsverriegelung (Interlock)</td><td class="es">enclavamiento de seguridad</td><td class="en">interlock</td><td>Sistema que bloquea automáticamente una función si una condición de seguridad no se cumple (ej: si la puerta está abierta, el plasma no enciende).</td></tr>
+      <tr><td class="de">der Not-Aus (E-Stop)</td><td class="es">parada de emergencia</td><td class="en">emergency stop</td><td>Parada inmediata de todos los movimientos del equipo. Botón rojo físico. Documentar siempre la causa en el Fehlerprotokoll.</td></tr>
+      <tr><td class="de">die Uptime / Verfügbarkeit</td><td class="es">disponibilidad del equipo</td><td class="en">uptime / availability</td><td>% del tiempo que el equipo está operativo. Uptime = tiempo activo / tiempo total × 100. Objetivo típico en FAB: &gt;90%.</td></tr>
+      <tr><td class="de">die MTBF (Mean Time Between Failures)</td><td class="es">tiempo medio entre fallos</td><td class="en">MTBF</td><td>Indicador de fiabilidad. MTBF = tiempo de operación / número de fallos. Cuanto mayor, más fiable el equipo.</td></tr>
+      <tr><td class="de">die MTTR (Mean Time To Repair)</td><td class="es">tiempo medio de reparación</td><td class="en">MTTR</td><td>Indicador de mantenibilidad. MTTR = tiempo total de reparación / número de reparaciones. Cuanto menor, mejor.</td></tr>
+      <tr><td class="de">der Rezept (Recipe)</td><td class="es">receta / programa de proceso</td><td class="en">recipe</td><td>Programa que define TODOS los parámetros de un proceso en un equipo: temperaturas, tiempos, presiones, flujos de gas, potencia RF...</td></tr>
+      <tr><td class="de">die Prozessintegration</td><td class="es">integración de procesos</td><td class="en">process integration</td><td>Coordinación de múltiples pasos de proceso para fabricar un dispositivo completo. Requiere que cada paso sea compatible con los anteriores y siguientes.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>🔄 Regelkreis — Lazo de Control Automático</h3>
+  <div class="spc-visual">
+    <p style="font-size:0.85rem; margin-bottom:0.8rem; color:var(--muted)">
+      <strong>Ejemplo:</strong> Control de temperatura de un horno CVD. El Sollwert = 800°C. El Sensor mide 795°C (Istwert). El Regler (PID) calcula la diferencia y ordena al Heizelement aumentar potencia. El proceso repite continuamente.
+    </p>
+    <div class="regelkreis-diagram">
+      <div class="rk-box highlight">Sollwert<br><span style="font-size:0.7rem">(setpoint: 800°C)</span></div>
+      <span class="rk-arrow">→</span>
+      <div class="rk-box">Regler<br><span style="font-size:0.7rem">(PID-Controller)</span></div>
+      <span class="rk-arrow">→</span>
+      <div class="rk-box">Stellglied<br><span style="font-size:0.7rem">(Heizelement)</span></div>
+      <span class="rk-arrow">→</span>
+      <div class="rk-box">Strecke<br><span style="font-size:0.7rem">(Ofen / Kammer)</span></div>
+      <span class="rk-arrow">→</span>
+      <div class="rk-box highlight">Sensor<br><span style="font-size:0.7rem">(Istwert: 795°C)</span></div>
+    </div>
+    <div class="rk-return">↑ El Sensor retroalimenta el Istwert al Regler (bucle cerrado / geschlossener Regelkreis) ↑</div>
+    <div style="margin-top:0.8rem; font-size:0.82rem; color:var(--muted);">
+      <strong>Vocabulario del diagrama:</strong>
+      <strong>Sollwert</strong> = consigna · <strong>Regler</strong> = controlador · <strong>Stellglied</strong> = elemento de actuación · <strong>Strecke</strong> = proceso controlado · <strong>Sensor</strong> = medición · <strong>Istwert</strong> = valor real · <strong>Regelabweichung</strong> = error = Sollwert − Istwert
+    </div>
+  </div>
+
+  <h3>✅ IQ / OQ / PQ — Qualifizierungsprozess</h3>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.8rem;">Cualquier equipo nuevo o tras mantenimiento mayor debe pasar por las 3 fases en orden. Sin PQ aprobado, el equipo no entra en producción.</p>
+  <div class="qualification-grid">
+    <div class="qual-card qual-iq">
+      <h4>1. IQ — Installations-Qualifizierung</h4>
+      <p>Verifica que el equipo está físicamente instalado según especificación del fabricante.</p>
+      <div class="qual-example">
+        <strong>¿Qué se verifica?</strong><br>
+        • Conexiones eléctricas correctas<br>
+        • Suministro de gases especiales<br>
+        • Agua de refrigeración (DI water)<br>
+        • Nivelación y anclaje<br>
+        • Documentación de instalación completa
+      </div>
+    </div>
+    <div class="qual-card qual-oq">
+      <h4>2. OQ — Betriebs-Qualifizierung</h4>
+      <p>Verifica que el equipo opera dentro de los parámetros especificados (sin wafers de producción).</p>
+      <div class="qual-example">
+        <strong>¿Qué se verifica?</strong><br>
+        • Rango de temperaturas alcanzables<br>
+        • Control de presión y vacío<br>
+        • Interlock y Not-Aus funcionales<br>
+        • Recetas básicas ejecutables<br>
+        • Dummy wafer runs sin producto
+      </div>
+    </div>
+    <div class="qual-card qual-pq">
+      <h4>3. PQ — Leistungs-Qualifizierung</h4>
+      <p>Verifica que el equipo produce resultados dentro de especificación con wafers de producción reales.</p>
+      <div class="qual-example">
+        <strong>¿Qué se verifica?</strong><br>
+        • Uniformidad de deposición (WIW)<br>
+        • Repeatability (run-to-run)<br>
+        • Cp/Cpk de parámetros críticos<br>
+        • Comparación con equipo de referencia<br>
+        • Aprobación formal + Freigabe
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLIP CARDS LF13 -->
+<section>
+  <h2><span class="lf-tag lf13">LF13</span> Lernkarten — Anlagen &amp; Automatisierung</h2>
+  <p class="flip-hint">Haz clic para girar las tarjetas</p>
+  <div class="flip-grid">
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">Loadlock</span>
+          <span class="hint">¿para qué sirve?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Exclusa de carga</span>
+          <span class="definition">Cámara intermedia que se bombea a vacío antes de abrir la cámara de proceso. Evita contaminar el vacío.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">Präventive Wartung (PM)</span>
+          <span class="hint">¿cuándo se hace?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Mantenimiento preventivo</span>
+          <span class="definition">Programado periódicamente (diario/semanal/mensual) para EVITAR fallos. Sigue Arbeitsanweisung. Se documenta en PM-Protokoll.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">Kalibrierung</span>
+          <span class="hint">vs. Wartung</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Calibración</span>
+          <span class="definition">Verifica y ajusta instrumentos de medición frente a un estándar trazable. No es lo mismo que mantenimiento.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">Interlock</span>
+          <span class="hint">seguridad</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Enclavamiento de seguridad</span>
+          <span class="definition">Bloquea automáticamente una función si una condición de seguridad no se cumple. Ej: puerta abierta → plasma OFF.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">FOUP</span>
+          <span class="hint">transporte de obleas</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Contenedor hermético de obleas</span>
+          <span class="definition">Caja estándar para 25 obleas de 300mm. Transportado por AMHS (raíles aéreos OHT) sin contacto humano.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">IQ → OQ → PQ</span>
+          <span class="hint">¿en qué orden?</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Calificación: 3 fases</span>
+          <span class="definition">IQ = instalado bien · OQ = opera bien (dummy) · PQ = produce bien (wafers reales). Siempre en este orden.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">Rezept (Recipe)</span>
+          <span class="hint">en un equipo FAB</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Receta / Programa de proceso</span>
+          <span class="definition">Define TODOS los parámetros: temperatura, presión, flujos de gas, tiempo, potencia RF. Controlado y versionado en MES.</span>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)">
+          <span class="term">MTBF vs. MTTR</span>
+          <span class="hint">indicadores de equipo</span>
+        </div>
+        <div class="flip-back">
+          <span class="translation">Fiabilidad vs. Mantenibilidad</span>
+          <span class="definition">MTBF = tiempo entre fallos (mayor = mejor). MTTR = tiempo de reparación (menor = mejor). Uptime = MTBF/(MTBF+MTTR).</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     QUIZ
+═══════════════════════════════════════════════════ -->
+
+<section>
+  <h2>🧩 Quiz — 5 Fragen (LF5 · LF11 · LF12 · LF13)</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem;">Selecciona la respuesta correcta en cada pregunta.</p>
+
+  <!-- Q1 LF5 -->
+  <div class="quiz-question">
+    <p><span class="quiz-tag lf5">LF5</span> ¿Qué es una <em>Arbeitsanweisung</em> (AA) en una FAB?</p>
+    <div class="quiz-options" id="q1">
+      <button class="quiz-option" onclick="checkAnswer(this,'q1',false,'fb1')">Un informe de resultados de producción que se envía al cliente.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q1',true,'fb1')">Un documento que describe paso a paso cómo realizar una tarea específica en el proceso.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q1',false,'fb1')">Una orden de compra de materiales para la FAB.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q1',false,'fb1')">El registro histórico completo de un lote de obleas.</button>
+    </div>
+    <div class="quiz-feedback" id="fb1"></div>
+  </div>
+
+  <!-- Q2 LF11 -->
+  <div class="quiz-question">
+    <p><span class="quiz-tag lf11">LF11</span> Un proceso tiene Cp = 1.0 y Cpk = 0.8. ¿Qué significa esto?</p>
+    <div class="quiz-options" id="q2">
+      <button class="quiz-option" onclick="checkAnswer(this,'q2',false,'fb2')">El proceso tiene demasiada variabilidad y produce muchos defectos.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q2',true,'fb2')">El proceso tiene dispersión suficiente para caber en spec (Cp=1), pero está descentrado hacia un límite (Cpk&lt;Cp).</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q2',false,'fb2')">El proceso es Six Sigma y produce menos de 3.4 ppm de defectos.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q2',false,'fb2')">El proceso es capaz y perfectamente centrado entre USL y LSL.</button>
+    </div>
+    <div class="quiz-feedback" id="fb2"></div>
+  </div>
+
+  <!-- Q3 LF11 -->
+  <div class="quiz-question">
+    <p><span class="quiz-tag lf11">LF11</span> ¿Qué mide la <em>Defektdichte</em>?</p>
+    <div class="quiz-options" id="q3">
+      <button class="quiz-option" onclick="checkAnswer(this,'q3',false,'fb3')">El número total de obleas rechazadas en un mes.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q3',false,'fb3')">La diferencia entre USL y LSL de un parámetro de proceso.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q3',true,'fb3')">El número de defectos por unidad de área [cm⁻²] sobre la oblea.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q3',false,'fb3')">El porcentaje de chips que pasan la inspección final (Yield).</button>
+    </div>
+    <div class="quiz-feedback" id="fb3"></div>
+  </div>
+
+  <!-- Q4 LF12 -->
+  <div class="quiz-question">
+    <p><span class="quiz-tag lf12">LF12</span> ¿Qué es una <em>Opferschicht</em> en la fabricación MEMS?</p>
+    <div class="quiz-options" id="q4">
+      <button class="quiz-option" onclick="checkAnswer(this,'q4',false,'fb4')">Una capa de protección que evita que el silicio se oxide durante el proceso.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q4',false,'fb4')">La capa funcional activa del sensor MEMS que genera la señal eléctrica.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q4',true,'fb4')">Una capa depositada temporalmente (p. ej. SiO₂) que luego se graba para liberar estructuras mecánicas móviles.</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q4',false,'fb4')">Una capa de adhesivo que une dos obleas en el proceso de wafer bonding.</button>
+    </div>
+    <div class="quiz-feedback" id="fb4"></div>
+  </div>
+
+  <!-- Q5 LF13 -->
+  <div class="quiz-question">
+    <p><span class="quiz-tag lf13">LF13</span> ¿Cuál es el orden correcto de las fases de calificación de un equipo nuevo?</p>
+    <div class="quiz-options" id="q5">
+      <button class="quiz-option" onclick="checkAnswer(this,'q5',false,'fb5')">PQ → OQ → IQ (primero con wafers reales, luego verificar instalación)</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q5',false,'fb5')">OQ → IQ → PQ (primero operación, luego instalación, luego rendimiento)</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q5',true,'fb5')">IQ → OQ → PQ (instalación → operación → rendimiento con wafers reales)</button>
+      <button class="quiz-option" onclick="checkAnswer(this,'q5',false,'fb5')">Kalibrierung → Wartung → Qualifizierung (solo si el equipo falla)</button>
+    </div>
+    <div class="quiz-feedback" id="fb5"></div>
+  </div>
+
+  <div class="quiz-score" id="quizScore"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SCHREIBÜBUNG
+═══════════════════════════════════════════════════ -->
+
+<section>
+  <h2>✍️ Schreibübung — Freie Textaufgabe</h2>
+
+  <div style="background:#f8fafc; border-radius:10px; padding:1rem; margin-bottom:1rem; border-left:4px solid var(--lf13); font-size:0.88rem;">
+    <strong>Aufgabe:</strong> Erklären Sie den Unterschied zwischen <em>präventiver Wartung</em> und <em>Kalibrierung</em> in einer Halbleiterfabrik. Welche Dokumente werden dabei verwendet?
+    <br><br>
+    <span style="color:var(--muted); font-size:0.82rem;">
+      <strong>Tipp:</strong> Verwende Fachwörter wie: <em>präventive Wartung, PM-Protokoll, Kalibrierung, Kalibrierungsprotokoll, Qualifizierung, Spezifikation, Arbeitsanweisung, Gerätelogbuch, Freigabe-Protokoll, Regelkreis, Interlock</em>.
+    </span>
+  </div>
+
+  <textarea id="schreibTextarea" placeholder="Schreiben Sie hier Ihre Antwort auf Deutsch... (mindestens 5-8 Sätze)" oninput="trackWriting()"></textarea>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="korrigieren()">✔ Korrigieren</button>
+    <button class="btn btn-secondary" onclick="toggleMusterloesung()">💡 Musterlösung anzeigen</button>
+    <button class="btn btn-secondary" onclick="clearTextarea()">🗑 Zurücksetzen</button>
+  </div>
+
+  <div id="korrekturBox"></div>
+
+  <div class="musterloesung" id="musterloesungBox">
+    <h4>Musterlösung</h4>
+    <p><strong>Präventive Wartung (PM)</strong> ist ein geplanter Prozess, der regelmäßig durchgeführt wird, um Geräteausfälle zu verhindern. In einer Halbleiterfabrik unterscheidet man zwischen täglicher, wöchentlicher, monatlicher und jährlicher präventiver Wartung. Beispiele sind: Reinigung der Prozesskammer, Austausch von Dichtungen (O-Ringen), Überprüfung von Ventilen und Messgeräten. Die PM wird nach einer <em>Arbeitsanweisung</em> durchgeführt und im <em>PM-Protokoll</em> und im <em>Gerätelogbuch</em> dokumentiert.</p>
+    <p><strong>Kalibrierung</strong> ist die Überprüfung und Justierung eines Messinstruments im Vergleich zu einem rückverfolgbaren Standard (z.B. NIST). Sie stellt sicher, dass die Messwerte korrekt und genau sind. Zum Beispiel: Kalibrierung eines Temperaturreglers mit einem Referenzthermometer, oder Kalibrierung eines Drucksensors mit einem kalibrierten Manometer. Das Ergebnis wird im <em>Kalibrierungsprotokoll</em> festgehalten.</p>
+    <p><strong>Unterschied:</strong> Die präventive Wartung verhindert mechanische Ausfälle; die Kalibrierung gewährleistet die Messgenauigkeit. Beides ist notwendig, aber verschiedene Aktivitäten.</p>
+    <p><strong>Dokumente:</strong></p>
+    <ul>
+      <li><em>Arbeitsanweisung (AA)</em> — beschreibt die Schritte der PM oder Kalibrierung</li>
+      <li><em>PM-Protokoll</em> — dokumentiert wann, von wem und was gewartet wurde</li>
+      <li><em>Kalibrierungsprotokoll</em> — dokumentiert den Vergleich mit dem Standard und die Abweichung</li>
+      <li><em>Gerätelogbuch</em> — chronologische Aufzeichnung aller Wartungen, Ausfälle und Kalibrierungen</li>
+      <li><em>Freigabe-Protokoll</em> — nach PM oder Kalibrierung muss das Gerät formell freigegeben werden, bevor es wieder in die Produktion geht</li>
+    </ul>
+    <p style="margin-top:0.5rem; color:var(--muted); font-size:0.8rem;">Nach jeder PM oder Kalibrierung ist eine Re-Qualifizierung (OQ oder PQ) erforderlich, wenn kritische Parameter verändert wurden.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN: Bibliografía / Quellen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quellen">
+  <h2>📚 Quellen &amp; Bibliografía — LF5 + LF11 + LF12 + LF13</h2>
+  <p style="font-size:.83rem;color:var(--muted);margin-bottom:1rem">Fuentes para esta FASE. Los capítulos indicados cubren exactamente el contenido aquí tratado.</p>
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- May & Spanos — azul -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid var(--primary)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">May &amp; Spanos — <em>Fundamentals of Semiconductor Manufacturing and Process Control</em></div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">SPC, Yield, Ätzen (LF11 + LF12)</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Fundamentals_Semiconductor_Manufacturing_ProcessControl_May_Spanos.pdf" style="background:var(--primary);color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Cap. 2, pp. 35–70</strong> — Process monitoring, SPC, Regelkarten (LF11 Qualität)</li>
+        <li><strong>Cap. 3, pp. 71–94</strong> — Yield models, Fehleranalyse (LF11)</li>
+        <li><strong>Cap. 6, pp. 191–240</strong> — Etching processes (LF12 MEMS context)</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#e0f2fe;border-radius:6px;padding:.4rem .6rem;color:#0369a1;font-family:monospace">
+        May, G. S.; Spanos, C. J. <em>Fundamentals of Semiconductor Manufacturing and Process Control</em>; Wiley-IEEE Press, 2006.
+      </div>
+    </div>
+
+    <!-- Wolf & Tauber — violeta -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #7c3aed">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Wolf &amp; Tauber — <em>Silicon Processing for the VLSI Era</em>, Vol. 1</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Wet etching MEMS + Cleanrooms (LF12 + LF13)</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Silicon_Processing_for_VLSI_Era_Vol1-2_Wolf_Tauber.pdf" style="background:#7c3aed;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Vol. 1, Cap. 9, pp. 357–420</strong> — Wet etching, MEMS structures (KOH, TMAH, LF12)</li>
+        <li><strong>Vol. 1, Cap. 4, pp. 95–143</strong> — Cleanrooms &amp; contamination (LF13 Anlagen/Wartung)</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#ede9fe;border-radius:6px;padding:.4rem .6rem;color:#5b21b6;font-family:monospace">
+        Wolf, S.; Tauber, R. N. <em>Silicon Processing for the VLSI Era, Vol. 1–2</em>; Lattice Press, 2000.
+      </div>
+    </div>
+
+    <!-- Online resources — verde -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid var(--success)">
+      <div style="font-weight:700;font-size:.92rem;margin-bottom:.5rem">Recursos Online</div>
+      <ul style="font-size:.83rem;padding-left:1.2rem">
+        <li><a href="https://www.halbleiter.org/qualitaet/" style="color:var(--primary);font-weight:600">halbleiter.org/qualitaet/</a> (DE) — Qualitätskontrolle — SPC, Yield, Fehleranalyse en alemán</li>
+        <li><a href="https://www.mems-exchange.org/MEMS/what-is.html" style="color:var(--primary);font-weight:600">MEMS Exchange</a> (EN) — What is MEMS? — Introducción a MEMS/microsistemas</li>
+        <li><a href="https://www.elektronik-kompendium.de/sites/bau/index.htm" style="color:var(--primary);font-weight:600">elektronik-kompendium.de</a> (DE) — Componentes y circuitos (LF5/LF13)</li>
+      </ul>
+    </div>
+
+    <!-- KMK — amarillo -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Rahmenlehrplan KMK — LF5 + LF11 + LF12 + LF13</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">LF5 (40h) · LF11 (40h) · LF12 (40h) · LF13 (80h)</div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/Rahmenlehrplan_Mikrotechnologe_KMK_OFICIAL.pdf" style="background:#d97706;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF KMK</a>
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="background:#92400e;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Carpeta IHK</a>
+        </div>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>LF 5</strong> — Standardsoftware anwenden <strong>(40h)</strong></li>
+        <li><strong>LF 11</strong> — Qualität sichern <strong>(40h)</strong></li>
+        <li><strong>LF 12</strong> — MEMS beschreiben und anwenden <strong>(40h)</strong></li>
+        <li><strong>LF 13</strong> — Verfahrenstechnische Anlagen einstellen, prüfen, optimieren <strong>(80h)</strong></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE_LF5_LF11_LF12_LF13.html</strong> ·
+  ← <a href="FASE5_Repaso_General_IHK.html" style="color:#94a3b8">Fase 5 — Repaso General</a>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// PROGRESS TRACKING
+// ═══════════════════════════════════════════
+let progressSteps = {
+  flipLf5: false,
+  flipLf11: false,
+  flipLf12: false,
+  flipLf13: false,
+  q1: false, q2: false, q3: false, q4: false, q5: false,
+  writing: false,
+  allQuiz: false
+};
+const TOTAL_STEPS = Object.keys(progressSteps).length;
+
+function updateProgress() {
+  const done = Object.values(progressSteps).filter(Boolean).length;
+  const pct = Math.round((done / TOTAL_STEPS) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + TOTAL_STEPS + ' Aktivitäten abgeschlossen (' + pct + '%)';
+}
+
+// ═══════════════════════════════════════════
+// FLIP CARDS
+// ═══════════════════════════════════════════
+function flipCard(card) {
+  card.classList.toggle('flipped');
+  // detect which LF the card belongs to by its gradient color
+  const front = card.querySelector('.flip-front');
+  const bg = front ? front.style.background : '';
+  if (bg.includes('0891b2')) progressSteps.flipLf5 = true;
+  else if (bg.includes('d97706')) progressSteps.flipLf11 = true;
+  else if (bg.includes('7c3aed')) progressSteps.flipLf12 = true;
+  else if (bg.includes('059669')) progressSteps.flipLf13 = true;
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════
+let quizAnswered = {};
+
+function checkAnswer(btn, questionId, isCorrect, feedbackId) {
+  if (quizAnswered[questionId]) return;
+  quizAnswered[questionId] = true;
+
+  const options = document.querySelectorAll('#' + questionId + ' .quiz-option');
+  options.forEach(opt => {
+    opt.disabled = true;
+    opt.style.cursor = 'default';
+  });
+
+  const fb = document.getElementById(feedbackId);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.textContent = '✓ Richtig! ' + getCorrectFeedback(questionId);
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    btn.classList.add('wrong');
+    // highlight correct
+    options.forEach(opt => {
+      if (opt.getAttribute('onclick').includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+    fb.textContent = '✗ Falsch. ' + getCorrectFeedback(questionId);
+    fb.className = 'quiz-feedback show ko';
+  }
+
+  // track progress
+  progressSteps[questionId] = true;
+  updateProgress();
+
+  // check if all quiz answered
+  const allDone = ['q1','q2','q3','q4','q5'].every(q => quizAnswered[q]);
+  if (allDone) {
+    progressSteps.allQuiz = true;
+    showQuizScore();
+    updateProgress();
+  }
+}
+
+function getCorrectFeedback(questionId) {
+  const feedbacks = {
+    q1: 'Eine Arbeitsanweisung (AA) beschreibt Schritt für Schritt, wie eine bestimmte Aufgabe in der FAB auszuführen ist. Sie ist an jedem Arbeitsplatz verfügbar und muss befolgt werden.',
+    q2: 'Cp=1.0 bedeutet, dass der Prozess theoretisch in die Spezifikation passt (6σ = USL−LSL), aber Cpk=0.8 zeigt, dass der Mittelwert nicht zentriert ist — der Prozess ist zu nah an einem der Spezifikationsgrenzen.',
+    q3: 'Die Defektdichte gibt an, wie viele Defekte pro Flächeneinheit (cm²) auf einer Oberfläche vorhanden sind. Sie ist ein kritischer Parameter für die Berechnung des Yields.',
+    q4: 'Die Opferschicht (z.B. SiO₂) wird zunächst abgeschieden, dann wird die funktionale Schicht darüber aufgebracht. Anschließend wird die Opferschicht selektiv geätzt (z.B. mit HF), und die Struktur darüber wird frei und beweglich.',
+    q5: 'Die korrekte Reihenfolge ist immer IQ → OQ → PQ. Zuerst wird die Installation verifiziert, dann die Betriebsfähigkeit mit Testwafers, und schließlich die Produktionsleistung mit echten Wafers.'
+  };
+  return feedbacks[questionId] || '';
+}
+
+function showQuizScore() {
+  const correct = ['q1','q2','q3','q4','q5'].filter(q => {
+    const opts = document.querySelectorAll('#' + q + ' .quiz-option.correct');
+    return Array.from(opts).some(opt => !opt.classList.contains('wrong'));
+  }).length;
+  const scoreDiv = document.getElementById('quizScore');
+  const score = Object.keys(quizAnswered).length;
+  const correctCount = ['q1','q2','q3','q4','q5'].filter(q => {
+    const opts = document.querySelectorAll('#' + q + ' .quiz-option');
+    return Array.from(opts).some(opt => opt.classList.contains('correct') && !opt.classList.contains('wrong'));
+  }).length;
+
+  scoreDiv.style.display = 'block';
+  scoreDiv.innerHTML = '🎯 Quiz abgeschlossen! Ergebnis wird durch die Korrigieren-Funktion bewertet. Alle 5 Fragen beantwortet.';
+}
+
+// ═══════════════════════════════════════════
+// MEMS APP CARDS
+// ═══════════════════════════════════════════
+function toggleMemsCard(card) {
+  card.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════
+// WRITING EXERCISE
+// ═══════════════════════════════════════════
+function trackWriting() {
+  const ta = document.getElementById('schreibTextarea');
+  if (ta.value.trim().length > 50) {
+    progressSteps.writing = true;
+    updateProgress();
+  }
+}
+
+function clearTextarea() {
+  document.getElementById('schreibTextarea').value = '';
+  document.getElementById('korrekturBox').className = '';
+  document.getElementById('korrekturBox').innerHTML = '';
+}
+
+function toggleMusterloesung() {
+  const ml = document.getElementById('musterloesungBox');
+  ml.classList.toggle('show');
+}
+
+// ═══════════════════════════════════════════
+// KORRIGIEREN — Fachbegriff checker
+// ═══════════════════════════════════════════
+function korrigieren() {
+  const text = document.getElementById('schreibTextarea').value;
+  const box = document.getElementById('korrekturBox');
+
+  if (text.trim().length < 30) {
+    box.className = 'show';
+    box.style.borderLeftColor = '#e02424';
+    box.innerHTML = '<strong>⚠ Hinweis:</strong> Bitte schreiben Sie mindestens einige Sätze, bevor Sie korrigieren.';
+    return;
+  }
+
+  const fachbegriffe = [
+    { term: 'präventive Wartung', alt: ['Wartung', 'PM', 'Maintenance'] },
+    { term: 'Kalibrierung', alt: ['kalibriert', 'Kalibrierungsprotokoll'] },
+    { term: 'Qualifizierung', alt: ['qualifiziert', 'IQ', 'OQ', 'PQ'] },
+    { term: 'Protokoll', alt: ['Prüfprotokoll', 'PM-Protokoll', 'Kalibrierungsprotokoll'] },
+    { term: 'Spezifikation', alt: ['Spec', 'Spezifikationsgrenzen'] },
+    { term: 'Interlock', alt: ['Sicherheitsverriegelung'] },
+    { term: 'Arbeitsanweisung', alt: ['AA'] },
+    { term: 'Regelkreis', alt: ['Regler', 'Sollwert', 'Istwert'] },
+    { term: 'Gerätelogbuch', alt: ['Logbuch'] },
+    { term: 'Freigabe', alt: ['Freigabe-Protokoll', 'Freigabedokument'] }
+  ];
+
+  let found = [];
+  let missing = [];
+
+  fachbegriffe.forEach(fb => {
+    const allTerms = [fb.term, ...fb.alt];
+    const used = allTerms.some(t => text.toLowerCase().includes(t.toLowerCase()));
+    if (used) found.push(fb.term);
+    else missing.push(fb.term);
+  });
+
+  // Word count
+  const wordCount = text.trim().split(/\s+/).length;
+
+  // Check for German sentence structure (very basic)
+  const hasSentences = (text.match(/\./g) || []).length >= 2;
+
+  let html = '<strong>📝 Korrektur-Feedback:</strong><br><br>';
+  html += '<strong>Wortanzahl:</strong> ' + wordCount + ' Wörter';
+  if (wordCount < 60) html += ' <span style="color:#e02424">(zu kurz — mindestens 80 Wörter empfohlen)</span>';
+  else if (wordCount < 120) html += ' <span style="color:#d97706">(ausreichend — mehr Details wäre besser)</span>';
+  else html += ' <span style="color:#065f46">(gut!)</span>';
+
+  html += '<br><br>';
+  html += '<strong>✅ Verwendete Fachbegriffe (' + found.length + '/' + fachbegriffe.length + '):</strong><br>';
+  if (found.length > 0) {
+    html += found.map(t => '<span style="background:#dcfce7;color:#065f46;padding:1px 6px;border-radius:4px;font-size:0.8rem;margin:2px;display:inline-block">' + t + '</span>').join(' ');
+  } else {
+    html += '<em style="color:var(--muted)">Noch keine Fachbegriffe gefunden.</em>';
+  }
+
+  if (missing.length > 0) {
+    html += '<br><br><strong>💡 Noch nicht verwendet (versuche diese einzubauen):</strong><br>';
+    html += missing.map(t => '<span style="background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;font-size:0.8rem;margin:2px;display:inline-block">' + t + '</span>').join(' ');
+  }
+
+  html += '<br><br>';
+  if (found.length >= 6) {
+    html += '<span style="color:#065f46;font-weight:600">🌟 Sehr gut! Du verwendest viele Fachbegriffe korrekt.</span>';
+  } else if (found.length >= 3) {
+    html += '<span style="color:#92400e;font-weight:600">👍 Gut begonnen! Versuche noch mehr Fachbegriffe einzubauen.</span>';
+  } else {
+    html += '<span style="color:#7f1d1d;font-weight:600">📚 Überarbeite deinen Text und integriere mehr Fachvokabular.</span>';
+  }
+
+  // Try to use korrektur_engine if available
+  if (typeof window.korrekturEngine !== 'undefined') {
+    try {
+      window.korrekturEngine.check(text, 'korrekturBox');
+      return;
+    } catch(e) {}
+  }
+
+  box.className = 'show';
+  box.style.display = 'block';
+  box.innerHTML = html;
+}
+</script>
+<script src="korrektur_engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemie-Vokabular Deutsch | Vocabulario Químico Alemán | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1e429f;
+    --success: #0e9f6e;
+    --warning: #e3a008;
+    --danger: #e02424;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --c1: #7c3aed; /* grundbegriffe */
+    --c2: #0891b2; /* periodensystem */
+    --c3: #dc2626; /* reaktionen */
+    --c4: #d97706; /* sauren/basen */
+    --c5: #059669; /* fab-prozesse */
+    --c6: #b45309; /* gefahrstoffe */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  header { background: linear-gradient(135deg, #7c3aed, #0891b2); color: white; padding: 2rem 1.5rem; text-align: center; }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.9rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem; }
+  main { max-width: 900px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 0.95rem; font-weight: 600; margin: 1rem 0 0.4rem; color: var(--primary-dark); }
+  .sec-tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; color: white; }
+
+  /* ── Búsqueda/Filtro ── */
+  .search-bar { width: 100%; padding: 0.6rem 1rem; border: 2px solid var(--border); border-radius: 8px; font-size: 0.9rem; margin-bottom: 0.8rem; }
+  .search-bar:focus { outline: none; border-color: var(--primary); }
+  .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .filter-btn { padding: 0.25rem 0.7rem; border-radius: 999px; border: 2px solid var(--border); background: white; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover { border-color: var(--primary); }
+  .filter-btn.active { color: white; border-color: transparent; }
+
+  /* ── Vocab Table ── */
+  .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .vocab-table thead tr { background: #f3f4f6; }
+  .vocab-table th { padding: 0.5rem 0.7rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--border); font-size: 0.8rem; }
+  .vocab-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .vocab-table tr:hover td { background: #f9fafb; }
+  .vocab-table tr.hidden { display: none; }
+  .de-term { font-weight: 700; }
+  .es-term { color: var(--c1); font-size: 0.82rem; }
+  .en-term { color: var(--muted); font-size: 0.78rem; }
+  .explanation { font-size: 0.8rem; color: var(--text); }
+  .example { font-size: 0.75rem; color: var(--c5); font-style: italic; }
+  .cat-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  /* ── Concept Cards ── */
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .concept-card { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
+  .concept-card:hover, .concept-card.open { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .concept-card h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .concept-card .de-small { font-size: 0.75rem; color: var(--muted); }
+  .concept-detail { display: none; font-size: 0.8rem; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+  .concept-card.open .concept-detail { display: block; }
+  .formula { font-family: monospace; background: #fef3c7; color: #92400e; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.8rem; }
+
+  /* ── Flip Cards ── */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .flip-card { height: 100px; perspective: 600px; cursor: pointer; }
+  .flip-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.45s; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.5rem; text-align: center; }
+  .flip-front { color: white; }
+  .flip-back { background: var(--card); border: 2px solid var(--border); transform: rotateY(180deg); }
+  .flip-front .term { font-size: 0.82rem; font-weight: 700; }
+  .flip-front .hint { font-size: 0.6rem; opacity: 0.85; margin-top: 0.2rem; }
+  .flip-back .trans { font-size: 0.75rem; font-weight: 700; }
+  .flip-back .ctx { font-size: 0.6rem; color: var(--muted); margin-top: 0.2rem; }
+  .flip-count { text-align: center; font-size: 0.82rem; color: var(--muted); margin-top: 0.6rem; }
+
+  /* ── Accordion ── */
+  .accordion { border: 2px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 0.5rem; }
+  .acc-header { padding: 0.7rem 1rem; cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+  .acc-header:hover { background: #f3f4f6; }
+  .acc-body { display: none; padding: 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
+  .acc-body.open { display: block; }
+  .acc-arrow { font-size: 0.8rem; transition: transform 0.2s; }
+  .acc-header.open .acc-arrow { transform: rotate(180deg); }
+
+  /* ── Info box ── */
+  .info-box { background: #eff6ff; border: 2px solid var(--primary); border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; margin: 0.5rem 0; }
+  .warn-box { background: #fffbeb; border: 2px solid var(--warning); border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; margin: 0.5rem 0; }
+  .success-box { background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; margin: 0.5rem 0; }
+
+  /* Contador de términos */
+  #term-counter { font-size: 0.82rem; color: var(--muted); margin-bottom: 0.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Chemie-Vokabular auf Deutsch</h1>
+  <p>Vocabulario Químico Alemán — Conceptos + Traducción ES/EN + Contexto FAB</p>
+  <div class="badges">
+    <span class="badge">~120 términos</span>
+    <span class="badge">Explicaciones desde cero</span>
+    <span class="badge">ES + EN + DE</span>
+    <span class="badge">Contexto IHK-FAB</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════
+     CÓMO USAR ESTE ARCHIVO
+════════════════════════════════════════════════════ -->
+<section>
+  <h2>ℹ Cómo usar este suplemento</h2>
+  <div class="info-box">
+    Este archivo es un <strong>suplemento</strong> a los archivos FASE0–FASE5. No reemplaza a los FASE-archivos sino que agrega
+    lo que estos daban por sabido:<br>
+    • Conceptos químicos explicados desde cero (en alemán)<br>
+    • Vocabulario técnico alemán para términos que en los FASE se mencionan sin traducir<br>
+    • La lógica de los procesos FAB conectada con la química básica
+  </div>
+  <div class="warn-box">
+    <strong>Nota:</strong> Las secciones "PhD-Brücke" en los archivos FASE asumen que recuerdas conceptos.
+    Este archivo te da las bases para entenderlos en alemán.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     BUSCADOR PRINCIPAL
+════════════════════════════════════════════════════ -->
+<section>
+  <h2>🔍 Buscador de Vocabulario</h2>
+  <input type="text" class="search-bar" id="searchInput" placeholder="Busca en alemán, español o inglés... (ej: Bindung, enlace, bond)">
+  <div class="filter-row" id="filterRow">
+    <button class="filter-btn active" data-cat="all" onclick="filterCat('all',this)" style="border-color:#6b7280">Todos</button>
+    <button class="filter-btn" data-cat="grund" onclick="filterCat('grund',this)" style="color:var(--c1)">Grundbegriffe</button>
+    <button class="filter-btn" data-cat="periodensystem" onclick="filterCat('periodensystem',this)" style="color:var(--c2)">Periodensystem</button>
+    <button class="filter-btn" data-cat="bindung" onclick="filterCat('bindung',this)" style="color:var(--c3)">Bindungen</button>
+    <button class="filter-btn" data-cat="reaktion" onclick="filterCat('reaktion',this)" style="color:var(--warning)">Reaktionen</button>
+    <button class="filter-btn" data-cat="losung" onclick="filterCat('losung',this)" style="color:var(--c4)">Lösungen/Säuren</button>
+    <button class="filter-btn" data-cat="fab" onclick="filterCat('fab',this)" style="color:var(--c5)">FAB-Prozesse</button>
+    <button class="filter-btn" data-cat="gefahr" onclick="filterCat('gefahr',this)" style="color:var(--c6)">Gefahrstoffe</button>
+    <button class="filter-btn" data-cat="mess" onclick="filterCat('mess',this)" style="color:var(--primary)">Messtechnik</button>
+  </div>
+  <div id="term-counter">Cargando...</div>
+
+  <table class="vocab-table" id="vocabTable">
+    <thead>
+      <tr>
+        <th style="width:20px"></th>
+        <th>Deutsch</th>
+        <th>Español / English</th>
+        <th>Erklärung (Erklärung auf DE)</th>
+        <th>FAB-Bezug</th>
+      </tr>
+    </thead>
+    <tbody id="vocabBody">
+
+<!-- ══ GRUNDBEGRIFFE DER CHEMIE ══════════════════════════ -->
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">das Atom</div><div class="en-term">EN: atom</div></td>
+  <td><div class="es-term">átomo</div></td>
+  <td class="explanation">Kleinstes Teilchen eines Elements, das dessen chemische Eigenschaften trägt. Besteht aus Kern (Protonen + Neutronen) und Elektronen-Hülle.</td>
+  <td class="example">Si-Atom: 14 Protonen, 14 Elektronen. Bildet das Silizium-Kristallgitter.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">das Molekül</div><div class="en-term">EN: molecule</div></td>
+  <td><div class="es-term">molécula</div></td>
+  <td class="explanation">Zwei oder mehr Atome, die durch chemische Bindungen zusammengehalten werden. Kleinste Einheit einer chemischen Verbindung.</td>
+  <td class="example">H₂O, SiH₄ (Silan), NH₃ — alles Moleküle die in der FAB vorkommen.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">das Ion</div><div class="en-term">EN: ion</div></td>
+  <td><div class="es-term">ion</div></td>
+  <td class="explanation">Atom oder Molekül, das Elektronen gewonnen (→ negativ geladen, Anion) oder verloren hat (→ positiv geladen, Kation).</td>
+  <td class="example">Ar⁺-Ionen beim Sputtern. B⁺-Ionen bei der Ionenimplantation.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">das Element</div><div class="en-term">EN: element</div></td>
+  <td><div class="es-term">elemento</div></td>
+  <td class="explanation">Reinstoff, der aus Atomen mit gleicher Protonenzahl besteht und sich nicht weiter chemisch zerlegen lässt.</td>
+  <td class="example">Si (Silizium), B (Bor), P (Phosphor) — alle Elemente aus dem Periodensystem.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">die Verbindung</div><div class="en-term">EN: compound</div></td>
+  <td><div class="es-term">compuesto (químico)</div></td>
+  <td class="explanation">Stoff aus zwei oder mehr verschiedenen Elementen, die chemisch miteinander verbunden sind. Hat eigene Eigenschaften.</td>
+  <td class="example">SiO₂ (Siliziumdioxid), Si₃N₄ (Siliziumnitrid) — wichtige FAB-Verbindungen.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">das Valenzelektron</div><div class="en-term">EN: valence electron</div></td>
+  <td><div class="es-term">electrón de valencia</div></td>
+  <td class="explanation">Elektron in der äußersten Schale eines Atoms. Bestimmt das chemische Verhalten und die Bindungsfähigkeit. Si hat 4, B hat 3, P hat 5.</td>
+  <td class="example">Si hat 4 Valenzelektronen → bildet 4 kovalente Bindungen → Diamantgitter.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">die Elektronegativität</div><div class="en-term">EN: electronegativity</div></td>
+  <td><div class="es-term">electronegatividad</div></td>
+  <td class="explanation">Maß dafür, wie stark ein Atom Elektronen in einer Bindung an sich zieht. Skala nach Pauling (F = 4,0 = höchste). Differenz → Bindungspolarität.</td>
+  <td class="example">Si-O-Bindung: O zieht Elektronen stärker → SiO₂ hat polaren Charakter → gute Haftung.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">der Aggregatzustand</div><div class="en-term">EN: state of matter / phase</div></td>
+  <td><div class="es-term">estado de agregación / fase</div></td>
+  <td class="explanation">Der physikalische Zustand eines Stoffes: fest (solid), flüssig (liquid), gasförmig (gaseous). Abhängig von Temperatur und Druck.</td>
+  <td class="example">CVD-Precursoren sind gasförmig. Si-Wafer ist fest. HF-Lösung ist flüssig.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">der Schmelzpunkt (Fp)</div><div class="en-term">EN: melting point</div></td>
+  <td><div class="es-term">punto de fusión</div></td>
+  <td class="explanation">Temperatur, bei der ein fester Stoff flüssig wird. Si: 1414°C | GaAs: 1238°C | Al: 660°C | W: 3422°C.</td>
+  <td class="example">Thermische Oxidation von Si läuft bei 900–1200°C — weit unter Schmelzpunkt (1414°C).</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">der Siedepunkt (Kp)</div><div class="en-term">EN: boiling point</div></td>
+  <td><div class="es-term">punto de ebullición</div></td>
+  <td class="explanation">Temperatur, bei der eine Flüssigkeit bei Normaldruck vollständig in die Gasphase übergeht.</td>
+  <td class="example">HF siedet bei 19,5°C → auch bei Raumtemperatur Dämpfe möglich → Gefahr!</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">die Sublimation</div><div class="en-term">EN: sublimation</div></td>
+  <td><div class="es-term">sublimación</div></td>
+  <td class="explanation">Direkter Übergang von fest → gasförmig, ohne flüssige Phase. Umgekehrt: Resublimation (Deposition).</td>
+  <td class="example">Bei der thermischen Verdampfung (PVD) verdampft Metall im Vakuum und kondensiert auf dem Wafer.</td>
+</tr>
+<tr data-cat="grund"><td><div class="cat-dot" style="background:var(--c1)"></div></td>
+  <td><div class="de-term">die molare Masse (M)</div><div class="en-term">EN: molar mass</div></td>
+  <td><div class="es-term">masa molar</div></td>
+  <td class="explanation">Masse von einem Mol (6,022×10²³ Teilchen) eines Stoffs. Einheit: g/mol. Numerisch gleich der Atommasse in u.</td>
+  <td class="example">Si: M = 28,09 g/mol. Wichtig für Stöchiometrie von CVD-Prozessen.</td>
+</tr>
+
+<!-- ══ PERIODENSYSTEM ══════════════════════════════════ -->
+<tr data-cat="periodensystem"><td><div class="cat-dot" style="background:var(--c2)"></div></td>
+  <td><div class="de-term">das Periodensystem der Elemente (PSE)</div><div class="en-term">EN: periodic table</div></td>
+  <td><div class="es-term">tabla periódica</div></td>
+  <td class="explanation">Anordnung aller bekannten Elemente nach steigender Ordnungszahl (Protonenzahl) und ähnlichen Eigenschaften in Perioden (Zeilen) und Gruppen (Spalten).</td>
+  <td class="example">Halbleiter: 14. Gruppe (IVA). Dotierstoffe: 13. Gruppe (B) und 15. Gruppe (P, As).</td>
+</tr>
+<tr data-cat="periodensystem"><td><div class="cat-dot" style="background:var(--c2)"></div></td>
+  <td><div class="de-term">die Periode</div><div class="en-term">EN: period (row)</div></td>
+  <td><div class="es-term">período</div></td>
+  <td class="explanation">Horizontale Zeile im PSE. Elemente einer Periode haben die gleiche Anzahl Elektronenschalen. Si steht in Periode 3.</td>
+  <td class="example">Si (Periode 3): Na, Mg, Al, Si, P, S, Cl, Ar — alle Periode 3.</td>
+</tr>
+<tr data-cat="periodensystem"><td><div class="cat-dot" style="background:var(--c2)"></div></td>
+  <td><div class="de-term">die Gruppe / Hauptgruppe</div><div class="en-term">EN: group / main group</div></td>
+  <td><div class="es-term">grupo / grupo principal</div></td>
+  <td class="explanation">Vertikale Spalte im PSE. Elemente einer Gruppe haben gleich viele Valenzelektronen → ähnliche chemische Eigenschaften. Alte Notation: I–VIII (Haupt- und Nebengruppen).</td>
+  <td class="example">IV. Hauptgruppe: C, Si, Ge, Sn, Pb — alle haben 4 Valenzelektronen.</td>
+</tr>
+<tr data-cat="periodensystem"><td><div class="cat-dot" style="background:var(--c2)"></div></td>
+  <td><div class="de-term">die Ordnungszahl (Z)</div><div class="en-term">EN: atomic number</div></td>
+  <td><div class="es-term">número atómico</div></td>
+  <td class="explanation">Anzahl der Protonen im Atomkern. Definiert das Element eindeutig. Z = 14 ist immer Silizium.</td>
+  <td class="example">Si: Z=14 | B: Z=5 | P: Z=15 | As: Z=33 | Ga: Z=31.</td>
+</tr>
+<tr data-cat="periodensystem"><td><div class="cat-dot" style="background:var(--c2)"></div></td>
+  <td><div class="de-term">das Metall / Halbmetall / Nichtmetall</div><div class="en-term">EN: metal / metalloid / nonmetal</div></td>
+  <td><div class="es-term">metal / semimetal / no metal</div></td>
+  <td class="explanation">Klassifizierung im PSE. Metalle: links und unten (leiten Strom gut). Nichtmetalle: rechts oben (leiten nicht). Halbmetalle (Metalloide): dazwischen — Si, Ge, As, Te.</td>
+  <td class="example">Si ist ein Halbmetall (Metalloid) mit halbleitenden Eigenschaften.</td>
+</tr>
+<tr data-cat="periodensystem"><td><div class="cat-dot" style="background:var(--c2)"></div></td>
+  <td><div class="de-term">das Isotop</div><div class="en-term">EN: isotope</div></td>
+  <td><div class="es-term">isótopo</div></td>
+  <td class="explanation">Atome desselben Elements (gleiche Protonenzahl) mit unterschiedlicher Neutronenzahl → unterschiedliche Massenzahl. ²⁸Si (92,2%), ²⁹Si (4,7%), ³⁰Si (3,1%).</td>
+  <td class="example">In der FAB ohne direkte Relevanz, aber ¹¹B vs. ¹⁰B bei Ionenimplantation hat unterschiedliche Eindringtiefen.</td>
+</tr>
+
+<!-- ══ BINDUNGSTYPEN ══════════════════════════════════ -->
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">die chemische Bindung</div><div class="en-term">EN: chemical bond</div></td>
+  <td><div class="es-term">enlace químico</div></td>
+  <td class="explanation">Kraft, die Atome in Molekülen oder Festkörpern zusammenhält. Haupttypen: kovalent, ionisch, metallisch. Entsteht durch Wechselwirkung der Valenzelektronen.</td>
+  <td class="example">Si-Kristall: kovalente Bindungen. NaCl: ionische Bindung. Kupferleitungen: metallische Bindung.</td>
+</tr>
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">die kovalente Bindung / Atombindung</div><div class="en-term">EN: covalent bond</div></td>
+  <td><div class="es-term">enlace covalente</div></td>
+  <td class="explanation">Zwei Atome teilen sich Elektronen (Elektronenpaar). Typisch zwischen Nichtmetallen. Si-Si-Bindung im Kristall ist kovalent. Stark und gerichtet.</td>
+  <td class="example">Si-Gitter: jedes Si-Atom bildet 4 kovalente Bindungen zu 4 Nachbar-Atomen (Tetraeder).</td>
+</tr>
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">die Ionenbindung</div><div class="en-term">EN: ionic bond</div></td>
+  <td><div class="es-term">enlace iónico</div></td>
+  <td class="explanation">Elektrostatische Anziehung zwischen entgegengesetzt geladenen Ionen. Entsteht, wenn ein Atom Elektronen auf ein anderes überträgt (hohe Elektronegativitätsdifferenz).</td>
+  <td class="example">NaF (Natriumfluorid): Na⁺ und F⁻. Weniger relevant in der FAB, aber wichtig für GHS-Konzepte.</td>
+</tr>
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">die metallische Bindung</div><div class="en-term">EN: metallic bond</div></td>
+  <td><div class="es-term">enlace metálico</div></td>
+  <td class="explanation">Positiv geladene Metallkationen umgeben von einem „Elektronensee" frei beweglicher Elektronen. Erklärt elektrische und thermische Leitfähigkeit von Metallen.</td>
+  <td class="example">Kupfer- und Aluminiumleitungen im IC: metallische Bindung → gute Leitfähigkeit.</td>
+</tr>
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">das Kristallgitter</div><div class="en-term">EN: crystal lattice</div></td>
+  <td><div class="es-term">red cristalina</div></td>
+  <td class="explanation">Regelmäßige, dreidimensionale Anordnung von Atomen, Ionen oder Molekülen in einem Festkörper. Bestimmt mechanische und elektrische Eigenschaften.</td>
+  <td class="example">Si-Diamantgitter: kubisch-flächenzentriert. Jedes Atom hat 4 Nachbarn im Tetraeder.</td>
+</tr>
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">die sp³-Hybridisierung</div><div class="en-term">EN: sp³ hybridization</div></td>
+  <td><div class="es-term">hibridización sp³</div></td>
+  <td class="explanation">Mischung von s- und drei p-Orbitalen zu vier gleichwertigen sp³-Orbitalen mit Tetraeder-Geometrie (109,5° Winkel). Typisch für C (Diamant), Si, Ge.</td>
+  <td class="example">Si in Kristall: sp³-hybridisiert → Tetraederanordnung der 4 Bindungspartner.</td>
+</tr>
+<tr data-cat="bindung"><td><div class="cat-dot" style="background:var(--c3)"></div></td>
+  <td><div class="de-term">der Einkristall / polykristallin / amorph</div><div class="en-term">EN: single crystal / polycrystalline / amorphous</div></td>
+  <td><div class="es-term">monocristal / policristalino / amorfo</div></td>
+  <td class="explanation">Einkristall: gesamtes Material ein Gitter (perfekte Ordnung) → beste elektrische Eigenschaften. Polykristallin: viele kleine Körner. Amorph: keine regelmäßige Struktur.</td>
+  <td class="example">Si-Wafer: Einkristall (CZ- oder FZ-Verfahren). Poly-Si im Gate: polykristallin. SiO₂-Glas: amorph.</td>
+</tr>
+
+<!-- ══ CHEMISCHE REAKTIONEN ══════════════════════════ -->
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">die chemische Reaktion</div><div class="en-term">EN: chemical reaction</div></td>
+  <td><div class="es-term">reacción química</div></td>
+  <td class="explanation">Prozess, bei dem Stoffe (Edukte) umgewandelt werden und neue Stoffe (Produkte) entstehen. Atome werden dabei umgeordnet, aber nicht erzeugt oder vernichtet.</td>
+  <td class="example">Si + O₂ → SiO₂: Silizium reagiert mit Sauerstoff zu Siliziumdioxid (thermische Oxidation).</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">das Edukt / das Produkt</div><div class="en-term">EN: reactant / product</div></td>
+  <td><div class="es-term">reactivo / producto</div></td>
+  <td class="explanation">Edukte stehen links der Reaktionspfeils (→), Produkte rechts. Reaktionsgleichung muss ausgeglichen sein (Massenerhaltung).</td>
+  <td class="example">Si + 2H₂O → SiO₂ + 2H₂: Edukte = Si + H₂O. Produkte = SiO₂ + H₂.</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">die Oxidation / die Reduktion</div><div class="en-term">EN: oxidation / reduction</div></td>
+  <td><div class="es-term">oxidación / reducción</div></td>
+  <td class="explanation">Oxidation: Abgabe von Elektronen (Oxidationszahl steigt). Reduktion: Aufnahme von Elektronen (Oxidationszahl sinkt). Beide immer gleichzeitig (Redoxreaktion).</td>
+  <td class="example">Thermische Oxidation: Si wird oxidiert (Si⁰ → Si⁴⁺). O₂ wird reduziert. SiO₂ entsteht.</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">der Katalysator</div><div class="en-term">EN: catalyst</div></td>
+  <td><div class="es-term">catalizador</div></td>
+  <td class="explanation">Stoff, der eine Reaktion beschleunigt, ohne selbst verbraucht zu werden. Senkt die Aktivierungsenergie. Homogen: gleiche Phase. Heterogen: unterschiedliche Phase.</td>
+  <td class="example">In der FAB: Plasma aktiviert CVD-Reaktionen (PECVD) — ähnlich wie katalytische Aktivierung.</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">exotherm / endotherm</div><div class="en-term">EN: exothermic / endothermic</div></td>
+  <td><div class="es-term">exotérmico / endotérmico</div></td>
+  <td class="explanation">Exotherm: Reaktion gibt Wärme ab (ΔH < 0). Endotherm: Reaktion nimmt Wärme auf (ΔH > 0).</td>
+  <td class="example">Piranha-Lösung (H₂SO₄ + H₂O₂): stark exotherm — Wärmeentwicklung beim Mischen!</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">die Aktivierungsenergie (Ea)</div><div class="en-term">EN: activation energy</div></td>
+  <td><div class="es-term">energía de activación</div></td>
+  <td class="explanation">Mindestenergie, die Edukte benötigen, um eine Reaktion zu starten. Höhere T° → mehr Moleküle überwinden Ea → schnellere Reaktion (Arrhenius-Gleichung).</td>
+  <td class="example">CVD bei höherer Temperatur → schnelleres Schichtwachstum wegen mehr Aktivierungsenergie.</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">die Diffusion</div><div class="en-term">EN: diffusion</div></td>
+  <td><div class="es-term">difusión</div></td>
+  <td class="explanation">Spontane Bewegung von Teilchen von höherer zu niedrigerer Konzentration (Konzentrationsausgleich). Beschrieben durch Fick'sche Gesetze. Schneller bei höherer T°.</td>
+  <td class="example">Dotierstoff-Diffusion: B oder P wandert im Si von der Oberfläche ins Innere → Dotierungsprofil entsteht.</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">die Hydrolyse</div><div class="en-term">EN: hydrolysis</div></td>
+  <td><div class="es-term">hidrólisis</div></td>
+  <td class="explanation">Spaltung einer Verbindung durch Wasser. Säure-Hydrolyse: H₃O⁺ greift an. Base-Hydrolyse: OH⁻ greift an.</td>
+  <td class="example">TEOS-Hydrolyse: Si(OC₂H₅)₄ + H₂O → SiO₂ (Sol-Gel) oder Si-O-Bindung in CVD.</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">die Pyrolyse</div><div class="en-term">EN: pyrolysis / thermal decomposition</div></td>
+  <td><div class="es-term">pirólisis</div></td>
+  <td class="explanation">Thermische Zersetzung eines Stoffs ohne Sauerstoff. Bei hohen Temperaturen zerfällt der Precursor in reaktive Fragmente.</td>
+  <td class="example">LPCVD: SiH₄ → Si + 2H₂ (pyrolytische Zersetzung von Silan bei 600°C).</td>
+</tr>
+<tr data-cat="reaktion"><td><div class="cat-dot" style="background:var(--warning)"></div></td>
+  <td><div class="de-term">pyrophor</div><div class="en-term">EN: pyrophoric</div></td>
+  <td><div class="es-term">pirofórico</div></td>
+  <td class="explanation">Stoff, der sich bei Kontakt mit Luft/Sauerstoff spontan (ohne externe Zündung) entzündet. Extrem gefährlich!</td>
+  <td class="example">SiH₄ (Silan): pyrophor! Auch B₂H₆, PH₃, AsH₃. In der FAB: Doppelwand-Leitungen + Gasdetektoren zwingend.</td>
+</tr>
+
+<!-- ══ LÖSUNGEN / SÄUREN / BASEN ══════════════════════ -->
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">die Lösung</div><div class="en-term">EN: solution</div></td>
+  <td><div class="es-term">solución / disolución</div></td>
+  <td class="explanation">Homogenes Gemisch aus einem Lösungsmittel (z.B. Wasser) und einem gelösten Stoff (Solut). Alle Teilchen molekular verteilt — man kann sie nicht sehen.</td>
+  <td class="example">HF-Lösung: HF in Wasser gelöst. TMAH-Lösung: Entwickler für Photoresist.</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">die Konzentration (c)</div><div class="en-term">EN: concentration</div></td>
+  <td><div class="es-term">concentración</div></td>
+  <td class="explanation">Menge des gelösten Stoffs pro Volumen der Lösung. Molare Konzentration: mol/L (molar, M). Massenanteil: g gelöst / 100g Lösung × 100% = %.</td>
+  <td class="example">TMAH 2,38%: Massenprozent des Entwicklers. SC-1: NH₄OH:H₂O₂:H₂O = 1:1:5 (Volumenverhältnis).</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">die Molarität / die molare Konzentration</div><div class="en-term">EN: molarity / molar concentration</div></td>
+  <td><div class="es-term">molaridad / concentración molar</div></td>
+  <td class="explanation">Anzahl Mol eines gelösten Stoffs pro Liter Lösung. Einheit: mol/L oder M. c = n/V.</td>
+  <td class="example">1 M HF-Lösung: 1 Mol HF (20 g) pro Liter Wasser gelöst.</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">die Säure / die Base</div><div class="en-term">EN: acid / base</div></td>
+  <td><div class="es-term">ácido / base</div></td>
+  <td class="explanation">Säure: gibt Protonen (H⁺) ab (Brønsted-Definition). Base: nimmt Protonen auf. Starke Säuren: vollständig dissoziiert (HCl, H₂SO₄, HNO₃). Schwache: teilweise (HF!).</td>
+  <td class="example">HF (Flusssäure): schwache Säure, aber biologisch extrem gefährlich. H₂SO₄: starke Säure (Piranha).</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">der pH-Wert</div><div class="en-term">EN: pH value</div></td>
+  <td><div class="es-term">pH / valor de pH</div></td>
+  <td class="explanation">Maß für die H⁺-Konzentration: pH = −log[H⁺]. pH 0–7: sauer. pH 7: neutral. pH 7–14: basisch. Jede Einheit = Faktor 10!</td>
+  <td class="example">TMAH-Entwickler: pH ~13 (stark basisch). HF-Lösung: pH ~1–3 (stark sauer).</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">die Neutralisation</div><div class="en-term">EN: neutralization</div></td>
+  <td><div class="es-term">neutralización</div></td>
+  <td class="explanation">Reaktion von Säure + Base → Wasser + Salz. H⁺ + OH⁻ → H₂O. Exotherm!</td>
+  <td class="example">In der FAB: Abwässer müssen vor der Entsorgung neutralisiert werden (pH-Kontrolle).</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">das Lösungsmittel</div><div class="en-term">EN: solvent</div></td>
+  <td><div class="es-term">disolvente</div></td>
+  <td class="explanation">Stoff, der den gelösten Stoff aufnimmt. Wasser ist das universellste Lösungsmittel (polar). Für organische Stoffe: Aceton, IPA (Isopropanol), NMP.</td>
+  <td class="example">IPA (Isopropanol): in der FAB für Wafer-Trocknung und Reinigung verwendet.</td>
+</tr>
+<tr data-cat="losung"><td><div class="cat-dot" style="background:var(--c4)"></div></td>
+  <td><div class="de-term">der Reinstoff / Reinstwasser (DI-Wasser)</div><div class="en-term">EN: pure substance / deionized water</div></td>
+  <td><div class="es-term">sustancia pura / agua desionizada</div></td>
+  <td class="explanation">Reinstwasser (DI water): Wasser ohne Ionen, Partikel, Organik. Leitfähigkeit ~0,055 µS/cm. Standard in FAB für alle Spülvorgänge.</td>
+  <td class="example">Nach jedem Nassätzschritt: DI-Wasser-Spülung (Rinse) um Chemikalienreste zu entfernen.</td>
+</tr>
+
+<!-- ══ FAB-PROZESSE ═══════════════════════════════════ -->
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die Ätzung / ätzen</div><div class="en-term">EN: etching / to etch</div></td>
+  <td><div class="es-term">ataque / grabar / atacar</div></td>
+  <td class="explanation">Entfernen von Material durch chemische oder physikalische Reaktion. Nass: Flüssigkeit löst Material. Trocken: Plasma/Gas reagiert mit Material.</td>
+  <td class="example">HF-Ätzung: SiO₂ + 6HF → H₂SiF₆ + 2H₂O. Plasma-Ätzung: CF₄ + Si → SiF₄ (gasförmig).</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die Ätzrate</div><div class="en-term">EN: etch rate</div></td>
+  <td><div class="es-term">velocidad de ataque / tasa de grabado</div></td>
+  <td class="explanation">Dicke des Material, das pro Zeiteinheit entfernt wird. Einheit: nm/min oder Å/min. Kontrolliert durch: Konzentration, Temperatur, Druck (Plasma).</td>
+  <td class="example">HF (1%) ätzt SiO₂ mit ~1 nm/min. Konzentriertes HF (49%) ätzt viel schneller.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die Selektivität</div><div class="en-term">EN: selectivity</div></td>
+  <td><div class="es-term">selectividad</div></td>
+  <td class="explanation">Verhältnis der Ätzrate von Zielmaterial zu Maskenmaterial. Selektivität = Ätzrate(Ziel) / Ätzrate(Maske). Hohe Selektivität = präzises Ätzen ohne Maskenverlust.</td>
+  <td class="example">HF: ätzt SiO₂ schnell, Si₃N₄ kaum → hohe Selektivität SiO₂/Si₃N₄.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">anisotrop / isotrop</div><div class="en-term">EN: anisotropic / isotropic</div></td>
+  <td><div class="es-term">anisotrópico / isotrópico</div></td>
+  <td class="explanation">Isotropes Ätzen: gleich schnell in alle Richtungen (typisch Nassätzen) → rundet Kanten. Anisotropes Ätzen: nur in eine Richtung (senkrecht, typisch Trockenätzen/Plasma).</td>
+  <td class="example">RIE (Trockenätzen): anisotrop → senkrechte Wände. KOH-Nassätzen: anisotrop (kristallrichtungsabhängig).</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die Abscheidung (Deposition)</div><div class="en-term">EN: deposition</div></td>
+  <td><div class="es-term">deposición / depósito</div></td>
+  <td class="explanation">Aufbringung einer dünnen Schicht auf einem Substrat. CVD: aus Gasphase durch Reaktion. PVD: physikalisch (Sputtern/Verdampfen). ALD: atomlagenweise.</td>
+  <td class="example">PECVD-Abscheidung von SiO₂ bei 350°C nach der Metallisierung.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">der Precursor</div><div class="en-term">EN: precursor</div></td>
+  <td><div class="es-term">precursor</div></td>
+  <td class="explanation">Ausgangsstoff für CVD/ALD-Prozesse. Oft organometallische Verbindung oder Hydrid. Muss gasförmig in die Kammer eingeleitet werden können.</td>
+  <td class="example">TEOS: Si(OC₂H₅)₄ für SiO₂-CVD. TMA: Al(CH₃)₃ für Al₂O₃-ALD. WF₆ für W-CVD.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die thermische Oxidation</div><div class="en-term">EN: thermal oxidation</div></td>
+  <td><div class="es-term">oxidación térmica</div></td>
+  <td class="explanation">Kontrolliertes Aufwachsen einer SiO₂-Schicht auf Si-Oberfläche durch Erhitzen in O₂ (trocken) oder H₂O-Dampf (nass). Bei 900–1200°C. Si wird dabei verbraucht (Schicht wächst ins Si hinein).</td>
+  <td class="example">Trocken: Si + O₂ → SiO₂ (langsam, hohe Qualität → Gate-Oxid). Nass: Si + 2H₂O → SiO₂ + 2H₂ (schnell → Feldoxid).</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die Reinigung / Wafer-Reinigung</div><div class="en-term">EN: cleaning / wafer cleaning</div></td>
+  <td><div class="es-term">limpieza / limpieza de oblea</div></td>
+  <td class="explanation">Entfernung von Partikeln, organischen Resten und Metallionen von der Waferoberfläche vor sensiblen Prozessschritten. RCA-Reinigung ist der Standard.</td>
+  <td class="example">RCA-Sequenz: SC-1 (NH₄OH:H₂O₂:H₂O) → HF-Dip (natives Oxid) → SC-2 (HCl:H₂O₂:H₂O) → DI-Spülung.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">das Plasma</div><div class="en-term">EN: plasma</div></td>
+  <td><div class="es-term">plasma</div></td>
+  <td class="explanation">Teilweise oder vollständig ionisiertes Gas. Enthält freie Elektronen, Ionen und reaktive Radikale. Wird durch elektrisches Feld erzeugt (RF-Entladung). Vierter Aggregatzustand.</td>
+  <td class="example">PECVD + RIE + Sputtern verwenden Plasma. CF₄-Plasma ätzt Si/SiO₂. O₂-Plasma entfernt Photoresist (Ashen).</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">das Radikal</div><div class="en-term">EN: radical / free radical</div></td>
+  <td><div class="es-term">radical (libre)</div></td>
+  <td class="explanation">Teilchen mit einem ungepaartem Elektron → sehr reaktiv. Entsteht durch Energiezufuhr (Licht, Plasma, Wärme). Kurzlebig, aber reaktionsfreudig.</td>
+  <td class="example">Im CF₄-Plasma entstehen F-Radikale → greifen Si-Bindungen an → SiF₄ (flüchtig) entsteht.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">der Wafer</div><div class="en-term">EN: wafer</div></td>
+  <td><div class="es-term">oblea (de silicio)</div></td>
+  <td class="explanation">Dünne runde Scheibe aus einkristallinem Si (oder anderen Halbleitern). Standard-Durchmesser: 200 mm (8") oder 300 mm (12"). Basis aller IC-Herstellungsprozesse.</td>
+  <td class="example">GlobalFoundries Dresden: 200 mm Wafer. ESMC (geplant): 300 mm Wafer.</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">die Dotierung</div><div class="en-term">EN: doping</div></td>
+  <td><div class="es-term">dopaje</div></td>
+  <td class="explanation">Gezielte Einbringung von Fremdatomen (Dotierstoffe) in das Si-Gitter, um die elektrischen Eigenschaften zu verändern. n-Typ: überschuss Elektronen. p-Typ: Überschuss Löcher.</td>
+  <td class="example">n-Typ: P oder As (Gruppe V, 5 Valenzelektronen). p-Typ: B (Gruppe III, 3 Valenzelektronen).</td>
+</tr>
+<tr data-cat="fab"><td><div class="cat-dot" style="background:var(--c5)"></div></td>
+  <td><div class="de-term">das Ausheilglühen / Annealing</div><div class="en-term">EN: annealing</div></td>
+  <td><div class="es-term">recocido / revenido</div></td>
+  <td class="explanation">Thermische Behandlung nach der Ionenimplantation bei 700–1100°C. Zwei Ziele: 1) Aktivierung der Dotierstoffe (auf Gitterplätzen). 2) Reparatur von Kristallschäden.</td>
+  <td class="example">RTA (Rapid Thermal Annealing): sehr schnelles Aufheizen/Abkühlen → minimales Thermisches Budget.</td>
+</tr>
+
+<!-- ══ GEFAHRSTOFFE ═══════════════════════════════════ -->
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">der Gefahrstoff</div><div class="en-term">EN: hazardous substance / chemical hazard</div></td>
+  <td><div class="es-term">sustancia peligrosa</div></td>
+  <td class="explanation">Stoff, der eine Gefahr für Gesundheit, Sicherheit oder Umwelt darstellt. Klassifizierung nach GHS (Global Harmonized System). Kennzeichnung durch Piktogramme + H-Sätze.</td>
+  <td class="example">HF, SiH₄, H₂SO₄, NH₃, AsH₃ sind wichtige Gefahrstoffe in der Halbleiterfabrik.</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">das GHS-Piktogramm</div><div class="en-term">EN: GHS hazard pictogram</div></td>
+  <td><div class="es-term">pictograma GHS</div></td>
+  <td class="explanation">Standardisierte Gefahrensymbole (rote Raute). GHS01: Explosiv. GHS02: Entzündbar. GHS03: Oxidierend. GHS05: Ätzend. GHS06: Giftig. GHS07: Reizend. GHS08: Gesundheitsgefahr. GHS09: Umwelt.</td>
+  <td class="example">HF: GHS05 (ätzend) + GHS06 (giftig) + GHS08 (schwere Gesundheitsschäden).</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">die persönliche Schutzausrüstung (PSA)</div><div class="en-term">EN: personal protective equipment (PPE)</div></td>
+  <td><div class="es-term">equipo de protección individual (EPI)</div></td>
+  <td class="explanation">Ausrüstung zum Schutz vor Gefahren: Schutzhandschuhe, Schutzbrille, Gesichtsschutz, Chemikalienschutzkleidung, Atemschutz je nach Gefährdung.</td>
+  <td class="example">Bei HF: Butyl-Gummi-Handschuhe (mind. 2 Lagen) + Gesichtsschutz + Säureschutzkleidung + Kalziumgluconat-Gel bereit.</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">ätzend / korrosiv</div><div class="en-term">EN: corrosive</div></td>
+  <td><div class="es-term">corrosivo</div></td>
+  <td class="explanation">Zerstört Haut, Gewebe, Materialien durch chemische Reaktion. Starke Säuren (H₂SO₄, HCl) und Laugen (NaOH, KOH) sind ätzend.</td>
+  <td class="example">HF: ätzend + systemisch giftig. Piranha: stark oxidierend + ätzend. KOH: stark ätzend.</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">giftig / toxisch</div><div class="en-term">EN: toxic / poisonous</div></td>
+  <td><div class="es-term">tóxico / venenoso</div></td>
+  <td class="explanation">Verursacht Gesundheitsschäden oder Tod bei Einatmen, Verschlucken oder Hautkontakt. Unterschieden nach LD₅₀-Wert. GHS06 (Totenkopf) = akut giftig.</td>
+  <td class="example">AsH₃ (Arsin): extrem giftig (Hb-Schädigung). SiH₄: giftig + pyrophor. HCN: lethal.</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">das Sicherheitsdatenblatt (SDB)</div><div class="en-term">EN: Safety Data Sheet (SDS / MSDS)</div></td>
+  <td><div class="es-term">ficha de datos de seguridad (FDS)</div></td>
+  <td class="explanation">Standardisiertes Dokument (16 Abschnitte) mit allen Sicherheitsinformationen zu einem Gefahrstoff: Eigenschaften, Gefahren, Erste Hilfe, Entsorgung, Lagerung.</td>
+  <td class="example">Vor der Arbeit mit neuen Chemikalien in der FAB: SDB lesen und verstehen (Pflicht!).</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">der H-Satz / P-Satz</div><div class="en-term">EN: H-statement / P-statement</div></td>
+  <td><div class="es-term">frase H / frase P</div></td>
+  <td class="explanation">H-Sätze (Hazard): beschreiben Art der Gefahr (H200–H400). P-Sätze (Precautionary): Sicherheitsmaßnahmen (P200–P500). Ersetzen R- und S-Sätze (altes System).</td>
+  <td class="example">HF: H301 (giftig beim Verschlucken) + H311 (giftig bei Hautkontakt) + H314 (verursacht Verätzungen).</td>
+</tr>
+<tr data-cat="gefahr"><td><div class="cat-dot" style="background:var(--c6)"></div></td>
+  <td><div class="de-term">karzinogen / kanzerogen</div><div class="en-term">EN: carcinogenic</div></td>
+  <td><div class="es-term">carcinogénico / cancerígeno</div></td>
+  <td class="explanation">Stoff, der Krebs verursachen kann. GHS08. Kategorie 1A/1B: bekannt oder wahrscheinlich karzinogen. Strenge Expositionsgrenzen (MAK-Werte).</td>
+  <td class="example">As (Arsen): karzinogen (Kat. 1). Cr(VI): karzinogen. Besonders strenger Umgang in der FAB.</td>
+</tr>
+
+<!-- ══ MESSTECHNIK ══════════════════════════════════════ -->
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">der Druck (p)</div><div class="en-term">EN: pressure</div></td>
+  <td><div class="es-term">presión</div></td>
+  <td class="explanation">Kraft pro Fläche. Einheit: Pascal (Pa), bar, mbar, Torr. 1 atm = 1013 mbar = 760 Torr = 101.325 Pa.</td>
+  <td class="example">Vakuumkammer: 10⁻⁵ mbar. LPCVD: 0,1–10 Torr. Reinraum: +10–20 Pa über Umgebung.</td>
+</tr>
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">die Temperatur (T)</div><div class="en-term">EN: temperature</div></td>
+  <td><div class="es-term">temperatura</div></td>
+  <td class="explanation">Maß für die mittlere kinetische Energie der Teilchen. Einheit: Kelvin (K) für absolute Temperatur. Celsius (°C): T[K] = T[°C] + 273,15.</td>
+  <td class="example">CVD-Ofen: 600–1100°C. EUV-Lithografie: Umgebungstemperatur wird auf ±0,01°C geregelt.</td>
+</tr>
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">der Massenstrom / Volumenstrom</div><div class="en-term">EN: mass flow / volumetric flow</div></td>
+  <td><div class="es-term">flujo másico / flujo volumétrico</div></td>
+  <td class="explanation">Massenstrom: kg/s oder g/min. Volumenstrom: L/min oder sccm (standard cubic centimeters per minute). In CVD/ALD kontrolliert durch MFC (Massenstromregler).</td>
+  <td class="example">CVD SiH₄-Fluss: typisch 10–200 sccm. MFC = Mass Flow Controller reguliert präzise.</td>
+</tr>
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">sccm (standard cubic centimeters per minute)</div><div class="en-term">EN: sccm</div></td>
+  <td><div class="es-term">sccm (centímetros cúbicos estándar por minuto)</div></td>
+  <td class="explanation">Einheit für Gasfluss in der Halbleiterfertigung. Bei Standardbedingungen (0°C, 1 atm). 1 sccm = 1 cm³/min bei STP.</td>
+  <td class="example">CVD-Reaktor: O₂-Fluss = 100 sccm, SiH₄-Fluss = 50 sccm → Verhältnis kontrolliert SiO₂-Qualität.</td>
+</tr>
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">die Reinheit (Purity) / 9N</div><div class="en-term">EN: purity</div></td>
+  <td><div class="es-term">pureza</div></td>
+  <td class="explanation">Anteil des Reinststoffs in einem Material. „Nines" = Anzahl der Neunen: 5N = 99,999%. Silizium für ICs: 9N–11N (99,9999999%).</td>
+  <td class="example">Si-Wafer-Substrat: 9N (0,000001% Fremdatome). Dotierungsniveau ändert das von innen heraus gezielt.</td>
+</tr>
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">das Spektrum / die Spektroskopie</div><div class="en-term">EN: spectrum / spectroscopy</div></td>
+  <td><div class="es-term">espectro / espectroscopía</div></td>
+  <td class="explanation">Spektroskopie: Analyse von Wechselwirkung elektromagnetischer Strahlung mit Materie → Identifikation von Stoffen. In der FAB: XPS, SIMS, EDS für Schichtanalyse.</td>
+  <td class="example">XPS (X-ray Photoelectron Spectroscopy): Analyse der Zusammensetzung dünner Schichten in der FAB.</td>
+</tr>
+<tr data-cat="mess"><td><div class="cat-dot" style="background:var(--primary)"></div></td>
+  <td><div class="de-term">der Yield / die Ausbeute</div><div class="en-term">EN: yield</div></td>
+  <td><div class="es-term">rendimiento / rendimiento de chips</div></td>
+  <td class="explanation">In der FAB: Anteil der funktionierenden Chips pro Wafer (%). Bestimmt die Wirtschaftlichkeit. Abhängig von Defektdichte, Prozessqualität, Chipgröße.</td>
+  <td class="example">Yield = (funktionierende Chips / Gesamtchips) × 100%. Ziel: &gt;95% für profitable Produktion.</td>
+</tr>
+
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     KONZEPTE MIT ERKLÄRUNGEN (Accordion)
+════════════════════════════════════════════════════ -->
+<section>
+  <h2>📖 Schlüsselkonzepte — Erklärt auf Deutsch (von Grund auf)</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.5rem">Klicke zum Aufklappen — jedes Konzept wird ohne Vorkenntnisse erklärt.</p>
+
+  <div class="accordion">
+    <div class="acc-header" onclick="toggleAcc(this)">Was ist ein Halbleiter? (Halbleiter vs. Leiter vs. Isolator) <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p><strong>Leiter (Metalle):</strong> Haben viele freie Elektronen im Leitungsband. Strom fließt leicht. Beispiel: Cu, Al — die Metalldrähte im IC.</p>
+      <p style="margin-top:0.5rem"><strong>Isolatoren:</strong> Keine freien Elektronen. Die Bandlücke (Eg) ist sehr groß (z.B. SiO₂: 9 eV). Kein Strom bei normaler Spannung. Werden als Gate-Oxid oder Isolation verwendet.</p>
+      <p style="margin-top:0.5rem"><strong>Halbleiter:</strong> Mittlere Bandlücke (Si: 1,12 eV, Ge: 0,67 eV). Bei Raumtemperatur leitet er kaum — aber durch Dotierung oder Wärme kann man gezielt Elektronen ins Leitungsband bringen. Das macht ihn steuerbar.</p>
+      <div class="info-box" style="margin-top:0.7rem">
+        <strong>Auf Deutsch ausdrücken:</strong> „Silizium ist ein Halbleiter mit einer Bandlücke von 1,12 Elektronenvolt. Durch gezielte Dotierung mit Bor (p-Typ) oder Phosphor (n-Typ) kann die Leitfähigkeit gezielt eingestellt werden."
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" style="margin-top:0.5rem">
+    <div class="acc-header" onclick="toggleAcc(this)">Was ist Dotierung? (Dotierung im Detail) <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p>Reines Si-Kristall hat 4 Valenzelektronen und bildet 4 kovalente Bindungen. Es gibt kaum freie Ladungsträger → schlechte Leitfähigkeit.</p>
+      <p style="margin-top:0.5rem"><strong>n-Typ (Donator):</strong> Man ersetzt einige Si-Atome durch Atome der 5. Gruppe (P, As). Diese haben 5 Valenzelektronen — 4 gehen Bindungen ein, das 5. bleibt übrig als freies Elektron. → Mehr Elektronen als Löcher = n-Typ.</p>
+      <p style="margin-top:0.5rem"><strong>p-Typ (Akzeptor):</strong> Atome der 3. Gruppe (B) haben nur 3 Valenzelektronen. Für 4 Bindungen fehlt ein Elektron → entsteht ein „Loch" (positive Ladungsträgerstelle). → Mehr Löcher als Elektronen = p-Typ.</p>
+      <p style="margin-top:0.5rem"><strong>Typische Konzentrationen:</strong> Reines Si: ~10¹⁰ Ladungsträger/cm³. Dotiertes Si: 10¹⁵–10²⁰ Atome/cm³. Das ist kontrollierte Verunreinigung auf atomarer Ebene!</p>
+      <div class="info-box" style="margin-top:0.7rem">
+        <strong>Formulierung für IHK:</strong> „Durch Ionenimplantation werden Phosphoratome (Donatoren) mit einer Energie von 50 keV in das Siliziumsubstrat eingebracht. Die Dosierung beträgt 10¹⁵ Atome/cm². Anschließend erfolgt ein Annealing bei 900°C zur Aktivierung der Dotierstoffe."
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" style="margin-top:0.5rem">
+    <div class="acc-header" onclick="toggleAcc(this)">Was passiert bei der thermischen Oxidation? <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p>Wenn man einen Si-Wafer bei hoher Temperatur (900–1200°C) in eine Ofenatmosphäre mit O₂ oder H₂O-Dampf bringt, reagiert das Silizium an der Oberfläche direkt mit dem Oxidationsmittel.</p>
+      <p style="margin-top:0.5rem"><strong>Trockenoxidation (O₂):</strong> <span class="formula">Si + O₂ → SiO₂</span> — langsam, aber sehr hochwertig. Ideal für Gate-Oxide (&lt;10 nm).</p>
+      <p style="margin-top:0.5rem"><strong>Nassoxidation (H₂O):</strong> <span class="formula">Si + 2H₂O → SiO₂ + 2H₂↑</span> — etwa 5–10× schneller, aber niedrigere Qualität. Für dickere Oxide (Feldoxid, STI-Liner).</p>
+      <p style="margin-top:0.5rem"><strong>Wichtig:</strong> Das Oxid wächst nicht NUR auf der Oberfläche — es wächst ZUM TEIL ins Silizium hinein. Von 1 nm SiO₂ stammen ~0,44 nm aus dem Si-Substrat (Deal-Grove-Modell).</p>
+      <div class="warn-box" style="margin-top:0.7rem">Merke: Jede thermische Oxidation „verbraucht" etwas Si. Das muss bei der Dimensionierung berücksichtigt werden.</div>
+    </div>
+  </div>
+
+  <div class="accordion" style="margin-top:0.5rem">
+    <div class="acc-header" onclick="toggleAcc(this)">Wie funktioniert CVD? (Chemical Vapor Deposition erklärt) <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p>Bei CVD werden gasförmige Ausgangsstoffe (Precursoren) in eine beheizte Kammer geleitet. Auf der heißen Wafer-Oberfläche reagieren sie chemisch und hinterlassen eine feste Schicht, während die gasförmigen Reaktionsprodukte abgepumpt werden.</p>
+      <p style="margin-top:0.5rem"><strong>Ablauf der CVD-Reaktion (4 Schritte):</strong></p>
+      <ol style="margin-left:1.2rem; font-size:0.83rem; margin-top:0.3rem">
+        <li>Precursor-Gas strömt in die Kammer ein</li>
+        <li>Gas diffundiert zur Wafer-Oberfläche (Grenzschicht)</li>
+        <li>Adsorption + chemische Reaktion an der Oberfläche → feste Schicht wächst</li>
+        <li>Gasförmige Nebenprodukte (z.B. HCl, CH₄, H₂) desorbiern und werden abgepumpt</li>
+      </ol>
+      <p style="margin-top:0.5rem"><strong>Beispiel TEOS-Oxid:</strong> <span class="formula">Si(OC₂H₅)₄ → SiO₂ + 4C₂H₄ + 2H₂O</span> bei 700°C (LPCVD) oder 350°C (PECVD mit Plasma).</p>
+      <div class="info-box" style="margin-top:0.7rem">
+        PECVD ersetzt die Temperatur durch Plasma-Energie. Plasma erzeugt reaktive Radikale → Reaktion läuft auch bei &lt;400°C ab.
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" style="margin-top:0.5rem">
+    <div class="acc-header" onclick="toggleAcc(this)">Was bedeutet „Konformität" bei der Schichtabscheidung? <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p>Konformität beschreibt, wie gleichmäßig eine Schicht auf einer strukturierten Oberfläche aufgebracht wird — auch in engen Gräben und auf Stufen.</p>
+      <p style="margin-top:0.5rem">Stell dir vor, du streichst eine Kerze: Auf der Seite und oben wird sie gleich dick angemalt (= gute Konformität) oder nur oben (= schlechte Konformität).</p>
+      <p style="margin-top:0.5rem"><strong>Konformität 100%:</strong> ALD (selbstlimitierend — jede Oberfläche wird gleichmäßig belegt).</p>
+      <p style="margin-top:0.5rem"><strong>Gute Konformität:</strong> CVD (gas diffundiert gut in Strukturen).</p>
+      <p style="margin-top:0.5rem"><strong>Schlechte Konformität:</strong> PVD/Sputtern (gerichtete Partikel — im Schatten von Strukturen bilden sich Lücken = „Shadowing").</p>
+      <div class="info-box" style="margin-top:0.7rem">Für FinFETs (3D-Transistoren) und tiefe Kontaktlöcher ist 100% Konformität essenziell → ALD ist Pflicht.</div>
+    </div>
+  </div>
+
+  <div class="accordion" style="margin-top:0.5rem">
+    <div class="acc-header" onclick="toggleAcc(this)">Warum ist HF (Flusssäure) so gefährlich? (Chemie + Erstmaßnahmen) <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p><strong>Chemisch:</strong> HF ist eine schwache Säure (pKa = 3,17), dissoziiert also nur wenig im Wasser. Das macht sie paradoxerweise gefährlicher: HF-Moleküle können leicht durch Haut und Membranen diffundieren (lipophil)!</p>
+      <p style="margin-top:0.5rem"><strong>Systemische Gefahr:</strong> Im Körper bildet HF freie F⁻-Ionen → binden an Ca²⁺ → Hypokalzämie (Kalziummangel im Blut) → Herzrhythmusstörungen → Tod. Selbst kleine Mengen auf der Haut können tödlich sein!</p>
+      <p style="margin-top:0.5rem"><strong>FAB-Reaktion:</strong> <span class="formula">SiO₂ + 6HF → H₂SiF₆ + 2H₂O</span> — HF ist der einzige einfache Stoff, der SiO₂ auflöst.</p>
+      <div class="warn-box" style="margin-top:0.7rem">
+        <strong>Erstmaßnahmen bei HF-Kontakt:</strong><br>
+        1. Sofort mit viel Wasser spülen (15 min)<br>
+        2. <strong>Kalziumgluconat-Gel</strong> (2,5%) auf die Stelle auftragen → bindet F⁻-Ionen vor Ort<br>
+        3. Notarzt rufen (immer, auch bei kleiner Fläche!)<br>
+        4. Kontaminierte Kleidung entfernen
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" style="margin-top:0.5rem">
+    <div class="acc-header" onclick="toggleAcc(this)">Was ist ein Plasma? (4. Aggregatzustand) <span class="acc-arrow">▼</span></div>
+    <div class="acc-body">
+      <p>Wenn man einem Gas genug Energie zuführt (durch elektrisches Feld, hohe Temperatur), werden die Elektronen von den Atomen getrennt → es entsteht ein Gemisch aus freien Elektronen, Ionen und neutralen Teilchen = Plasma.</p>
+      <p style="margin-top:0.5rem"><strong>Eigenschaften:</strong> Elektrisch leitend (freie Ladungsträger). Enthält reaktive Radikale (ungepaarte Elektronen). Kann gezielt durch RF-Leistung (Radiofrequenz, z.B. 13,56 MHz) erzeugt werden.</p>
+      <p style="margin-top:0.5rem"><strong>In der FAB eingesetzt für:</strong><br>
+      • PECVD: Plasma aktiviert CVD-Reaktion bei niedriger Temperatur<br>
+      • RIE (Reactive Ion Etching): Plasma ätzt anisotrop<br>
+      • Sputtern: Ar⁺-Ionen aus dem Plasma bombardieren Target<br>
+      • Ashen (O₂-Plasma): entfernt organischen Photoresist (verbrennt ihn zu CO₂ + H₂O)</p>
+      <div class="info-box" style="margin-top:0.7rem">Alltagsbeispiel für Plasma: Neonröhre, Blitz, Flamme (teilweise ionisiert).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     FLIP CARDS — KERNBEGRIFFE
+════════════════════════════════════════════════════ -->
+<section>
+  <h2>🃏 Flip-Karten — 30 Kernbegriffe (Klick = übersetzen)</h2>
+  <div class="flip-grid" id="flipGrid">
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c1),var(--c2))"><div class="term">das Atom</div><div class="hint">Grundbegriff</div></div><div class="flip-back"><div class="trans">átomo / atom</div><div class="ctx">Kleinstes Teilchen eines Elements. Si: 14 Protonen.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c1),var(--c2))"><div class="term">das Ion</div><div class="hint">Geladenes Teilchen</div></div><div class="flip-back"><div class="trans">ion / ion</div><div class="ctx">Atom mit Elektronen-Überschuss (Anion, −) oder -Mangel (Kation, +)</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c1),var(--c2))"><div class="term">das Valenzelektron</div><div class="hint">Äußere Schale</div></div><div class="flip-back"><div class="trans">electrón de valencia / valence electron</div><div class="ctx">Si=4, B=3, P=5 Valenzelektronen → bestimmt Bindungen + Dotierung</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c3),var(--c4))"><div class="term">die kovalente Bindung</div><div class="hint">Bindungstyp</div></div><div class="flip-back"><div class="trans">enlace covalente / covalent bond</div><div class="ctx">Gemeinsames Elektronenpaar. Si-Si im Kristall: 4 kovalente Bindungen.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c3),var(--c4))"><div class="term">das Kristallgitter</div><div class="hint">Festkörper</div></div><div class="flip-back"><div class="trans">red cristalina / crystal lattice</div><div class="ctx">Regelmäßige 3D-Anordnung von Atomen. Si: Diamantgitter, kubisch-flächen-zentriert.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c3),var(--c4))"><div class="term">der Aggregatzustand</div><div class="hint">Phase</div></div><div class="flip-back"><div class="trans">estado de agregación / state of matter</div><div class="ctx">fest (solid) | flüssig (liquid) | gasförmig (gas). CVD-Precursoren: gasförmig.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c5),#059669)"><div class="term">die Oxidation</div><div class="hint">Reaktionstyp</div></div><div class="flip-back"><div class="trans">oxidación / oxidation</div><div class="ctx">Abgabe von Elektronen. Si wird zu Si⁴⁺ bei thermischer Oxidation → SiO₂.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c5),#059669)"><div class="term">die Reduktion</div><div class="hint">Reaktionstyp</div></div><div class="flip-back"><div class="trans">reducción / reduction</div><div class="ctx">Aufnahme von Elektronen. Immer zusammen mit Oxidation (Redoxreaktion).</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c5),#059669)"><div class="term">exotherm</div><div class="hint">Energie</div></div><div class="flip-back"><div class="trans">exotérmico / exothermic</div><div class="ctx">Reaktion gibt Wärme ab (ΔH &lt; 0). Piranha ist stark exotherm!</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c5),#059669)"><div class="term">die Diffusion</div><div class="hint">Transport</div></div><div class="flip-back"><div class="trans">difusión / diffusion</div><div class="ctx">Bewegung von hoher zu niedriger Konzentration (Fick). Dotierstoff-Diffusion in Si.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c4),var(--warning))"><div class="term">die Säure</div><div class="hint">pH &lt; 7</div></div><div class="flip-back"><div class="trans">ácido / acid</div><div class="ctx">Protonendonator (H⁺). HF, HCl, H₂SO₄. FAB: Reinigung + Ätzung.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c4),var(--warning))"><div class="term">die Base / Lauge</div><div class="hint">pH &gt; 7</div></div><div class="flip-back"><div class="trans">base / alcalí / base</div><div class="ctx">Protonenakzeptor (OH⁻). KOH, NaOH, NH₄OH. FAB: KOH-Ätzung, SC-1.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c4),var(--warning))"><div class="term">der pH-Wert</div><div class="hint">Säure-Base</div></div><div class="flip-back"><div class="trans">pH / valor pH</div><div class="ctx">pH = −log[H⁺]. 0–7 sauer, 7 neutral, 7–14 basisch. TMAH: ~13.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c4),var(--warning))"><div class="term">die Konzentration (c)</div><div class="hint">Lösung</div></div><div class="flip-back"><div class="trans">concentración / concentration</div><div class="ctx">mol/L oder Massenprozent (%). SC-1: 1:1:5 Volumenverhältnis.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c6),#92400e)"><div class="term">der Gefahrstoff</div><div class="hint">Sicherheit</div></div><div class="flip-back"><div class="trans">sustancia peligrosa / hazardous substance</div><div class="ctx">GHS-klassifiziert. HF, SiH₄, AsH₃, H₂SO₄. SDB lesen!</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c6),#92400e)"><div class="term">pyrophor</div><div class="hint">Selbstentzündlich</div></div><div class="flip-back"><div class="trans">pirofórico / pyrophoric</div><div class="ctx">Entzündet sich an Luft selbstständig. SiH₄, B₂H₆, PH₃. Extrem gefährlich!</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c6),#92400e)"><div class="term">ätzend / korrosiv</div><div class="hint">GHS05</div></div><div class="flip-back"><div class="trans">corrosivo / corrosive</div><div class="ctx">Zerstört Haut und Gewebe. H₂SO₄, HF, KOH. GHS05-Piktogramm.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c6),#92400e)"><div class="term">giftig / toxisch</div><div class="hint">GHS06</div></div><div class="flip-back"><div class="trans">tóxico / toxic</div><div class="ctx">Gesundheitsschaden bei Einatmen/Kontakt. AsH₃: extrem giftig. GHS06.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">die Ätzung</div><div class="hint">FAB-Prozess</div></div><div class="flip-back"><div class="trans">ataque / grabado / etching</div><div class="ctx">Material entfernen durch chemische Reaktion. Nass (HF) oder trocken (Plasma-RIE).</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">die Abscheidung</div><div class="hint">FAB-Prozess</div></div><div class="flip-back"><div class="trans">deposición / deposition</div><div class="ctx">Schicht auf Wafer aufbringen. CVD: chemisch. PVD: physikalisch. ALD: atomar.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">das Plasma</div><div class="hint">4. Zustand</div></div><div class="flip-back"><div class="trans">plasma / plasma</div><div class="ctx">Ionisiertes Gas. Radikale + Ionen. PECVD, RIE, Sputtern. RF-erzeugt.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">das Radikal</div><div class="hint">Reaktives Teilchen</div></div><div class="flip-back"><div class="trans">radical / radical</div><div class="ctx">Ungepaartes Elektron → sehr reaktiv. F• aus CF₄-Plasma ätzt Si.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">der Precursor</div><div class="hint">CVD/ALD</div></div><div class="flip-back"><div class="trans">precursor / precursor</div><div class="ctx">Gasförmiger Ausgangsstoff. TEOS, TMA, WF₆, SiH₄. Reagiert auf Wafer-Oberfläche.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">das Ausheilglühen</div><div class="hint">Nach Implantation</div></div><div class="flip-back"><div class="trans">recocido / annealing</div><div class="ctx">700–1100°C nach Ionenimplantation. Aktiviert Dotierstoffe, repariert Gitterschäden.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--primary),var(--c5))"><div class="term">der Yield</div><div class="hint">Qualitätsmaß</div></div><div class="flip-back"><div class="trans">rendimiento / yield</div><div class="ctx">% funktionierende Chips. Yield = funkt. Chips / Gesamt × 100%. Ziel: &gt;95%.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c2),var(--primary))"><div class="term">anisotrop</div><div class="hint">Ätzrichtung</div></div><div class="flip-back"><div class="trans">anisotrópico / anisotropic</div><div class="ctx">Ätzt bevorzugt in eine Richtung (senkrecht). Plasma/RIE. Gegenteil: isotrop.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c2),var(--primary))"><div class="term">die Selektivität</div><div class="hint">Ätzprozess</div></div><div class="flip-back"><div class="trans">selectividad / selectivity</div><div class="ctx">Ätzrate(Ziel)/Ätzrate(Maske). Hoch = gut. HF: ätzt SiO₂, kaum Si₃N₄.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c2),var(--primary))"><div class="term">die Hydrolyse</div><div class="hint">Reaktionstyp</div></div><div class="flip-back"><div class="trans">hidrólisis / hydrolysis</div><div class="ctx">Spaltung durch Wasser. TEOS-Hydrolyse → SiO₂-Bildung in CVD/Sol-Gel.</div></div></div></div>
+
+    <div class="flip-card" onclick="fc(this)"><div class="flip-inner"><div class="flip-front" style="background:linear-gradient(135deg,var(--c2),var(--primary))"><div class="term">die Reinheit (9N)</div><div class="hint">Materialqualität</div></div><div class="flip-back"><div class="trans">pureza / purity</div><div class="ctx">Nines = Neunen: 5N = 99,999%. Si-Wafer: 9N (9 Neunen = 99,9999999%).</div></div></div></div>
+
+  </div>
+  <div class="flip-count" id="flipCount">0 / 30 geflippt</div>
+</section>
+
+</main>
+
+<script>
+// ── Flip Cards ──────────────────────────────────────
+let flipped = 0;
+function fc(card) {
+  if (!card.classList.contains('flipped')) {
+    flipped++;
+    document.getElementById('flipCount').textContent = flipped + ' / 30 geflippt';
+  }
+  card.classList.toggle('flipped');
+}
+
+// ── Accordion ───────────────────────────────────────
+function toggleAcc(header) {
+  const body = header.nextElementSibling;
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ── Vocabulary Search & Filter ──────────────────────
+const rows = document.querySelectorAll('#vocabBody tr');
+let currentCat = 'all';
+let currentSearch = '';
+
+function updateCount() {
+  const visible = document.querySelectorAll('#vocabBody tr:not(.hidden)').length;
+  document.getElementById('term-counter').textContent = visible + ' de ' + rows.length + ' términos mostrados';
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  currentSearch = this.value.toLowerCase();
+  applyFilters();
+});
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const colors = { 'all': '#6b7280', 'grund': 'var(--c1)', 'periodensystem': 'var(--c2)', 'bindung': 'var(--c3)', 'reaktion': 'var(--warning)', 'losung': 'var(--c4)', 'fab': 'var(--c5)', 'gefahr': 'var(--c6)', 'mess': 'var(--primary)' };
+  if (cat !== 'all') {
+    btn.style.background = colors[cat] || '#1a56db';
+    btn.style.color = 'white';
+    btn.style.borderColor = 'transparent';
+  } else {
+    btn.style.background = '#f3f4f6';
+    btn.style.color = '#111827';
+    btn.style.borderColor = '#6b7280';
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  rows.forEach(row => {
+    const cat = row.getAttribute('data-cat') || '';
+    const text = row.textContent.toLowerCase();
+    const catOk = (currentCat === 'all') || (cat === currentCat);
+    const searchOk = !currentSearch || text.includes(currentSearch);
+    row.classList.toggle('hidden', !catOk || !searchOk);
+  });
+  updateCount();
+}
+
+// Initialize count
+updateCount();
+</script>
+</body>
+</html>

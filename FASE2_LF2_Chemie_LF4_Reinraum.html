@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FASE 2 — LF2 Chemische Grundlagen + LF4 Reinraum | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1e429f;
+    --success: #0e9f6e;
+    --warning: #e3a008;
+    --danger: #e02424;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --lf2: #7c3aed;
+    --lf3: #059669;
+    --lf4: #0891b2;
+    --lf9: #dc2626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  header { background: linear-gradient(135deg, var(--lf2), var(--lf4)); color: white; padding: 2rem 1.5rem; text-align: center; }
+  header h1 { font-size: 1.6rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.95rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem; }
+  .progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 8px; margin-top: 1rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .progress-bar { background: white; height: 8px; border-radius: 999px; width: 0%; transition: width 0.5s; }
+  main { max-width: 860px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--primary-dark); }
+  .lf-tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: white; }
+  .lf2 { background: var(--lf2); }
+  .lf3 { background: var(--lf3); }
+  .lf4 { background: var(--lf4); }
+  .lf9 { background: var(--lf9); }
+
+  /* ── Tablas Periódicas relevantes ── */
+  .element-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem; margin-top: 0.8rem; }
+  .element-card { border: 2px solid var(--border); border-radius: 8px; padding: 0.5rem 0.3rem; text-align: center; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+  .element-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+  .element-card.iv-a { border-color: var(--lf2); background: #f5f3ff; }
+  .element-card.iii-v { border-color: var(--lf4); background: #ecfeff; }
+  .element-card.dopant { border-color: var(--warning); background: #fffbeb; }
+  .el-num { font-size: 0.65rem; color: var(--muted); }
+  .el-sym { font-size: 1.4rem; font-weight: 700; }
+  .el-name { font-size: 0.6rem; color: var(--muted); overflow-wrap: break-word; word-break: break-word; }
+  .el-detail { display: none; }
+  .element-card.active { outline: 3px solid var(--primary); transform: scale(1.05); }
+  .el-panel { display: none; margin-top: 0.8rem; background: #f8fafc; border: 2px solid var(--primary); border-radius: 10px; padding: 1rem; font-size: 0.85rem; }
+  .el-panel.show { display: block; }
+  .el-panel-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .el-panel-sym { font-size: 2rem; font-weight: 700; color: var(--primary); }
+  .el-panel-num { font-size: 0.75rem; color: var(--muted); }
+  .el-panel-names { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.6rem; font-size: 0.82rem; }
+  .el-panel-de { color: var(--lf2); font-weight: 700; }
+  .el-panel-es { color: var(--success); font-weight: 600; }
+  .el-panel-en { color: var(--muted); font-style: italic; }
+  .el-panel-info { font-size: 0.82rem; line-height: 1.6; color: var(--text); }
+  .element-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; font-size: 0.8rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; border: 2px solid; }
+
+  /* ── Diagrama de banda ── */
+  .band-diagram { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 0.8rem; }
+  .band-box { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+  .band-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .band-visual { position: relative; height: 100px; background: #f3f4f6; border-radius: 8px; overflow: hidden; }
+  .band-valence { position: absolute; bottom: 0; left: 0; right: 0; background: var(--lf2); opacity: 0.5; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: white; }
+  .band-conduct { position: absolute; top: 0; left: 0; right: 0; background: var(--primary); opacity: 0.5; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: white; }
+  .band-gap { position: absolute; left: 0; right: 0; background: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--text); }
+  .band-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem; }
+
+  /* ── Dopaje interactivo ── */
+  .doping-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem; }
+  .doping-box { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; }
+  .doping-box h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
+  .crystal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 0.5rem 0; }
+  .crystal-atom { width: 100%; aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: white; }
+  .atom-si { background: #6b7280; }
+  .atom-p { background: #e02424; }
+  .atom-b { background: #1a56db; }
+  .atom-free { background: #0e9f6e; border: 2px dashed #065f46; }
+  .atom-hole { background: transparent; border: 2px dashed #1a56db; color: var(--lf2); font-size: 0.5rem; }
+  .doping-info { font-size: 0.8rem; margin-top: 0.5rem; }
+  .doping-info span { font-weight: 600; }
+
+  /* ── Procesos Químicos FAB ── */
+  .process-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.85rem; }
+  .process-table th { background: #f3f4f6; padding: 0.5rem 0.7rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  .process-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .process-table tr:hover td { background: #f9fafb; }
+  .chem-badge { display: inline-block; background: #fef3c7; color: #92400e; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-family: monospace; }
+
+  /* ── Reinraum ISO Classes ── */
+  .iso-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.82rem; }
+  .iso-table th { background: var(--lf4); color: white; padding: 0.5rem 0.7rem; text-align: left; font-weight: 600; }
+  .iso-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); }
+  .iso-table tr:nth-child(even) td { background: #f0f9ff; }
+  .iso-highlight { background: #d1fae5 !important; font-weight: 600; }
+  .particle-bar { height: 16px; background: var(--lf4); border-radius: 3px; display: inline-block; opacity: 0.6; transition: width 0.5s; }
+
+  /* ── ESD y Gefahren ── */
+  .warning-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .warning-card { border: 2px solid; border-radius: 10px; padding: 0.8rem; text-align: center; }
+  .warning-card.esd { border-color: var(--warning); background: #fffbeb; }
+  .warning-card.chemical { border-color: var(--danger); background: #fff5f5; }
+  .warning-card.particle { border-color: var(--lf4); background: #ecfeff; }
+  .warning-card .icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .warning-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .warning-card p { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── Vokabeln Flip Cards ── */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .flip-card { height: 110px; perspective: 600px; cursor: pointer; }
+  .flip-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.6rem; text-align: center; }
+  .flip-front { background: linear-gradient(135deg, var(--lf2), var(--lf4)); color: white; }
+  .flip-back { background: var(--card); border: 2px solid var(--border); transform: rotateY(180deg); }
+  .flip-front .term { font-size: 0.85rem; font-weight: 700; }
+  .flip-front .hint { font-size: 0.65rem; opacity: 0.8; margin-top: 0.3rem; }
+  .flip-back .trans { font-size: 0.78rem; font-weight: 600; color: var(--lf2); }
+  .flip-back .context { font-size: 0.65rem; color: var(--muted); margin-top: 0.3rem; }
+  .flip-progress { text-align: center; margin-top: 0.8rem; font-size: 0.85rem; color: var(--muted); }
+
+  /* ── Quiz ── */
+  .quiz-question { margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 10px; border-left: 4px solid var(--primary); }
+  .quiz-question p { font-weight: 600; margin-bottom: 0.7rem; }
+  .quiz-option { display: block; width: 100%; text-align: left; padding: 0.5rem 0.8rem; margin: 0.3rem 0; border: 2px solid var(--border); border-radius: 8px; background: white; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+  .quiz-option:hover { border-color: var(--primary); background: #eff6ff; }
+  .quiz-option.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--danger); background: #fff1f2; color: #9f1239; }
+  .quiz-feedback { font-size: 0.85rem; margin-top: 0.5rem; padding: 0.4rem 0.7rem; border-radius: 6px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #d1fae5; color: #065f46; }
+  .quiz-feedback.wrong { background: #fee2e2; color: #991b1b; }
+  #quiz-result { text-align: center; padding: 1rem; background: #f0f9ff; border-radius: 10px; display: none; font-size: 1rem; font-weight: 600; }
+
+  /* ── Schreibübung ── */
+  textarea { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 0.7rem; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 100px; transition: border-color 0.2s; }
+  textarea:focus { outline: none; border-color: var(--primary); }
+  .btn { padding: 0.5rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .btn-secondary:hover { background: #d1d5db; }
+  .musterloesung { display: none; margin-top: 1rem; padding: 1rem; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; font-size: 0.88rem; }
+  .musterloesung.show { display: block; }
+  .musterloesung h4 { color: var(--success); font-weight: 700; margin-bottom: 0.5rem; }
+
+  /* ── Prozessbaum ── */
+  .proc-tree { font-size: 0.83rem; margin: 0.8rem 0; }
+  .proc-tree ul { list-style: none; padding-left: 1.2rem; border-left: 2px solid var(--border); margin: 0.2rem 0 0.2rem 0.4rem; }
+  .proc-tree li { padding: 0.15rem 0 0.15rem 0.6rem; position: relative; color: var(--text); }
+  .proc-tree li::before { content: '├─ '; color: var(--muted); font-family: monospace; }
+  .proc-tree li:last-child::before { content: '└─ '; }
+  .proc-root { font-weight: 700; font-size: 0.88rem; color: var(--lf2); padding: 0.3rem 0; }
+  .proc-detail { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .proc-block { border-radius: 10px; padding: 1rem; border-left: 4px solid; }
+  .proc-block h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .proc-block .rxn { background: rgba(0,0,0,0.04); border-radius: 6px; padding: 0.4rem 0.7rem; margin: 0.4rem 0; font-family: monospace; font-size: 0.82rem; }
+  .proc-block .rxn-detail { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; padding-left: 0.5rem; border-left: 2px solid var(--border); }
+  /* ── Siglas / Abkürzungen ── */
+  .abk-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.6rem; }
+  .abk-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .abk-table td:first-child { font-weight: 700; color: var(--lf2); white-space: nowrap; width: 70px; }
+  .abk-table td:nth-child(2) { color: var(--text); font-style: italic; }
+  .abk-table td:nth-child(3) { color: var(--muted); }
+  .abk-table tr:nth-child(even) td { background: #f9fafb; }
+  /* ── Reinraum Luft Flow ── */
+  .luft-flow { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 1rem 0; }
+  .luft-box { background: var(--card); border: 2px solid var(--lf4); border-radius: 8px; padding: 0.5rem 1.2rem; text-align: center; font-size: 0.82rem; min-width: 200px; position: relative; }
+  .luft-box.highlight { background: #ecfeff; font-weight: 700; border-width: 3px; }
+  .luft-box.split-box { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; min-width: 360px; }
+  .luft-arrow { font-size: 1.2rem; color: var(--lf4); line-height: 1; }
+  .luft-param { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 0.15rem; }
+  /* Anki export */
+  .anki-row { display: flex; gap: 0.5rem; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .anki-front { width: 180px; font-weight: 600; color: var(--lf2); }
+  .anki-back { flex: 1; color: var(--muted); }
+  .anki-context { font-size: 0.75rem; color: var(--lf4); font-style: italic; }
+  .copy-btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; background: var(--border); border: none; border-radius: 5px; cursor: pointer; }
+  .copy-btn:hover { background: #d1d5db; }
+  #copy-notice { display: none; color: var(--success); font-size: 0.85rem; margin-left: 0.5rem; }
+  /* Citas en línea (inline references) */
+  a.ref { display:inline-block; font-size:.68rem; font-weight:700; text-decoration:none; background:#dbeafe; color:var(--primary); border-radius:3px; padding:0 4px; vertical-align:super; line-height:1.5; white-space:nowrap; margin-left:2px; }
+  a.ref:hover { background:var(--primary); color:white; }
+  a.ref.wolf { background:#ede9fe; color:#7c3aed; }
+  a.ref.wolf:hover { background:#7c3aed; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FASE 2 — Chemische Grundlagen, Halbleiterphysik &amp; Reinraum</h1>
+  <p>LF 2: Materialien &amp; FAB-Chemie | LF 3: Halbleiterwerkstoffe | LF 4: Reinraum | LF 9: Dotierungsverfahren</p>
+  <div class="badges">
+    <span class="badge">⏱ ~90 min</span>
+    <span class="badge">LF 2 (80h KMK)</span>
+    <span class="badge">LF 3 (40h KMK)</span>
+    <span class="badge">LF 4 (20h KMK)</span>
+    <span class="badge">LF 9 (40h KMK)</span>
+    <span class="badge">Vorteil: PhD Chemie</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 1: Halbleitermaterialien
+════════════════════════════════════════════════════════════ -->
+<section id="sec-materialien">
+  <h2>⚛ <span class="lf-tag lf2">LF 2</span> Halbleitermaterialien — Relevante Elemente</h2>
+  <div style="background:#f5f3ff;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid var(--lf2)">
+    <h3 style="font-size:.95rem;margin-bottom:.5rem;color:#5b21b6">¿Qué son los Halbleitermaterialien?</h3>
+    <p style="font-size:.85rem">Elementos o compuestos con conductividad eléctrica intermedia entre conductores (<em>Metalle</em>) y aislantes (<em>Isolatoren</em>). La propiedad clave es la <strong>Bandlücke E<sub>g</sub></strong> — en español: <em>brecha de banda</em>, en inglés: <em>band gap</em>. Es la zona de energía prohibida que separa el <em>Valenzband</em> (electrones ligados al átomo) del <em>Leitungsband</em> (electrones libres que conducen corriente). <strong>E<sub>g</sub> no es la energía de activación</strong> — es específicamente la brecha energética del sólido cristalino. Controlando E<sub>g</sub> se diseñan transistores, LEDs y sensores.</p>
+    <p style="font-size:.83rem;margin-top:.4rem;color:#6b21a8"><strong>PhD-Vorteil:</strong> la hibridación sp³ explica la estructura tetraédrica del Si (= diamante). La electronegatividad explica por qué GaAs forma enlace polar-covalente. La <em>analogy</em> con energía de activación: E<sub>g</sub> es como una barrera de energía — los electrones necesitan superar E<sub>g</sub> para ser libres, igual que una reacción necesita superar E<sub>a</sub> para ocurrir. Pero son conceptos distintos: E<sub>a</sub> es cinética de reacción, E<sub>g</sub> es estructura electrónica del cristal.</p>
+    <p style="font-size:.8rem;margin-top:.3rem;color:var(--muted)">Klicke auf ein Element für Details.</p>
+  </div>
+
+  <div class="element-legend">
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--lf2); background:#f5f3ff"></div> IV-A Halbleiter</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--lf4); background:#ecfeff"></div> III-V Verbindungen</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--warning); background:#fffbeb"></div> Dotierstoffe</div>
+  </div>
+
+  <div class="element-grid" id="elementGrid">
+    <div class="element-card iv-a" onclick="toggleEl(this)"
+      data-de="Silizium" data-es="Silicio" data-en="Silicon" data-num="14"
+      data-info="<strong>Bandlücke E<sub>g</sub> = 1,12 eV</strong> · Schmelzpunkt 1414°C · Kristallstruktur: Diamantgitter (sp³-Hybridisierung, tetraedrisch wie Kohlenstoff) · Reinheit für Wafer: 99,9999999% (9N) · Haupthalbleiter der modernen Mikroelektronik (Intel, GlobalFoundries, TSMC).">
+      <div class="el-num">14</div>
+      <div class="el-sym">Si</div>
+      <div class="el-name">Silizium</div>
+    </div>
+    <div class="element-card iv-a" onclick="toggleEl(this)"
+      data-de="Germanium" data-es="Germanio" data-en="Germanium" data-num="32"
+      data-info="<strong>Bandlücke E<sub>g</sub> = 0,67 eV</strong> · Schmelzpunkt 938°C · Höhere Ladungsträgermobilität als Si → schnellere Transistoren bei niedrigen Frequenzen · SiGe-BiCMOS (HBT): kombiniert Si-Prozess mit Ge-Eigenschaften · Infrarot-Optik (Glasfaser-Fenster).">
+      <div class="el-num">32</div>
+      <div class="el-sym">Ge</div>
+      <div class="el-name">Germanium</div>
+    </div>
+    <div class="element-card iii-v" onclick="toggleEl(this)"
+      data-de="Galliumarsenid" data-es="Arseniuro de galio" data-en="Gallium arsenide" data-num="31/33"
+      data-info="<strong>Bandlücke E<sub>g</sub> = 1,42 eV — direkte Bandlücke!</strong> · III-V-Verbindungshalbleiter · Elektronenmobilität µ<sub>e</sub> = 8.500 cm²/Vs (6× höher als Si) · Anwendungen: LEDs, Laserdioden, Hochfrequenz-Chips (HF) · Direkte Bandlücke = Lichtemission möglich (anders als Si = indirekte Bandlücke).">
+      <div class="el-num">31/33</div>
+      <div class="el-sym">GaAs</div>
+      <div class="el-name">Gallium&shy;arsenid</div>
+    </div>
+    <div class="element-card iii-v" onclick="toggleEl(this)"
+      data-de="Indiumphosphid" data-es="Fosfuro de indio" data-en="Indium phosphide" data-num="49/15"
+      data-info="<strong>Bandlücke E<sub>g</sub> = 1,35 eV — direkte Bandlücke</strong> · III-V-Verbindungshalbleiter · Optimale Bandlücke für Telekommunikation (1,55 µm Glasfaserwellenlänge) · Glasfaser-Transceiver, optische Verstärker · Zukünftige ESMC/TSMC-Fab Dresden (anspruchsvollste Chips).">
+      <div class="el-num">49/15</div>
+      <div class="el-sym">InP</div>
+      <div class="el-name">Indium&shy;phosphid</div>
+    </div>
+    <div class="element-card iv-a" onclick="toggleEl(this)"
+      data-de="Siliziumkarbid" data-es="Carburo de silicio" data-en="Silicon carbide" data-num="6+14"
+      data-info="<strong>Bandlücke E<sub>g</sub> = 3,26 eV (4H-SiC) — Wide-Bandgap-Halbleiter</strong> · Hochtemperatur: stabil bis > 300°C · Hohe Durchbruchfeldstärke (10× höher als Si) → kompakte Leistungsschalter · Anwendungen: IGBTs und MOSFETs für Elektroautos, Windenergie · Infineon Dresden: produziert SiC-Chips.">
+      <div class="el-num">6+14</div>
+      <div class="el-sym">SiC</div>
+      <div class="el-name">Silizium&shy;karbid</div>
+    </div>
+    <div class="element-card iii-v" onclick="toggleEl(this)"
+      data-de="Galliumnitrid" data-es="Nitruro de galio" data-en="Gallium nitride" data-num="31/7"
+      data-info="<strong>Bandlücke E<sub>g</sub> = 3,4 eV — Wide-Bandgap-Halbleiter</strong> · HEMTs (High Electron Mobility Transistors) für Leistungsverstärker · 5G-Basisstationen, Mikrowellengeräte · GaN-LEDs (blaues Licht → kombiniert mit Phosphor → weißes Licht in LED-Lampen) · Sehr hohe Durchbruchfeldstärke.">
+      <div class="el-num">31/7</div>
+      <div class="el-sym">GaN</div>
+      <div class="el-name">Gallium&shy;nitrid</div>
+    </div>
+    <div class="element-card dopant" onclick="toggleEl(this)"
+      data-de="Bor (p-Typ-Dotierstoff)" data-es="Boro (dopante tipo-p)" data-en="Boron (p-type dopant)" data-num="5"
+      data-info="<strong>III. Hauptgruppe → 3 Valenzelektronen → Akzeptor → p-Typ-Dotierung</strong> · Bor hat 1 Valenzelektron weniger als Si → entsteht eine Fehlstelle im Gitter = ein Loch (Löcher / huecos / holes) im Valenzband · Loch verhält sich wie positive Ladung → p-Typ · Eingebracht per Diffusion oder Ionenimplantation.">
+      <div class="el-num">5</div>
+      <div class="el-sym">B</div>
+      <div class="el-name">Bor<br><small style="font-size:.55rem">(p-Typ)</small></div>
+    </div>
+    <div class="element-card dopant" onclick="toggleEl(this)"
+      data-de="Phosphor (n-Typ-Dotierstoff)" data-es="Fósforo (dopante tipo-n)" data-en="Phosphorus (n-type dopant)" data-num="15"
+      data-info="<strong>V. Hauptgruppe → 5 Valenzelektronen → Donator → n-Typ-Dotierung</strong> · Phosphor hat 1 Valenzelektron mehr als Si → das 5. Elektron ist schwach gebunden und wird ins Leitungsband abgegeben (freies Elektron) · Ionenimplantation als Hauptverfahren · Höhere Diffusivität als As → weniger präzise, aber einfacher.">
+      <div class="el-num">15</div>
+      <div class="el-sym">P</div>
+      <div class="el-name">Phosphor<br><small style="font-size:.55rem">(n-Typ)</small></div>
+    </div>
+    <div class="element-card dopant" onclick="toggleEl(this)"
+      data-de="Arsen (n-Typ-Dotierstoff)" data-es="Arsénico (dopante tipo-n)" data-en="Arsenic (n-type dopant)" data-num="33"
+      data-info="<strong>V. Gruppe → 5 Valenzelektronen → Donator → n-Typ-Dotierung</strong> · Niedrigere Diffusivität als Phosphor → schärfere, präzisere Dotierungsprofile (bevorzugt bei Source/Drain in kurzen Kanälen) · ⚠ GIFTIG: GHS06 (akut toxisch) + GHS08 (karzinogen) · Als Gas: Arsin (AsH₃) = hochgiftig, geschlossene Systeme + Gasdetektoren Pflicht.">
+      <div class="el-num">33</div>
+      <div class="el-sym">As</div>
+      <div class="el-name">Arsen<br><small style="font-size:.55rem">(n-Typ)</small></div>
+    </div>
+  </div>
+
+  <!-- Panel de detalle — se llena al hacer click en un elemento -->
+  <div id="el-panel" class="el-panel">
+    <div class="el-panel-header">
+      <span class="el-panel-sym" id="el-p-sym"></span>
+      <span class="el-panel-num" id="el-p-num"></span>
+    </div>
+    <div class="el-panel-names">
+      <span>🇩🇪 DE: <strong class="el-panel-de" id="el-p-de"></strong></span>
+      <span>🇪🇸 <span class="el-panel-es" id="el-p-es"></span></span>
+      <span>🇺🇸 EN: <span class="el-panel-en" id="el-p-en"></span></span>
+    </div>
+    <div class="el-panel-info" id="el-p-info"></div>
+  </div>
+
+  <!-- Bandlücken-Diagramm -->
+  <h3>Bandstruktur — vereinfacht</h3>
+  <div class="band-diagram">
+    <div class="band-box">
+      <h4>Isolator (SiO₂)</h4>
+      <div class="band-visual">
+        <div class="band-conduct" style="height:25%">Leitungsband</div>
+        <div class="band-gap" style="top:25%; height:50%">Eg ≈ 9 eV</div>
+        <div class="band-valence" style="height:25%">Valenzband</div>
+      </div>
+      <div class="band-label">Elektronen können nicht springen → kein Strom</div>
+    </div>
+    <div class="band-box">
+      <h4>Halbleiter (Si)</h4>
+      <div class="band-visual">
+        <div class="band-conduct" style="height:30%">Leitungsband</div>
+        <div class="band-gap" style="top:30%; height:35%">Eg = 1,12 eV</div>
+        <div class="band-valence" style="height:35%">Valenzband</div>
+      </div>
+      <div class="band-label">Dotierung oder Wärme → Elektronen wechseln</div>
+    </div>
+    <div class="band-box">
+      <h4>Metall (Al)</h4>
+      <div class="band-visual">
+        <div class="band-conduct" style="height:50%">Leitungsband</div>
+        <div class="band-gap" style="top:50%; height:0%"></div>
+        <div class="band-valence" style="height:50%">Valenzband</div>
+      </div>
+      <div class="band-label">Bänder überlappen → freie Elektronen</div>
+    </div>
+  </div>
+
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.8rem">
+    <strong>PhD-Brücke:</strong> Bandlücke ≈ HOMO-LUMO-Lücke in der Organischen Chemie.
+    Dotierung ≈ gezielte Einführung von Heteroatomen in ein Kristallgitter (wie N-Substitution in Aromaten).
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN LF3-A: Bändermodell & Kristallstruktur
+════════════════════════════════════════════════════════════ -->
+<section id="sec-bandmodell">
+  <h2>⚡ <span class="lf-tag lf3">LF 3</span> Bändermodell &amp; Kristallstruktur <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Physics of Semiconductor Devices, 3rd ed., Cap.1, pp.5–74">[Sze07, Cap.1]</a></h2>
+
+  <!-- Concepto desde cero -->
+  <div style="background:#f0fdf4;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid #059669">
+    <h3 style="font-size:.95rem;margin-bottom:.5rem;color:#065f46">¿Qué es el Bändermodell? (Modelo de bandas)</h3>
+    <p style="font-size:.85rem">En un átomo aislado, los electrones ocupan niveles de energía discretos. Cuando millones de átomos se unen en un sólido cristalino, esos niveles se "ensanchan" y forman <strong>bandas continuas de energía</strong>.</p>
+    <p style="font-size:.85rem;margin-top:.5rem">Las dos bandas clave son:</p>
+    <ul style="font-size:.85rem;margin:.4rem 0 0 1.2rem;display:flex;flex-direction:column;gap:.3rem">
+      <li><strong>Valenzband</strong> (banda de valencia): electrones ligados al átomo, llena a T=0 K</li>
+      <li><strong>Leitungsband</strong> (banda de conducción): electrones libres que pueden conducir corriente</li>
+      <li><strong>Verbotene Zone / Bandlücke (E<sub>g</sub>)</strong>: región de energía prohibida entre ambas bandas</li>
+    </ul>
+  </div>
+
+  <!-- Diagrama SVG del modelo de bandas -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem">
+    <!-- Isolator -->
+    <div style="background:#fff1f2;border-radius:8px;padding:1rem;text-align:center">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem;color:#dc2626">Isolator (Nichtleiter)</div>
+      <svg width="80" height="100" viewBox="0 0 80 100">
+        <rect x="5" y="10" width="70" height="15" fill="#93c5fd" rx="3"/>
+        <text x="40" y="21" text-anchor="middle" font-size="9" fill="#1e3a8a">Leitungsband</text>
+        <text x="40" y="50" text-anchor="middle" font-size="9" fill="#dc2626">E_g &gt; 5 eV</text>
+        <rect x="5" y="75" width="70" height="15" fill="#4ade80" rx="3"/>
+        <text x="40" y="86" text-anchor="middle" font-size="9" fill="#14532d">Valenzband</text>
+      </svg>
+      <p style="font-size:.75rem;margin-top:.3rem">SiO₂: 9 eV, Al₂O₃: 8.8 eV</p>
+    </div>
+    <!-- Halbleiter -->
+    <div style="background:#f0fdf4;border-radius:8px;padding:1rem;text-align:center;border:2px solid #059669">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem;color:#059669">Halbleiter</div>
+      <svg width="80" height="100" viewBox="0 0 80 100">
+        <rect x="5" y="25" width="70" height="15" fill="#93c5fd" rx="3"/>
+        <text x="40" y="36" text-anchor="middle" font-size="9" fill="#1e3a8a">Leitungsband</text>
+        <text x="40" y="58" text-anchor="middle" font-size="9" fill="#059669">E_g 1–3 eV</text>
+        <rect x="5" y="65" width="70" height="15" fill="#4ade80" rx="3"/>
+        <text x="40" y="76" text-anchor="middle" font-size="9" fill="#14532d">Valenzband</text>
+      </svg>
+      <p style="font-size:.75rem;margin-top:.3rem">Si: 1.12 eV, GaAs: 1.42 eV</p>
+    </div>
+    <!-- Metall -->
+    <div style="background:#fefce8;border-radius:8px;padding:1rem;text-align:center">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem;color:#d97706">Metall (Leiter)</div>
+      <svg width="80" height="100" viewBox="0 0 80 100">
+        <rect x="5" y="40" width="70" height="30" fill="#a78bfa" rx="3"/>
+        <text x="40" y="52" text-anchor="middle" font-size="9" fill="white">Leitungs- &amp;</text>
+        <text x="40" y="63" text-anchor="middle" font-size="9" fill="white">Valenzband</text>
+        <text x="40" y="29" text-anchor="middle" font-size="9" fill="#7c3aed">überlappend</text>
+      </svg>
+      <p style="font-size:.75rem;margin-top:.3rem">Al, Cu, W, TiN</p>
+    </div>
+  </div>
+
+  <!-- Analogía química -->
+  <div style="background:#fef9c3;border-radius:8px;padding:.8rem;font-size:.82rem;border-left:4px solid #ca8a04;margin-bottom:1rem">
+    <strong>🧪 Temperatura y electrones libres — la clave de los semiconductores:</strong>
+    <span style="display:block;margin-top:.5rem">La temperatura significa que los átomos del cristal vibran y sacuden a sus electrones. No todos los electrones reciben el mismo sacudón — hay una distribución: la mayoría recibe poco, unos pocos reciben mucho.</span>
+    <span style="display:block;margin-top:.4rem"><strong>En Si</strong> (E<sub>g</sub> = 1,12 eV): la barrera es alta, pero la distribución de energías siempre tiene una "cola" con electrones suficientemente energéticos para cruzarla. A 300 K, esa cola equivale a unos <strong>n<sub>i</sub> ≈ 1,5 × 10<sup>10</sup> electrones libres/cm³</strong> <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Cap.1, p.26 — ni Si a 300 K">[Sze07, p.26]</a> — es decir, 1 de cada billón de átomos del Si aporta un electrón libre. Muy pocos, pero no cero → Si es semiconductor, no aislante.</span>
+    <span style="display:block;margin-top:.4rem"><strong>En SiO₂</strong> (E<sub>g</sub> = 9 eV): la barrera es tan alta que esa cola prácticamente no existe a temperatura ambiente → cero electrones libres → aislante perfecto.</span>
+    <span style="display:block;margin-top:.4rem;font-style:italic;color:#6b7280;font-size:.8rem">Regla práctica: cuanto mayor E<sub>g</sub>, menor conductividad a temperatura ambiente. Dopando el Si se añaden electrones (n-Typ) o huecos (p-Typ) sin depender de la temperatura — eso es lo que permite controlar el transistor.</span>
+  </div>
+
+  <!-- Kristallstruktur -->
+  <div style="background:#f0f9ff;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid #0891b2">
+    <h3 style="font-size:.95rem;margin-bottom:.5rem;color:#0e4880">Kristallstruktur des Siliziums (Siliziumkristallstruktur) <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.2, p.25 — Si material, Kristallstruktur">[Wolf00, p.25]</a></h3>
+    <p style="font-size:.85rem">El silicio forma una red cúbica centrada en las caras con base de 2 átomos — la misma estructura que el diamante. Cada átomo de Si forma <strong>4 enlaces covalentes tetraédricos</strong> con sus vecinos.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.7rem">
+      <div style="background:white;border-radius:8px;padding:.7rem">
+        <div style="font-weight:700;font-size:.82rem;color:#059669;margin-bottom:.3rem">✅ Einkristall (monocrystalline)</div>
+        <p style="font-size:.8rem">Red perfectamente ordenada en toda la oblea. Se fabrica por el <strong>proceso Czochralski</strong>: tirar un cristal lentamente desde Si fundido (1414°C). Usado para transistores y circuitos integrados.</p>
+        <p style="font-size:.78rem;margin-top:.3rem;color:#6b7280"><em>der Einkristall • einkristallin • das Czochralski-Verfahren • die Schmelze • der Kristallzug</em></p>
+      </div>
+      <div style="background:white;border-radius:8px;padding:.7rem">
+        <div style="font-weight:700;font-size:.82rem;color:#d97706;margin-bottom:.3rem">⚠ Polykristall (polycrystalline)</div>
+        <p style="font-size:.8rem">Múltiples granos (Körner) con orientaciones distintas y bordes de grano entre ellos. Se deposita por CVD. Menor movilidad de portadores — usado para Gate-Elektroden, no para substratos activos.</p>
+        <p style="font-size:.78rem;margin-top:.3rem;color:#6b7280"><em>der Polykristall • polykristallin • das Korn • die Korngrenze • die Mobilität</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intrinsic semiconductor -->
+  <div style="background:#faf5ff;border-radius:8px;padding:.8rem;font-size:.83rem;border-left:4px solid #7c3aed">
+    <strong>Eigenleiter</strong> (DE) = <strong>semiconductor intrínseco</strong> (ES) = <strong>intrinsic semiconductor</strong> (EN): semiconductor puro, sin dopantes. A temperatura ambiente, la agitación térmica (<em>thermische Anregung</em>) excita una pequeña fracción de electrones al <em>Leitungsband</em> — dejan vacantes (<em>Löcher / huecos / holes</em>) en el <em>Valenzband</em>. Ambos tipos de portadores contribuyen a la conducción.
+    <div style="margin-top:.6rem;padding:.7rem;background:white;border-radius:8px;border:1px solid #e5e7eb;font-size:.8rem">
+      <strong>die Eigenleitungskonzentration n<sub>i</sub></strong> (concentración intrínseca de portadores / EN: intrinsic carrier concentration):<br>
+      Número de electrones libres <em>e igual</em> número de huecos por cm³ en un semiconductor puro a temperatura T.<br>
+      <span style="display:block;margin-top:.3rem">→ Si a 300 K: <strong>n<sub>i</sub> ≈ 1,5 × 10<sup>10</sup> cm<sup>−3</sup></strong></span>
+      <span style="display:block;margin-top:.2rem;color:#6b7280">Comparación: el Si tiene 5×10<sup>22</sup> átomos/cm³, así que solo 1 de cada 3×10<sup>12</sup> átomos aporta un portador libre. Es muy poco — por eso el Si puro casi no conduce y se necesita dopación para controlar la conductividad.</span>
+      <span style="display:block;margin-top:.3rem;color:#7c3aed">PhD-Brücke: n<sub>i</sub>² = N<sub>C</sub>·N<sub>V</sub>·e<sup>−E<sub>g</sub>/k<sub>B</sub>T</sup> — la misma forma que la constante de equilibrio K = A·e<sup>−ΔG/RT</sup>. Cuanto mayor E<sub>g</sub>, menor n<sub>i</sub>, igual que mayor ΔG de reacción da menor constante de equilibrio.</span>
+    </div>
+    <span style="display:block;margin-top:.4rem;font-size:.79rem;color:#6b7280"><em>Términos clave: der Eigenleiter • der intrinsische Halbleiter (EN: intrinsic semiconductor) • das Elektron-Loch-Paar (EN: electron-hole pair) • die thermische Anregung (EN: thermal excitation) • die Eigenleitungskonzentration n<sub>i</sub> (EN: intrinsic carrier concentration)</em></span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN LF3-B: PN-Übergang
+════════════════════════════════════════════════════════════ -->
+<section id="sec-pn">
+  <h2>🔀 <span class="lf-tag lf3">LF 3</span> PN-Übergang — Grundlagen <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Physics of Semiconductor Devices, 3rd ed., Cap.2, pp.79–133">[Sze07, Cap.2]</a></h2>
+
+  <div style="background:#f0fdf4;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid #059669">
+    <h3 style="font-size:.95rem;margin-bottom:.5rem;color:#065f46">¿Qué es una unión p-n? (PN-Übergang)</h3>
+    <p style="font-size:.85rem">Cuando se pone en contacto una zona dopada tipo-n (exceso de electrones) con una zona tipo-p (exceso de huecos), ocurre difusión de portadores. Esto crea una <strong>zona de carga espacial (Raumladungszone)</strong> con un campo eléctrico interno que frena la difusión hasta alcanzar equilibrio.</p>
+  </div>
+
+  <!-- Drei Zustände -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-bottom:1rem">
+    <div style="background:#f8fafc;border-radius:8px;padding:.8rem;border:2px solid #e5e7eb">
+      <div style="font-weight:700;font-size:.82rem;margin-bottom:.4rem">⚖ Gleichgewicht (sin tensión)</div>
+      <p style="font-size:.79rem">La Raumladungszone actúa como barrera. Difusionsspannung U_D ≈ 0.6–0.7 V para Si.</p>
+      <p style="font-size:.77rem;color:#6b7280;margin-top:.3rem"><em>die Raumladungszone • die Diffusionsspannung • das Gleichgewicht</em></p>
+    </div>
+    <div style="background:#f0fdf4;border-radius:8px;padding:.8rem;border:2px solid #059669">
+      <div style="font-weight:700;font-size:.82rem;margin-bottom:.4rem;color:#059669">▶ Durchlassrichtung (forward bias)</div>
+      <p style="font-size:.79rem">Tensión externa reduce la barrera → corriente fluye. Polo + al lado p, polo − al lado n.</p>
+      <p style="font-size:.77rem;color:#6b7280;margin-top:.3rem"><em>die Durchlassrichtung • die Flussspannung • der Schwellwert</em></p>
+    </div>
+    <div style="background:#fff1f2;border-radius:8px;padding:.8rem;border:2px solid #dc2626">
+      <div style="font-weight:700;font-size:.82rem;margin-bottom:.4rem;color:#dc2626">◀ Sperrrichtung (reverse bias)</div>
+      <p style="font-size:.79rem">Tensión externa amplía la barrera → casi sin corriente. Solo corriente de saturación I_S.</p>
+      <p style="font-size:.77rem;color:#6b7280;margin-top:.3rem"><em>die Sperrrichtung • die Sperrspannung • der Sperrstrom • der Durchbruch</em></p>
+    </div>
+  </div>
+
+  <!-- Shockley equation -->
+  <div style="background:#f0f9ff;border-radius:8px;padding:.8rem;font-size:.83rem;border-left:4px solid #0891b2;margin-bottom:1rem">
+    <strong>Shockley-Gleichung (Diodengleichung)</strong> <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Cap.2, p.80 — ideal diode equation">[Sze07, p.80]</a>:<br>
+    <span style="font-family:monospace;font-size:.9rem">I = I<sub>S</sub> · (e<sup>U/nU<sub>T</sub></sup> − 1)</span><br>
+    <span style="font-size:.8rem;margin-top:.3rem;display:block">I<sub>S</sub> = Sperrsättigungsstrom | U<sub>T</sub> = Temperaturspannung (≈26 mV bei 300K) | n = Idealitätsfaktor</span>
+    <span style="font-size:.78rem;color:#6b7280;display:block;margin-top:.3rem"><em>die Diodenkennlinie • der Sättigungsstrom • die Temperaturspannung • der Idealitätsfaktor</em></span>
+  </div>
+
+  <!-- FAB relevance -->
+  <div style="background:#fef9c3;border-radius:8px;padding:.8rem;font-size:.82rem;border-left:4px solid #ca8a04">
+    <strong>🏭 Relevanz in der FAB:</strong> Jeder Transistor (MOSFET, BJT) enthält mehrere PN-Übergänge. Die Qualität der Dotierungsprofile bestimmt direkt die elektrischen Eigenschaften. Source/Drain eines MOSFET sind hochdotierte p⁺/n⁺ Zonen, die PN-Übergänge mit dem Substrat bilden.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 2: Dotierung interactiva
+════════════════════════════════════════════════════════════ -->
+<section id="sec-dotierung">
+  <h2>🔬 <span class="lf-tag lf2">LF 2</span> Dotierung — n-Typ vs. p-Typ <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Cap.1, p.45 — donors, acceptors, n/p-type">[Sze07, p.45]</a></h2>
+  <div class="doping-container">
+    <div class="doping-box">
+      <h4 style="color:var(--danger)">n-Typ (Donator: P, As)</h4>
+      <div class="crystal-grid">
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-p">P</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-free">e⁻</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+      </div>
+      <div class="doping-info">
+        <span>Donator (5 Valenzelektronen)</span> → 1 freies Elektron (e⁻) pro Dotieratom.<br>
+        Majorität: <span style="color:var(--danger)">Elektronen</span> | Minorität: Löcher<br>
+        Anwendung: Source/Drain in nMOS, Emitter in npn-Transistor
+      </div>
+    </div>
+    <div class="doping-box">
+      <h4 style="color:var(--primary)">p-Typ (Akzeptor: B)</h4>
+      <div class="crystal-grid">
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-b">B</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-hole">⊕</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+        <div class="crystal-atom atom-si">Si</div>
+      </div>
+      <div class="doping-info">
+        <span>Akzeptor (3 Valenzelektronen)</span> → 1 Loch (⊕) pro Dotieratom.<br>
+        Majorität: <span style="color:var(--primary)">Löcher</span> | Minorität: Elektronen<br>
+        Anwendung: Kanal in nMOS, Basis in npn-Transistor
+      </div>
+    </div>
+  </div>
+
+  <h3>Dotierverfahren in der FAB</h3>
+  <table class="process-table">
+    <thead>
+      <tr><th>Verfahren</th><th>Prinzip</th><th>Vorteil</th><th>Nachteil</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Ionenimplantation</strong> <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Cap.12, p.527 — ion implantation">[Sze07, p.527]</a></td>
+        <td>Ionen werden beschleunigt (10–500 keV) und in Si geschossen</td>
+        <td>Präzise Tiefe + Konzentration, kalt</td>
+        <td>Kristallschäden → Ausheilung (Annealing) nötig</td>
+      </tr>
+      <tr>
+        <td><strong>Diffusion</strong> <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.6, p.199 — Fick'sche Gesetze, Diffusionsofen">[Wolf00, p.199]</a></td>
+        <td>Dotierstoff-Gasphase bei 900–1200°C; Fick'sches Gesetz</td>
+        <td>Gleichmäßig, kein Schaden</td>
+        <td>Temperaturbudget, schlechtere Kontrolle der Tiefe</td>
+      </tr>
+      <tr>
+        <td><strong>In-situ (CVD)</strong></td>
+        <td>Dotieratome direkt beim Schichtwachstum eingebaut</td>
+        <td>Integriert im Prozess</td>
+        <td>Nur für epitaktische Schichten</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.6rem">
+    <strong>PhD-Brücke:</strong> Diffusion folgt Fick'schen Gesetzen — exakt wie Stofftransport in Lösungen.
+    Ionenimplantation ≈ Bombardierung eines Kristalls (analog zu Ionenstrahlen in der Massenspektrometrie).
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN LF9: Dotierungsverfahren
+════════════════════════════════════════════════════════════ -->
+<section id="sec-lf9">
+  <h2>💉 <span class="lf-tag lf9">LF 9</span> Dotierungsverfahren — Ionenimplantation &amp; Diffusion <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Cap.12, pp.527–561">[Sze07, Cap.12]</a> <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.8, pp.280–356">[Wolf00, Cap.8]</a></h2>
+
+  <div style="background:#fff1f2;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc2626">
+    <h3 style="font-size:.95rem;margin-bottom:.5rem;color:#7f1d1d">¿Qué son los Dotierungsverfahren?</h3>
+    <p style="font-size:.85rem">Para controlar las propiedades eléctricas del semiconductor hay que introducir átomos dopantes (Dotierstoffe) de forma precisa. Hay dos métodos principales: <strong>Ionenimplantation</strong> (moderno, preciso) y <strong>Diffusion</strong> (clásico, simple).</p>
+  </div>
+
+  <!-- Vergleichstabelle -->
+  <table style="width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:1rem">
+    <thead>
+      <tr style="background:#dc2626;color:white">
+        <th style="padding:.5rem .7rem;text-align:left">Eigenschaft</th>
+        <th style="padding:.5rem .7rem;text-align:left">Ionenimplantation</th>
+        <th style="padding:.5rem .7rem;text-align:left">Diffusion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#fff1f2"><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca"><strong>Prinzip</strong></td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Iones acelerados se "disparan" al substrato</td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Átomos difunden desde la superficie por gradiente de concentración</td></tr>
+      <tr><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca"><strong>Kontrolle</strong></td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Alta: energía + dosis ajustables independientemente</td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Menor: depende de tiempo y temperatura</td></tr>
+      <tr style="background:#fff1f2"><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca"><strong>Tiefe</strong></td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Reichweite R_p controlada por energía (keV–MeV)</td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Gradiente de concentración según Fick</td></tr>
+      <tr><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca"><strong>Schäden</strong></td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Strahlenschäden → requiere Anneal (RTA)</td><td style="padding:.4rem .7rem;border-bottom:1px solid #fecaca">Sin daño cristalino directo</td></tr>
+      <tr style="background:#fff1f2"><td style="padding:.4rem .7rem"><strong>Anwendung</strong></td><td style="padding:.4rem .7rem">Source/Drain MOSFET, modern CMOS</td><td style="padding:.4rem .7rem">Prozesse menos críticos, MEMS</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Ionenimplantation detail -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+    <div style="background:#fff1f2;border-radius:8px;padding:.9rem;border-left:4px solid #dc2626">
+      <div style="font-weight:700;font-size:.85rem;color:#dc2626;margin-bottom:.5rem">⚡ Ionenimplantation — Schlüsselbegriffe <a href="#sec-quellen" class="ref" title="Sze &amp; Ng, Cap.12, p.527 — projected range, dose, damage">[Sze07, p.527]</a> <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.8, p.280 — ion implantation, RTA">[Wolf00, p.280]</a></div>
+      <dl style="font-size:.8rem;display:flex;flex-direction:column;gap:.3rem">
+        <dt style="font-weight:600">die Implantationsenergie [keV–MeV]</dt><dd style="color:#6b7280;margin-left:.8rem">Energía de los iones → controla la profundidad de implantación</dd>
+        <dt style="font-weight:600">die Dosis [Ionen/cm²]</dt><dd style="color:#6b7280;margin-left:.8rem">Número total de iones implantados → controla la concentración de dopantes</dd>
+        <dt style="font-weight:600">die Reichweite R_p</dt><dd style="color:#6b7280;margin-left:.8rem">Profundidad media de frenado (projected range)</dd>
+        <dt style="font-weight:600">die Strahlenschäden</dt><dd style="color:#6b7280;margin-left:.8rem">Daños en la red cristalina por colisiones de iones</dd>
+        <dt style="font-weight:600">der Anneal / RTA (Rapid Thermal Anneal)</dt><dd style="color:#6b7280;margin-left:.8rem">Calentamiento rápido (800–1100°C) para activar dopantes y reparar daños</dd>
+      </dl>
+    </div>
+    <div style="background:#f0f9ff;border-radius:8px;padding:.9rem;border-left:4px solid #0891b2">
+      <div style="font-weight:700;font-size:.85rem;color:#0891b2;margin-bottom:.5rem">🌡 Diffusion — Schlüsselbegriffe <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.6, p.199 — Fick'sche Gesetze, Diffusionskoeffizient">[Wolf00, p.199]</a></div>
+      <dl style="font-size:.8rem;display:flex;flex-direction:column;gap:.3rem">
+        <dt style="font-weight:600">das Fick'sche Gesetz</dt><dd style="color:#6b7280;margin-left:.8rem">1. Gesetz: flujo ∝ gradiente de concentración. 2. Gesetz: cambio temporal de concentración</dd>
+        <dt style="font-weight:600">der Diffusionskoeffizient D</dt><dd style="color:#6b7280;margin-left:.8rem">D = D₀ · e^(−E_A/kT) — fuerte dependencia con temperatura (Arrhenius)</dd>
+        <dt style="font-weight:600">die Diffusionsquelle</dt><dd style="color:#6b7280;margin-left:.8rem">Fuente de dopante: gas (POCl₃), sólido, o implantación previa</dd>
+        <dt style="font-weight:600">der Diffusionsofen</dt><dd style="color:#6b7280;margin-left:.8rem">Horno tubular de cuarzo, 900–1200°C, atmósfera controlada</dd>
+        <dt style="font-weight:600">die Eindringtiefe / Sperrschichttiefe</dt><dd style="color:#6b7280;margin-left:.8rem">Profundidad de penetración del dopante</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Analogía -->
+  <div style="background:#fef9c3;border-radius:8px;padding:.8rem;font-size:.82rem;border-left:4px solid #ca8a04">
+    <strong>🧪 Analogía química:</strong> La Ionenimplantation es como un bombardeo controlado de reactivos en fase gas. La Diffusion es como la difusión de un soluto en un sólido (similar a la impregnación catalítica que conoces). El Anneal activa los dopantes como una calcinación activa un catalizador.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 3: Chemische Prozesse in der FAB
+════════════════════════════════════════════════════════════ -->
+<section id="sec-chemie-fab">
+  <h2>🧪 <span class="lf-tag lf2">LF 2</span> Chemische Reaktionen in der FAB</h2>
+
+  <!-- Árbol de procesos -->
+  <h3>Prozessbaum — Árbol de procesos químicos</h3>
+  <div class="proc-tree">
+    <div class="proc-root">⬡ Chemische FAB-Prozesse</div>
+    <ul>
+      <li><strong style="color:#1e3a5f">Oxidation</strong> — SiO₂ aufwachsen (hacer crecer SiO₂)
+        <ul>
+          <li>Trockenoxidation: Si + O₂ → SiO₂ · 900–1100°C · langsam · Gateoxid (dünn, &lt;10 nm)</li>
+          <li>Nassoxidation: Si + 2H₂O → SiO₂ + 2H₂ · 900–1000°C · schnell · Feldoxid (dick, &gt;100 nm)</li>
+        </ul>
+      </li>
+      <li><strong style="color:#dc2626">Ätzprozesse</strong> — Schichten selektiv entfernen (Grabado)
+        <ul>
+          <li>Nassätzen, isotropisch (EN: isotropic wet etch)
+            <ul>
+              <li>SiO₂ + 6HF → H₂SiF₆ + 2H₂O · Kontaktlöcher, BOE</li>
+            </ul>
+          </li>
+          <li>Nassätzen, anisotropisch (EN: anisotropic wet etch)
+            <ul>
+              <li>Si + 2KOH + H₂O → K₂SiO₃ + 2H₂↑ · MEMS-Strukturen</li>
+              <li>Si + TMAH + H₂O → Si(OH)₄ + 2H₂↑ · CMOS-kompatibel</li>
+            </ul>
+          </li>
+          <li>Trockenätzen / Plasmaätzen (EN: dry/plasma etching) → LF 7</li>
+        </ul>
+      </li>
+      <li><strong style="color:#059669">Reinigungsprozesse</strong> — Oberfläche kontaminationsfrei machen (Limpieza)
+        <ul>
+          <li>Piranha: H₂SO₄:H₂O₂ (3:1) · 120°C · Photoresist-Entfernung</li>
+          <li>RCA SC-1: NH₄OH:H₂O₂:H₂O (1:1:5) · 75°C · Partikel + organisch</li>
+          <li>RCA SC-2: HCl:H₂O₂:H₂O (1:1:6) · 75°C · Metallionen</li>
+          <li>HF-Dip: HF:H₂O (1:50) · 20°C · natives SiO₂ entfernen</li>
+        </ul>
+      </li>
+      <li><strong style="color:#7c3aed">Deposition / CVD</strong> — Schichten aufbringen (Deposición) → LF 9
+        <ul>
+          <li>LPCVD: SiH₄ → poly-Si, Si₃N₄ · 600–800°C · Niederdruck</li>
+          <li>PECVD: SiO₂, Si₃N₄ · 200–400°C · Plasma-aktiviert</li>
+          <li>TEOS-CVD: Si(OC₂H₅)₄ → SiO₂ + C₂H₄ + H₂O · ILD-Schichten</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Bloques detallados por categoría -->
+  <div class="proc-detail">
+
+    <!-- Oxidation -->
+    <div class="proc-block" style="border-color:#1e3a5f;background:#f0f4f8">
+      <h4 style="color:#1e3a5f">1. Thermische Oxidation — Wachstum von SiO₂ <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.5, p.145 — Deal-Grove-Modell, Trocken-/Nassoxidation">[Wolf00, p.145]</a></h4>
+      <p style="font-size:.82rem;margin-bottom:.6rem">Die thermische Oxidation ist der einzige Prozess, bei dem das Substratmaterial selbst verbraucht wird. Für jedes gewachsene SiO₂ nm werden ~0,44 nm des darunterliegenden Si verbraucht. Die Schicht wächst teils nach oben, teils nach unten ins Si hinein (Deal-Grove-Modell).</p>
+
+      <div class="rxn"><span class="chem-badge">Si + O₂ → SiO₂</span> &nbsp; Trockenoxidation (EN: dry oxidation)</div>
+      <div class="rxn-detail">Temperatur: 900–1100°C · Atmosfera: reines O₂ · Wachstumsrate: ~5–25 nm/min · Schichtqualität: sehr dicht, wenig Defekte · Anwendung: Gateoxid des MOSFET (&lt;10 nm, jetzt Highκ-Ersatz), Tunneloxid</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">Si + 2H₂O → SiO₂ + 2H₂↑</span> &nbsp; Nassoxidation (EN: wet oxidation)</div>
+      <div class="rxn-detail">Temperatur: 900–1000°C · Atmosfera: Wasserdampf (H₂O-Dampf aus verbranntem H₂) · Wachstumsrate: ~100–400 nm/min (10× schneller als Trocken) · H₂O diffundiert schneller durch SiO₂ als O₂ · Anwendung: Feldoxid (STI, LOCOS), dicke Isolationsschichten (&gt;100 nm) · Leicht mehr Defekte als Trockenoxid</div>
+
+      <div style="margin-top:.6rem;font-size:.8rem;background:white;border-radius:6px;padding:.5rem">
+        <strong>Reaktionsmechanismus:</strong> Das Oxidationsmittel (O₂ oder H₂O) diffundiert durch die bereits gewachsene SiO₂-Schicht bis zur Si/SiO₂-Grenzfläche und reagiert dort mit Si-Atomen. Die Reaktionsrate nimmt mit zunehmender Schichtdicke ab (diffusionslimitiert).
+      </div>
+    </div>
+
+    <!-- Ätzprozesse -->
+    <div class="proc-block" style="border-color:#dc2626;background:#fff5f5">
+      <h4 style="color:#dc2626">2. Nassätzprozesse — Nasschemisches Ätzen <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.9, p.357 — HF-Ätzen, KOH, Nassätzmechanismen">[Wolf00, p.357]</a></h4>
+      <p style="font-size:.82rem;margin-bottom:.6rem">Beim Nassätzen wird die zu ätzende Schicht durch eine flüssige Chemikalie chemisch aufgelöst. Zwei Typen: <strong>isotropisch</strong> (ätzt in alle Richtungen gleich → runde Ätzprofile) und <strong>anisotropisch</strong> (ätzt bevorzugt in eine Richtung → scharfe Kanten).</p>
+
+      <div class="rxn"><span class="chem-badge">SiO₂ + 6HF → H₂SiF₆ + 2H₂O</span> &nbsp; HF-Ätzen von SiO₂</div>
+      <div class="rxn-detail">Typ: isotropisch · Ätzmedium: HF-Lösung (1–50%) oder BOE (Buffered Oxide Etch: NH₄F + HF) · Ätzrate: 50–200 nm/min · Selektivität: SiO₂ >> Si, SiN (sehr selektiv) · Si-F-Bindung (E = 5,7 eV) ist thermodynamisch stabiler als Si-O-Bindung → Produkt H₂SiF₆ ist wasserlöslich · Anwendung: Kontaktlöcher öffnen, Gateoxid entfernen, Oberflächen-SiO₂ (native oxide) ätzen · ⚠ HF: systemisch toxisch, Ca-Gluconat-Gel nötig</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">Si + 2KOH + H₂O → K₂SiO₃ + 2H₂↑</span> &nbsp; KOH-Ätzen von Si</div>
+      <div class="rxn-detail">Typ: anisotropisch · Temperatur: 70–90°C · Ätzt kristallographisch: (100)-Ebene wird geätzt, (111)-Ebene kaum → erzeugt V-förmige Gräben mit 54,7°-Flanken · Mechanismus: OH⁻-Ionen brechen Si-Si-Bindungen und formen lösliche Silikat-Ionen (SiO₄⁴⁻) · Nachteil: K⁺-Ionen kontaminieren CMOS → nicht kompatibel mit MOSFETs · Anwendung: MEMS (Beschleunigungssensoren, Drucksensoren, Mikrofluidik)</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">Si + TMAH + H₂O → Si(OH)₄ + H₂↑</span> &nbsp; TMAH-Ätzen von Si</div>
+      <div class="rxn-detail">TMAH = Tetramethylammoniumhydroxid · Typ: anisotropisch, wie KOH · CMOS-kompatibel (keine Alkali-Metall-Ionen) · Temperatur: 70–90°C · Anwendung: MEMS + integrierte CMOS-Systeme</div>
+    </div>
+
+    <!-- Reinigung -->
+    <div class="proc-block" style="border-color:#059669;background:#f0fdf4">
+      <h4 style="color:#059669">3. Reinigungsprozesse — Waferreinigung <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.4, p.95 — RCA-Reinigung, Kontaminationskontrolle">[Wolf00, p.95]</a></h4>
+      <p style="font-size:.82rem;margin-bottom:.6rem">Vor jedem kritischen Prozessschritt muss der Wafer gereinigt werden. Kontaminationen (Partikel, organische Reste, Metallionen, natives SiO₂) stören nachfolgende Schichten und degradieren die Bauelementeigenschaften. Die RCA-Reinigung (Radio Corporation of America) ist der Industriestandard.</p>
+
+      <div class="rxn"><span class="chem-badge">H₂SO₄ : H₂O₂ (3:1 bis 4:1) · 90–120°C</span> &nbsp; Piranha-Lösung</div>
+      <div class="rxn-detail">Wirkung: H₂SO₄ entzieht Elektronen aus organischen Verbindungen (Oxidation), H₂O₂ liefert reaktiven Sauerstoff → vollständige Oxidation von Photoresist und organischen Rückständen zu CO₂ + H₂O · Entfernt: Photoresist, organische Kontaminationen · Sehr exotherme Reaktion beim Ansetzen → immer H₂O₂ zu H₂SO₄ geben, nicht umgekehrt · ⚠ Piranha-Lösung oxidiert alles Organische — einschließlich Haut und Kleidung</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">NH₄OH : H₂O₂ : H₂O (1:1:5) · 75°C</span> &nbsp; RCA SC-1 (Standard Clean 1)</div>
+      <div class="rxn-detail">Wirkung: Die alkalische Lösung (pH ~10) oxidiert die Si-Oberfläche leicht (H₂O₂) und löst das Oxid (NH₄OH) im Zyklus → Partikel werden von der Oberfläche abgehoben und mitgelöst (Undercutting-Mechanismus). Organische Reste werden oxidativ zerstört · Entfernt: Partikel (Staub, SiO₂-Reste), organische Kontaminationen · NH₄OH greift SiO₂ leicht an → der Wafer verliert ~0,5–1 nm je Reinigungsschritt</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">HCl : H₂O₂ : H₂O (1:1:6) · 75°C</span> &nbsp; RCA SC-2 (Standard Clean 2)</div>
+      <div class="rxn-detail">Wirkung: Saures Medium (pH ~1–2) · H₂O₂ oxidiert Metallverunreinigungen (Fe, Al, Na, Cu…) zu Metallkationen · HCl-Komplexierung: Cl⁻-Ionen bilden mit den Metallkationen lösliche Chlorido-Komplexe (z.B. FeCl₃) · Entfernt: Metallionenverunreinigungen auf der Waferoberfläche · Kritisch weil Alkali-Metallionen (Na⁺, K⁺) MOSFETs direkt zerstören</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">HF : H₂O (1:50 bis 1:100)</span> &nbsp; HF-Dip (HF-Tauchbad)</div>
+      <div class="rxn-detail">Wirkung: Entfernt das native SiO₂ (1–3 nm dickes, unkontrolliertes Oxid, das sich an Luft sofort bildet) · Hinterlässt H-terminierte Si-Oberfläche (Si-H-Bindungen) → kurzzeitig chemisch inert, schützt vor Reoxidation · Wird unmittelbar vor Gateoxid-Wachstum, Epitaxie oder Metallabscheidung durchgeführt · Zeit ist kritisch: nach HF-Dip sofort in nächsten Prozessschritt</div>
+    </div>
+
+    <!-- CVD -->
+    <div class="proc-block" style="border-color:#7c3aed;background:#faf5ff">
+      <h4 style="color:#7c3aed">4. CVD — Chemical Vapor Deposition (Chemische Gasphasenabscheidung) <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.7, p.261 — LPCVD, PECVD, TEOS-Prozesse">[Wolf00, p.261]</a></h4>
+      <p style="font-size:.82rem;margin-bottom:.6rem">CVD ist das Hauptverfahren zur Abscheidung von Schichten in der FAB. Gasförmige Vorläuferstoffe (Precursoren) reagieren auf der Waferoberfläche und bilden eine feste Schicht. Die Waferoberfläche wird nicht verbraucht (anders als bei Oxidation).</p>
+
+      <div class="rxn"><span class="chem-badge">SiH₄ → Si + 2H₂</span> &nbsp; LPCVD von poly-Silizium</div>
+      <div class="rxn-detail">LPCVD = Low Pressure CVD · Druck: 0,1–1 mbar · Temperatur: 580–620°C · Silan (SiH₄) pyrolysiert thermisch auf der Waferoberfläche → polykristallines Si (poly-Si) · Anwendung: Gate-Elektroden in MOSFETs, Widerstände · ⚠ Silan: pyrophor (entzündet sich selbst an Luft) → geschlossene Systeme, Gasdetektoren</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">3SiH₄ + 4NH₃ → Si₃N₄ + 12H₂</span> &nbsp; LPCVD von Siliziumnitrid</div>
+      <div class="rxn-detail">Temperatur: 700–800°C · Produkt Si₃N₄: sehr hartes Dielektrikum, exzellente Diffusionsbarriere für Feuchtigkeit und Ionen · Anwendung: Passivierungsschicht, Ätzmaske (Selektivität gegen SiO₂ im HF-Bad sehr hoch), Spacer in MOSFETs</div>
+
+      <div class="rxn" style="margin-top:.5rem"><span class="chem-badge">Si(OC₂H₅)₄ → SiO₂ + 4C₂H₄ + 2H₂O</span> &nbsp; PECVD / TEOS-CVD</div>
+      <div class="rxn-detail">TEOS = Tetraethylorthosilicat · Temperatur: 300–400°C (PECVD: Plasma hilft die Reaktion bei niedrigerer T zu aktivieren) · Produkt: SiO₂ mit sehr guter Schrittstufenbedeckung (EN: step coverage) · Anwendung: ILD = Inter-Layer Dielectric (aislante dieléctrico entre capas metálicas) in mehrlagigen Metallisierungen</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIGLAS / ABKÜRZUNGEN
+════════════════════════════════════════════════════════════ -->
+<section id="sec-siglas">
+  <h2>🔤 Siglas y Abkürzungen — Acrónimos clave de la FAB</h2>
+  <p style="font-size:.83rem;color:var(--muted);margin-bottom:.6rem">Estas siglas aparecen constantemente en libros, manuales de equipo y exámenes IHK. Todas deben conocerse en DE e EN.</p>
+  <table class="abk-table">
+    <tbody>
+      <tr>
+        <td>CVD</td>
+        <td>Chemical Vapor Deposition</td>
+        <td><strong>Chemische Gasphasenabscheidung</strong> — proceso en que gases precursores reaccionan sobre el wafer y depositan una capa sólida (SiO₂, Si₃N₄, poly-Si…). Es el principal método de deposición en la FAB. Variantes: LPCVD, PECVD, APCVD.</td>
+      </tr>
+      <tr>
+        <td>RCA&nbsp;SC</td>
+        <td>Radio Corporation of America Standard Clean</td>
+        <td><strong>Reinigungsprotokoll</strong> desarrollado por RCA en los años 70, aún estándar en la industria. SC-1 = Standard Clean 1 (NH₄OH:H₂O₂:H₂O · partículas + orgánico). SC-2 = Standard Clean 2 (HCl:H₂O₂:H₂O · iones metálicos).</td>
+      </tr>
+      <tr>
+        <td>ILD</td>
+        <td>Inter-Layer Dielectric</td>
+        <td><strong>Zwischenschichtdielektrikum</strong> — capa aislante entre dos capas metálicas de un chip. Evita que los conductores de diferentes niveles se cortocircuiten. Material típico: SiO₂ depositado por TEOS-CVD. En nodos avanzados se usa dieléctrico de baja constante k (Low-k dielectric).</td>
+      </tr>
+      <tr>
+        <td>DUV</td>
+        <td>Deep Ultraviolet</td>
+        <td><strong>Tiefes Ultraviolett</strong> — rango espectral λ = 193 nm (láser ArF = Argon Fluoride). Es la tecnología de litografía estándar para nodos 7–28 nm. Usa lentes ópticas convencionales de cuarzo fundido. Inmersión en agua (NA hasta 1.35) permite llevarla a 10 nm con litografía de múltiple exposición.</td>
+      </tr>
+      <tr>
+        <td>EUV</td>
+        <td>Extreme Ultraviolet</td>
+        <td><strong>Extrem-Ultraviolett-Lithografie</strong> — λ = 13,5 nm (plasma de Sn). Usado para nodos ≤ 7 nm (5 nm, 3 nm, 2 nm). El aire absorbe EUV → todo el sistema trabaja en vacío. Espejos multilayer de Mo/Si en lugar de lentes. TSMC Dresden usará EUV para nodos 2 nm.</td>
+      </tr>
+      <tr>
+        <td>ULPA</td>
+        <td>Ultra Low Penetration Air</td>
+        <td><strong>Hochleistungsschwebstofffilter</strong> — filtro con eficiencia ≥ 99,999% para partículas ≥ 0,12 µm. Supera al HEPA (99,97% @ ≥ 0,3 µm). Usado en áreas de litografía ISO 1–3 donde cualquier partícula destruye chips. Norma: DIN EN 1822 clase U15–U17.</td>
+      </tr>
+      <tr>
+        <td>MOSFET</td>
+        <td>Metal-Oxide-Semiconductor Field-Effect Transistor</td>
+        <td><strong>Metall-Oxid-Halbleiter-Feldeffekttransistor</strong> — el transistor más fabricado del mundo. Tiene 4 terminales: Gate (G), Drain (D), Source (S), Body (B). El Gate controla el canal de corriente D→S mediante un campo eléctrico, sin corriente de control. El aislante Gate-Oxid (SiO₂ o High-κ) es el componente más crítico.</td>
+      </tr>
+      <tr>
+        <td>MEMS</td>
+        <td>Micro-Electro-Mechanical Systems</td>
+        <td><strong>Mikro-elektromechanische Systeme</strong> — dispositivos que combinan estructuras mecánicas móviles (resortes, membranas, masas de prueba) con circuitos electrónicos, todos fabricados sobre silicio. Ejemplos: acelerómetros del teléfono, sensores de presión en automóviles, microfonos. Fabricados con procesos KOH o TMAH de la FAB.</td>
+      </tr>
+      <tr>
+        <td>BJT</td>
+        <td>Bipolar Junction Transistor</td>
+        <td><strong>Bipolartransistor</strong> — transistor que usa tanto electrones (n) como huecos (p) como portadores de corriente (de ahí "bipolar"). Tiene 3 terminales: Base (B), Collector (C), Emitter (E). Tipos: NPN y PNP. Ventaja frente a MOSFET: mayor ganancia de corriente y velocidad a alta frecuencia → usado en HF-Chips (SiGe-BiCMOS, GaAs-HBT). El HBT (Heterojunction Bipolar Transistor) es una variante avanzada.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 4: Reinraumklassen ISO 14644
+════════════════════════════════════════════════════════════ -->
+<section id="sec-reinraum">
+  <h2>🏭 <span class="lf-tag lf4">LF 4</span> Reinraumklassen — ISO 14644 <a href="#sec-quellen" class="ref wolf" title="Wolf &amp; Tauber, Vol.1, Cap.4, pp.95–143 — ISO-Klassen, HEPA/ULPA, laminare Strömung">[Wolf00, Cap.4]</a></h2>
+  <div style="background:#ecfeff;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid var(--lf4)">
+    <h3 style="font-size:.95rem;margin-bottom:.5rem;color:#164e63">¿Qué es un Reinraum? (Sala blanca)</h3>
+    <p style="font-size:.85rem">Entorno de fabricación donde la concentración de partículas en el aire se controla estrictamente según la norma <strong>ISO 14644</strong>. Una sola partícula de polvo de 0,1 µm puede cortocircuitar una estructura de transistor moderno (cuyos detalles miden ~3–7 nm) o crear un defecto que invalide todo el chip.</p>
+    <p style="font-size:.83rem;margin-top:.4rem;color:#0e4880"><strong>Contexto Dresden:</strong> GlobalFoundries (12" wafers, 12 nm FinFET) y Infineon (SiC, IGBT) operan en ISO 3–5. La nueva ESMC/TSMC fab operará en ISO 2–3 para nodos de 2 nm. Reinraumklasse = máxima Partikelkonzentration por m³ para partículas ≥ 0,1 µm.</p>
+  </div>
+  <table class="iso-table">
+    <thead>
+      <tr>
+        <th>ISO-Klasse</th>
+        <th>Partikel/m³ (≥0,1µm)</th>
+        <th>Visualisierung</th>
+        <th>Anwendung in FAB</th>
+        <th>Früher (US Fed 209E)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="iso-highlight">
+        <td>ISO 1</td>
+        <td>10</td>
+        <td><div class="particle-bar" style="width:2px"></div></td>
+        <td>EUV-Lithografie, Retikel-Lagerung</td>
+        <td>—</td>
+      </tr>
+      <tr class="iso-highlight">
+        <td>ISO 2</td>
+        <td>100</td>
+        <td><div class="particle-bar" style="width:5px"></div></td>
+        <td>Wafer-Belichtung (DUV/ArF)</td>
+        <td>—</td>
+      </tr>
+      <tr class="iso-highlight">
+        <td>ISO 3</td>
+        <td>1.000</td>
+        <td><div class="particle-bar" style="width:15px"></div></td>
+        <td>Lithografie-Bereich, Schleusen</td>
+        <td>Klasse 1</td>
+      </tr>
+      <tr>
+        <td>ISO 4</td>
+        <td>10.000</td>
+        <td><div class="particle-bar" style="width:40px"></div></td>
+        <td>Ätzbereich, CVD</td>
+        <td>Klasse 10</td>
+      </tr>
+      <tr>
+        <td>ISO 5</td>
+        <td>100.000</td>
+        <td><div class="particle-bar" style="width:80px"></div></td>
+        <td>Allgemeiner Prozessbereich</td>
+        <td>Klasse 100</td>
+      </tr>
+      <tr>
+        <td>ISO 6</td>
+        <td>1.000.000</td>
+        <td><div class="particle-bar" style="width:120px"></div></td>
+        <td>Vorbereitungsbereiche</td>
+        <td>Klasse 1.000</td>
+      </tr>
+      <tr>
+        <td>ISO 7</td>
+        <td>10.000.000</td>
+        <td><div class="particle-bar" style="width:160px"></div></td>
+        <td>Verpackung, Wartung</td>
+        <td>Klasse 10.000</td>
+      </tr>
+      <tr>
+        <td>ISO 8</td>
+        <td>100.000.000</td>
+        <td><div class="particle-bar" style="width:200px"></div></td>
+        <td>Umgebungsluft FAB (Korridor)</td>
+        <td>Klasse 100.000</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.6rem">
+    ✦ Grün = typische FAB-Kernbereiche (GlobalFoundries Dresden, Infineon: ISO 3–5)
+  </p>
+
+  <h3>Reinraumtechnik — Schlüsselkomponenten</h3>
+  <table class="process-table">
+    <thead>
+      <tr><th>Komponente</th><th>Funktion</th><th>Standard</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>HEPA-Filter</strong></td>
+        <td>Abscheidegrad ≥ 99,97% für Partikel ≥0,3 µm</td>
+        <td>DIN EN 1822</td>
+      </tr>
+      <tr>
+        <td><strong>ULPA-Filter</strong></td>
+        <td>Abscheidegrad ≥ 99,999% für Partikel ≥0,12 µm (besser als HEPA)</td>
+        <td>DIN EN 1822</td>
+      </tr>
+      <tr>
+        <td><strong>Laminare Strömung</strong></td>
+        <td>Gleichgerichtete Luftströmung (0,3–0,5 m/s) → Partikel werden herausgespült</td>
+        <td>VDI 2083</td>
+      </tr>
+      <tr>
+        <td><strong>Überdruck</strong></td>
+        <td>Reinraum unter Überdruck → verhindert Einströmen von kontaminierter Luft</td>
+        <td>+10–20 Pa vs. Außen</td>
+      </tr>
+      <tr>
+        <td><strong>Schleusensystem (Airlock)</strong></td>
+        <td>Druckstufenübergang zwischen Klassen; Material/Personal-Schleusen getrennt</td>
+        <td>ISO 14644-4</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Esquema de flujo de aire del Reinraum -->
+  <h3 style="margin-top:1.2rem">Reinraum-Luftführung — Circulación del aire en sala blanca</h3>
+  <p style="font-size:.82rem;color:var(--muted);margin-bottom:.8rem">El aire no circula libremente — sigue un camino controlado con parámetros exactos en cada etapa. Unos 70–80% del aire se recircula; solo un 20–30% se renueva desde el exterior.</p>
+
+  <div class="luft-flow">
+    <div class="luft-box" style="border-color:#94a3b8;background:#f8fafc">
+      🌬 <strong>Außenluft</strong> — Aire exterior
+      <span class="luft-param">Temperatura y humedad no controladas · contaminado · partículas &gt; ISO 8</span>
+    </div>
+    <div class="luft-arrow">↓</div>
+    <div class="luft-box" style="border-color:#94a3b8;background:#f8fafc">
+      🔲 <strong>Vorfilter</strong> (Filtro previo / EN: pre-filter)
+      <span class="luft-param">Retiene partículas gruesas ≥ 5 µm · Klasse G4 o F7 · protege los filtros finales</span>
+    </div>
+    <div class="luft-arrow">↓</div>
+    <div class="luft-box" style="border-color:#0891b2;background:#ecfeff">
+      🌡 <strong>Klimaanlage — Luftaufbereitung</strong> (Acondicionamiento / EN: air handling unit)
+      <span class="luft-param">Temperatur: 22 ± 1°C · Relative Feuchte (rH): 45 ± 5% · Konstant für Maßhaltigkeit der Lithografie-Masken</span>
+    </div>
+    <div class="luft-arrow">↓</div>
+    <div class="luft-box highlight" style="border-color:#7c3aed;background:#f5f3ff">
+      ⬛⬛ <strong>HEPA / ULPA-Deckenfilter</strong> (EN: ceiling filter bank)
+      <span class="luft-param">HEPA: ≥ 99,97% @ ≥ 0,3 µm · ULPA: ≥ 99,999% @ ≥ 0,12 µm · Deckenplenum verteilt Luft gleichmäßig über die gesamte Reinraumfläche</span>
+    </div>
+    <div class="luft-arrow">↓</div>
+    <div class="luft-box highlight" style="border-color:#059669;background:#f0fdf4;padding:1rem 1.2rem">
+      <div style="font-size:.85rem;font-weight:700;margin-bottom:.4rem">⬇⬇⬇ <strong>Laminare Strömung</strong> (Flujo laminar / EN: laminar flow) ⬇⬇⬇</div>
+      <div style="font-size:.8rem">Gleichgerichteter Abwärtsstrom · Geschwindigkeit: 0,3–0,5 m/s · Partikel werden nach unten mitgerissen, nicht umgewälzt</div>
+      <div style="margin-top:.5rem;padding:.5rem .8rem;background:white;border-radius:6px;font-size:.78rem;font-style:italic;border:2px solid #d1fae5">
+        🏭 REINRAUM — Prozessbereich (ISO 1 bis ISO 8 je nach Zone)<br>
+        Equipos, personas, proceso de fabricación
+      </div>
+      <div style="font-size:.8rem;margin-top:.5rem">Überdruck: +10–20 Pa gegenüber angrenzenden Bereichen → verhindert Einströmen kontaminierter Luft</div>
+    </div>
+    <div class="luft-arrow">↓</div>
+    <div class="luft-box" style="border-color:#0891b2;background:#ecfeff">
+      🔳 <strong>Perforierter Boden / Unterboden-Gitter</strong> (Piso perforado / EN: raised floor)
+      <span class="luft-param">Luft verlässt den Prozessbereich nach unten · Hohlraum unter dem Boden dient als Rückluftkanal · Partikel werden vom Wafer weggeführt, nicht hochgewirbelt</span>
+    </div>
+    <div class="luft-arrow">↓</div>
+    <div class="luft-box split-box" style="border-color:#94a3b8;background:#f8fafc">
+      <div style="text-align:center;padding:.4rem">
+        ♻ <strong>Rezirkulation (70–80%)</strong><br>
+        <span style="font-size:.73rem;color:var(--muted)">Rückluft → Klimaanlage → HEPA → Reinraum</span>
+      </div>
+      <div style="text-align:center;padding:.4rem;border-left:1px solid var(--border)">
+        🚪 <strong>Abluft (20–30%)</strong><br>
+        <span style="font-size:.73rem;color:var(--muted)">Abluftbehandlung (Schadstofffilter) → Außen</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:.8rem;padding:.7rem;background:#fffbeb;border-radius:8px;border-left:3px solid #d97706;font-size:.8rem">
+    <strong>Schleusen (Airlocks):</strong> Beim Übergang zwischen Reinraumzonen mit unterschiedlichen ISO-Klassen gibt es Schleusen. Die Schleuse ist immer unter Druck der saubereren Zone — so strömt Luft immer von sauber nach weniger sauber, nie umgekehrt. Personen- und Materialschleusen sind getrennt (Personenkontamination ≠ Materialkontamination).
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 5: ESD und Gefahrstoffe
+════════════════════════════════════════════════════════════ -->
+<section id="sec-schutz">
+  <h2>⚠ <span class="lf-tag lf4">LF 4</span> Schutzmaßnahmen — ESD, Chemie, Partikel</h2>
+  <div class="warning-grid">
+    <div class="warning-card esd">
+      <div class="icon">⚡</div>
+      <h4>ESD-Schutz</h4>
+      <p>Elektrostatische Entladung zerstört Gateoxid (≤10 nm!). Erdungsarmband, antistatische Kleidung, ESD-Matten. Standard: IEC 61340.</p>
+    </div>
+    <div class="warning-card chemical">
+      <div class="icon">☣</div>
+      <h4>HF-Gefahren</h4>
+      <p>Flusssäure: systemisch giftig, Hautpenetration. Kalziumgluconat-Gel als Gegenmittel. PSA: Butylgummi-Handschuhe, Gesichtsschutz.</p>
+    </div>
+    <div class="warning-card chemical">
+      <div class="icon">💀</div>
+      <h4>Silan (SiH₄)</h4>
+      <p>Pyrophor: entzündet sich selbstzündlich an Luft. Gasdetektoren, N₂-Spülung, Doppelwand-Leitungen. GHS02 + GHS04.</p>
+    </div>
+    <div class="warning-card chemical">
+      <div class="icon">⚗</div>
+      <h4>Arsen / As-Verbindungen</h4>
+      <p>Karzinogen (GHS08). Als n-Dotant (AsH₃) hochgiftig. Abgeschlossene Systeme, kontinuierliche Gasüberwachung.</p>
+    </div>
+    <div class="warning-card particle">
+      <div class="icon">🌬</div>
+      <h4>Partikelkontrolle</h4>
+      <p>Reinraumkleidung (Bunny Suit): kein Haarausfall, kein Hautabrieb. Tragen: Haube → Maske → Overall → Handschuhe → Überschuhe.</p>
+    </div>
+    <div class="warning-card particle">
+      <div class="icon">🧤</div>
+      <h4>Handschuhregeln</h4>
+      <p>Latexfrei (Kontamination). Doppelt bei HF/Arsen. Wechsel nach jeder Chemikalie. Verbrauchte Handschuhe = Sondermüll.</p>
+    </div>
+  </div>
+
+  <h3>Bunny Suit — Anziehreihenfolge (IHK-relevant)</h3>
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem; align-items:center; font-size:0.85rem;">
+    <div style="background:#f3f4f6; border-radius:8px; padding:0.4rem 0.8rem; border:2px solid var(--lf4)">① Haarhaube</div>
+    <div style="color:var(--muted)">→</div>
+    <div style="background:#f3f4f6; border-radius:8px; padding:0.4rem 0.8rem; border:2px solid var(--lf4)">② Mundschutz/Maske</div>
+    <div style="color:var(--muted)">→</div>
+    <div style="background:#f3f4f6; border-radius:8px; padding:0.4rem 0.8rem; border:2px solid var(--lf4)">③ Overall (Reißverschluss zu)</div>
+    <div style="color:var(--muted)">→</div>
+    <div style="background:#f3f4f6; border-radius:8px; padding:0.4rem 0.8rem; border:2px solid var(--lf4)">④ Handschuhe (erste Lage)</div>
+    <div style="color:var(--muted)">→</div>
+    <div style="background:#f3f4f6; border-radius:8px; padding:0.4rem 0.8rem; border:2px solid var(--lf4)">⑤ Schuhe/Überschuhe</div>
+    <div style="color:var(--muted)">→</div>
+    <div style="background:#d1fae5; border-radius:8px; padding:0.4rem 0.8rem; border:2px solid var(--success)">⑥ Reinraum betreten</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 6: Vokabeln LF2+LF4
+════════════════════════════════════════════════════════════ -->
+<section id="sec-vokabeln">
+  <h2>🗂 Vokabeln — LF 2 + LF 3 + LF 4 + LF 9 (Klick = übersetzen)</h2>
+  <div class="flip-grid" id="flipGrid">
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Halbleiter</div><div class="hint">DE → ES + EN</div></div>
+        <div class="flip-back"><div class="trans">Semiconductor / Semiconductor</div><div class="context">Si, Ge, GaAs — Eg zwischen Leiter und Isolator</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Dotierung</div><div class="hint">DE → ES + EN</div></div>
+        <div class="flip-back"><div class="trans">Dopaje / Doping</div><div class="context">Einführung von Fremdatomen → p-Typ oder n-Typ</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Bandlücke</div><div class="hint">DE → ES + EN</div></div>
+        <div class="flip-back"><div class="trans">Banda prohibida / Band gap</div><div class="context">Eg in eV — Energiebarriere für Elektronen</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Donator</div><div class="hint">n-Typ Dotierung</div></div>
+        <div class="flip-back"><div class="trans">Donante / Donor</div><div class="context">V. Gruppe (P, As) → übergibt Elektron an Kristall</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Akzeptor</div><div class="hint">p-Typ Dotierung</div></div>
+        <div class="flip-back"><div class="trans">Aceptor / Acceptor</div><div class="context">III. Gruppe (B) → nimmt Elektron auf → Loch entsteht</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Ionenimplantation</div><div class="hint">Dotierverfahren</div></div>
+        <div class="flip-back"><div class="trans">Implantación iónica / Ion implantation</div><div class="context">Ionen werden mit 10–500 keV in Si geschossen</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Reinraum</div><div class="hint">LF 4 Schlüsselwort</div></div>
+        <div class="flip-back"><div class="trans">Sala blanca / Cleanroom</div><div class="context">Kontrollierte Partikelkonzentration nach ISO 14644</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Partikelkonzentration</div><div class="hint">ISO-Klasse Maß</div></div>
+        <div class="flip-back"><div class="trans">Concentración de partículas / Particle concentration</div><div class="context">Partikel/m³ bei ≥0,1 µm — bestimmt ISO-Klasse</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">laminare Strömung</div><div class="hint">Reinraumlüftung</div></div>
+        <div class="flip-back"><div class="trans">Flujo laminar / Laminar flow</div><div class="context">Gleichgerichtete Luftströmung → spült Partikel aus dem Bereich</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">HEPA-Filter</div><div class="hint">Luftfiltration</div></div>
+        <div class="flip-back"><div class="trans">Filtro HEPA / HEPA filter</div><div class="context">High-Efficiency Particulate Air — ≥99,97% @ 0,3 µm</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">ESD</div><div class="hint">Elektrische Gefahr</div></div>
+        <div class="flip-back"><div class="trans">Descarga electrostática / Electrostatic Discharge</div><div class="context">Zerstört dünne Oxide. Schutz: Erdungsband, antistatische Kleidung</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Schleuse / Airlock</div><div class="hint">Reinraumzugang</div></div>
+        <div class="flip-back"><div class="trans">Esclusa / Airlock</div><div class="context">Druckstufenübergang zwischen Reinraumklassen; verhindert Kontamination</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">thermische Oxidation</div><div class="hint">Si-Prozess</div></div>
+        <div class="flip-back"><div class="trans">Oxidación térmica / Thermal oxidation</div><div class="context">Si + O₂ → SiO₂ bei 900–1200°C; trocken oder nass</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Ätzrate</div><div class="hint">Prozesskontrolle</div></div>
+        <div class="flip-back"><div class="trans">Velocidad de ataque / Etch rate</div><div class="context">nm/min — material removal speed. Kontrolliert durch Konzentration + T°</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Selektivität</div><div class="hint">Ätzprozess</div></div>
+        <div class="flip-back"><div class="trans">Selectividad / Selectivity</div><div class="context">Verhältnis Ätzrate(Ziel) / Ätzrate(Maske) → hohe Selektivität = präzises Ätzen</div></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="term">Kontaminierung</div><div class="hint">Qualitätsproblem</div></div>
+        <div class="flip-back"><div class="trans">Contaminación / Contamination</div><div class="context">Partikel, Metallionen, organische Reste → Yield-Verlust</div></div>
+      </div>
+    </div>
+    <!-- LF3 cards -->
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)"><span style="font-size:1.1rem;font-weight:700">das Valenzband</span></div>
+        <div class="flip-back" style="background:#f0fdf4"><span style="font-size:.8rem;text-align:center"><strong>Banda de valencia</strong><br>Banda de energía donde los electrones están ligados a los átomos. Llena a T=0 K.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)"><span style="font-size:1.1rem;font-weight:700">das Leitungsband</span></div>
+        <div class="flip-back" style="background:#f0fdf4"><span style="font-size:.8rem;text-align:center"><strong>Banda de conducción</strong><br>Banda donde los electrones son libres y pueden conducir corriente eléctrica.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)"><span style="font-size:1.1rem;font-weight:700">die Bandlücke (E_g)</span></div>
+        <div class="flip-back" style="background:#f0fdf4"><span style="font-size:.8rem;text-align:center"><strong>Banda prohibida / Band gap</strong><br>Energía mínima para excitar un electrón al Leitungsband. Si: 1.12 eV.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)"><span style="font-size:1.1rem;font-weight:700">die Raumladungszone</span></div>
+        <div class="flip-back" style="background:#f0fdf4"><span style="font-size:.8rem;text-align:center"><strong>Zona de carga espacial</strong><br>Región en la unión p-n libre de portadores móviles, con campo eléctrico interno.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)"><span style="font-size:1.1rem;font-weight:700">der Einkristall</span></div>
+        <div class="flip-back" style="background:#f0fdf4"><span style="font-size:.8rem;text-align:center"><strong>Monocristal</strong><br>Red cristalina perfectamente ordenada. Fabricado por el proceso Czochralski a partir de Si fundido.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#059669,#34d399)"><span style="font-size:1.1rem;font-weight:700">die Durchlassrichtung</span></div>
+        <div class="flip-back" style="background:#f0fdf4"><span style="font-size:.8rem;text-align:center"><strong>Polarización directa (forward bias)</strong><br>Tensión que reduce la barrera del PN-Übergang → corriente fluye. Umbral ≈0.7 V para Si.</span></div>
+      </div>
+    </div>
+    <!-- LF9 cards -->
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#dc2626,#f87171)"><span style="font-size:1.1rem;font-weight:700">die Ionenimplantation</span></div>
+        <div class="flip-back" style="background:#fff1f2"><span style="font-size:.8rem;text-align:center"><strong>Implantación iónica</strong><br>Método para introducir dopantes acelerando iones (P, B, As) hacia el substrato con energía controlada.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#dc2626,#f87171)"><span style="font-size:1.1rem;font-weight:700">die Dosis [Ionen/cm²]</span></div>
+        <div class="flip-back" style="background:#fff1f2"><span style="font-size:.8rem;text-align:center"><strong>Dosis de implantación</strong><br>Número total de iones implantados por cm². Determina la concentración de dopantes.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#dc2626,#f87171)"><span style="font-size:1.1rem;font-weight:700">der Anneal / RTA</span></div>
+        <div class="flip-back" style="background:#fff1f2"><span style="font-size:.8rem;text-align:center"><strong>Recocido / Recocido Térmico Rápido</strong><br>Calentamiento (800–1100°C) tras implantación para activar dopantes y reparar daños en la red cristalina.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#dc2626,#f87171)"><span style="font-size:1.1rem;font-weight:700">die Strahlenschäden</span></div>
+        <div class="flip-back" style="background:#fff1f2"><span style="font-size:.8rem;text-align:center"><strong>Daños por radiación</strong><br>Defectos en la red cristalina causados por los iones implantados. Se eliminan con el proceso de Anneal.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#dc2626,#f87171)"><span style="font-size:1.1rem;font-weight:700">der Diffusionskoeffizient D</span></div>
+        <div class="flip-back" style="background:#fff1f2"><span style="font-size:.8rem;text-align:center"><strong>Coeficiente de difusión</strong><br>D = D₀·e^(−Ea/kT). Fuerte dependencia Arrhenius con temperatura. Controla la velocidad de difusión de dopantes.</span></div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <div class="flip-front" style="background:linear-gradient(135deg,#dc2626,#f87171)"><span style="font-size:1.1rem;font-weight:700">die Reichweite R_p</span></div>
+        <div class="flip-back" style="background:#fff1f2"><span style="font-size:.8rem;text-align:center"><strong>Alcance proyectado</strong><br>Profundidad media donde se detienen los iones implantados. Controlada por la energía del haz.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flip-progress" id="flipProgress">0 / 28 Karten geflippt</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 7: Quiz IHK
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quiz">
+  <h2>📝 Quiz — LF 2 + LF 4 (IHK-Stil)</h2>
+  <div id="quiz">
+    <div class="quiz-question" id="q1">
+      <p>1. Welches Element wird für p-Typ-Dotierung von Silizium verwendet?</p>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">a) Phosphor (P)</button>
+      <button class="quiz-option" onclick="answer('q1','correct',this)">b) Bor (B)</button>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">c) Arsen (As)</button>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">d) Germanium (Ge)</button>
+      <div class="quiz-feedback" id="fb-q1"></div>
+    </div>
+
+    <div class="quiz-question" id="q2">
+      <p>2. Welche ISO-Klasse entspricht maximal 100.000 Partikeln pro m³ (≥0,1 µm)?</p>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">a) ISO 3</button>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">b) ISO 4</button>
+      <button class="quiz-option" onclick="answer('q2','correct',this)">c) ISO 5</button>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">d) ISO 7</button>
+      <div class="quiz-feedback" id="fb-q2"></div>
+    </div>
+
+    <div class="quiz-question" id="q3">
+      <p>3. Welche Reaktion beschreibt die nasse thermische Oxidation von Silizium?</p>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">a) Si + O₂ → SiO₂</button>
+      <button class="quiz-option" onclick="answer('q3','correct',this)">b) Si + 2H₂O → SiO₂ + 2H₂</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">c) SiO₂ + 6HF → H₂SiF₆ + 2H₂O</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">d) Si + 2KOH + H₂O → K₂SiO₃ + 2H₂</button>
+      <div class="quiz-feedback" id="fb-q3"></div>
+    </div>
+
+    <div class="quiz-question" id="q4">
+      <p>4. Was bedeutet „ESD" im Reinraumkontext?</p>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">a) Erweiterte Schutzdiode</button>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">b) Elektron-Strahl-Depositionsverfahren</button>
+      <button class="quiz-option" onclick="answer('q4','correct',this)">c) Elektrostatische Entladung (Electrostatic Discharge)</button>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">d) Echtzeit-Sensordetektion</button>
+      <div class="quiz-feedback" id="fb-q4"></div>
+    </div>
+
+    <div class="quiz-question" id="q5">
+      <p>5. Die SC-1-Lösung (RCA-Reinigung) besteht aus:</p>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">a) H₂SO₄ : H₂O₂ : H₂O (Piranha)</button>
+      <button class="quiz-option" onclick="answer('q5','correct',this)">b) NH₄OH : H₂O₂ : H₂O (1:1:5)</button>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">c) HCl : H₂O₂ : H₂O (SC-2)</button>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">d) HF : H₂O (1:50)</button>
+      <div class="quiz-feedback" id="fb-q5"></div>
+    </div>
+
+    <div id="quiz-result">
+      <div id="quiz-score-text"></div>
+      <button class="btn btn-secondary" onclick="resetQuiz()" style="margin-top:0.8rem">Quiz wiederholen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 8: Schreibübungen Deutsch (2 ejercicios)
+════════════════════════════════════════════════════════════ -->
+<section id="sec-schreiben">
+  <h2>✍ Schreibübungen — Deutsches Fachaufsatz (IHK-Niveau)</h2>
+
+  <!-- Ejercicio 1: LF2 Dotierung -->
+  <div style="background:#f5f3ff; border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:0.88rem; border-left:4px solid var(--lf2)">
+    <strong>Aufgabe 1 <span class="lf-tag lf2" style="margin-left:.4rem">LF 2</span>:</strong> Erklären Sie in 4–6 Sätzen auf Deutsch:<br>
+    „Erläutern Sie den Unterschied zwischen n-Typ- und p-Typ-Dotierung von Silizium und nennen Sie für jeden Typ ein Beispiel eines Dotierstoffs."<br>
+    <em style="color:var(--muted)">Verwenden Sie: Donator, Akzeptor, Valenzband, Leitungsband, Ionenimplantation, Loch (Löcher).</em>
+  </div>
+  <textarea id="schreibTextarea1" placeholder="Die n-Typ-Dotierung erfolgt durch..."></textarea>
+  <div style="display:flex; gap:0.8rem; margin-top:0.8rem; flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="checkWortanzahl('schreibTextarea1','wort-count1')">Wörter zählen</button>
+    <button class="btn btn-secondary" onclick="toggleMuster('musterloesung1')">Musterlösung anzeigen</button>
+    <button class="btn" style="background:var(--lf2);color:white" onclick="korrigieren1()">✏ Korrigieren &amp; Feedback</button>
+  </div>
+  <div id="wort-count1" style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted)"></div>
+  <div id="korrekturBox1" style="display:none;margin-top:14px;font-size:.85rem"></div>
+  <div class="musterloesung" id="musterloesung1">
+    <h4>Musterlösung (IHK-Niveau) — LF 2 Dotierung:</h4>
+    <p>
+      Bei der <strong>n-Typ-Dotierung</strong> werden Fremdatome der V. Hauptgruppe — zum Beispiel <strong>Phosphor (P)</strong> oder Arsen (As) — in das Siliziumgitter eingebaut.
+      Diese Atome besitzen fünf Valenzelektronen; das fünfte Elektron ist nur schwach gebunden und wird leicht ins Leitungsband abgegeben.
+      Diese Dotieratome heißen <strong>Donatoren</strong>, da sie Elektronen zur Verfügung stellen.
+    </p>
+    <p style="margin-top:0.5rem">
+      Bei der <strong>p-Typ-Dotierung</strong> werden Atome der III. Hauptgruppe eingebaut, in der Praxis meistens <strong>Bor (B)</strong>.
+      Da Bor nur drei Valenzelektronen besitzt, fehlt ein Bindungselektron — es entsteht eine <strong>Fehlstelle (Loch, ⊕)</strong> im Valenzband, die sich wie eine positive Ladung verhält.
+      Diese Dotieratome heißen <strong>Akzeptoren</strong>.
+      In modernen FABs erfolgt das Einbringen beider Typen hauptsächlich durch <strong>Ionenimplantation</strong>.
+    </p>
+    <p style="margin-top:0.5rem; font-size:0.82rem; color:var(--muted)">
+      <strong>Schlüsselwörter:</strong> der Donator · der Akzeptor · das Leitungsband · das Valenzband · das Loch · die Ionenimplantation · die Fehlstelle · der Phosphor · das Bor
+    </p>
+  </div>
+
+  <hr style="margin:1.5rem 0; border:none; border-top:1px solid var(--border)">
+
+  <!-- Ejercicio 2: LF4 Reinraum -->
+  <div style="background:#f0f9ff; border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:0.88rem; border-left:4px solid var(--lf4)">
+    <strong>Aufgabe 2 <span class="lf-tag lf4" style="margin-left:.4rem">LF 4</span>:</strong> Erklären Sie in 4–6 Sätzen auf Deutsch:<br>
+    „Warum muss der Reinraum in einer Halbleiterfabrik eine bestimmte ISO-Klasse einhalten,
+    und welche Maßnahmen werden ergriffen, um diese zu erreichen?"<br>
+    <em style="color:var(--muted)">Verwenden Sie Fachbegriffe: Partikelkonzentration, laminare Strömung, HEPA-Filter, ISO 14644.</em>
+  </div>
+  <textarea id="schreibTextarea" placeholder="Schreiben Sie hier Ihre Antwort auf Deutsch..."></textarea>
+  <div style="display:flex; gap:0.8rem; margin-top:0.8rem; flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="checkWortanzahl('schreibTextarea','wort-count')">Wörter zählen</button>
+    <button class="btn btn-secondary" onclick="toggleMuster('musterloesung')">Musterlösung anzeigen</button>
+    <button class="btn" style="background:#1a56db;color:white" onclick="korrigieren()">✏ Korrigieren &amp; Feedback</button>
+  </div>
+  <div id="wort-count" style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted)"></div>
+  <div id="korrekturBox" style="display:none;margin-top:14px;font-size:.85rem"></div>
+  <div class="musterloesung" id="musterloesung">
+    <h4>Musterlösung (IHK-Niveau):</h4>
+    <p>
+      In einer Halbleiterfabrik müssen die Reinraumklassen nach ISO 14644 streng eingehalten werden,
+      da selbst kleinste Partikel (ab 0,1 µm) die Funktionalität mikroelektronischer Bauelemente zerstören können.
+      Die Partikelkonzentration im Lithografiebereich darf beispielsweise die ISO-Klasse 3 (maximal 1.000 Partikel/m³) nicht überschreiten,
+      da die Strukturbreiten der modernen Chips weit kleiner als die Wellenlänge des Lichts sind.
+    </p>
+    <p style="margin-top:0.5rem">
+      Um diese Reinheitsstufe zu erreichen, werden HEPA- und ULPA-Filter eingesetzt,
+      die Partikel bis 0,12 µm mit einem Abscheidegrad von 99,999 % zurückhalten.
+      Durch eine laminare Strömung (ca. 0,3–0,5 m/s) wird die gereinigte Luft gleichgerichtet über den Prozessbereich geleitet,
+      sodass entstehende Partikel sofort abgeführt werden.
+      Zusätzlich steht der Reinraum unter leichtem Überdruck (ca. 10–20 Pa gegenüber der Umgebung),
+      um das Eindringen kontaminierter Außenluft durch Undichtigkeiten zu verhindern.
+    </p>
+    <p style="margin-top:0.5rem; font-size:0.82rem; color:var(--muted)">
+      <strong>Benutzte Fachbegriffe:</strong> ISO 14644, Partikelkonzentration, Lithografiebereich, HEPA-Filter, ULPA-Filter,
+      Abscheidegrad, laminare Strömung, Überdruck, kontaminiert.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 9: Bibliografía / Quellen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quellen">
+  <h2>📚 Quellen &amp; Bibliografía — LF 2 + LF 3 + LF 4 + LF 9</h2>
+  <p style="font-size:.83rem;color:var(--muted);margin-bottom:1rem">Fuentes ordenadas por prioridad para estas LFs. Los capítulos indicados cubren exactamente el contenido de esta FASE.</p>
+
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- Sze & Ng -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid var(--primary)">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.9rem">📘 Sze &amp; Ng — Physics of Semiconductor Devices</div>
+          <div style="font-size:.8rem;color:#475569;margin-top:.2rem">3ª ed. Wiley-Interscience, 2007. ISBN 978-0-471-14323-9</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/02_Electronica_y_Dispositivos/Physics_of_Semiconductor_Devices_Sze_Ng_3rd_Ed.pdf" style="background:var(--primary);color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">📂 Abrir PDF local</a>
+      </div>
+      <div style="margin-top:.6rem;font-size:.82rem">
+        <strong>Capítulos para LF2+LF3+LF9:</strong>
+        <ul style="margin:.3rem 0 0 1.2rem;display:flex;flex-direction:column;gap:.2rem">
+          <li><strong>Cap. 1</strong>, pp. 5–74 — Physics and Properties of Semiconductors: Bandlücke, Kristallstruktur, Eigenleitung, n<sub>i</sub></li>
+          <li><strong>Cap. 2</strong>, pp. 79–133 — p-n Junction: PN-Übergang, Shockley-Gleichung, Durchlass-/Sperrrichtung</li>
+          <li><strong>Cap. 12</strong>, pp. 527–561 — Ionenimplantation: Reichweite R<sub>p</sub>, Strahlenschäden, Annealing</li>
+        </ul>
+        <div style="margin-top:.5rem;font-size:.79rem;background:#e0f2fe;border-radius:6px;padding:.4rem .6rem;color:#0369a1;font-family:monospace">
+          Sze, S. M.; Ng, K. K. <em>Physics of Semiconductor Devices</em>, 3rd ed.; Wiley-Interscience, 2007. ISBN 978-0-471-14323-9.
+        </div>
+        <div style="margin-top:.3rem;color:#6b7280">La referencia más completa para física de semiconductores a nivel universitario. Nivel avanzado — ideal para construir base sólida antes del IHK.</div>
+      </div>
+    </div>
+
+    <!-- Wolf VLSI -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #7c3aed">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.9rem">📗 Wolf &amp; Tauber — Silicon Processing for the VLSI Era</div>
+          <div style="font-size:.8rem;color:#475569;margin-top:.2rem">Vol. 1–2. Lattice Press, 2000.</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Silicon_Processing_for_VLSI_Era_Vol1-2_Wolf_Tauber.pdf" style="background:#7c3aed;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">📂 Abrir PDF local</a>
+      </div>
+      <div style="margin-top:.6rem;font-size:.82rem">
+        <strong>Capítulos para LF2+LF4+LF9:</strong>
+        <ul style="margin:.3rem 0 0 1.2rem;display:flex;flex-direction:column;gap:.2rem">
+          <li><strong>Vol. 1, Cap. 2</strong>, pp. 25–80 — Silicon: el material. Cristalización Czochralski, dopantes, propiedades</li>
+          <li><strong>Vol. 1, Cap. 4</strong>, pp. 95–143 — Cleanrooms &amp; Contamination Control: ISO-Klassen, HEPA/ULPA, RCA-Reinigung</li>
+          <li><strong>Vol. 1, Cap. 5</strong>, pp. 145–198 — Thermal Oxidation: Deal-Grove-Modell, Trocken-/Nassoxidation, Schichtwachstum</li>
+          <li><strong>Vol. 1, Cap. 6</strong>, pp. 199–260 — Diffusion: Fick'sche Gesetze, Diffusionsofen, Dotierprofile</li>
+          <li><strong>Vol. 1, Cap. 7</strong>, pp. 261–280 — CVD: LPCVD poly-Si/Si₃N₄, PECVD, TEOS-Prozesse</li>
+          <li><strong>Vol. 1, Cap. 8</strong>, pp. 280–356 — Ion Implantation: energía, dosis, R<sub>p</sub>, RTA, Annealing</li>
+          <li><strong>Vol. 1, Cap. 9</strong>, pp. 357–420 — Wet Processing &amp; Etching: HF-Ätzen, KOH, Nassätzmechanismen</li>
+        </ul>
+        <div style="margin-top:.5rem;font-size:.79rem;background:#ede9fe;border-radius:6px;padding:.4rem .6rem;color:#5b21b6;font-family:monospace">
+          Wolf, S.; Tauber, R. N. <em>Silicon Processing for the VLSI Era</em>, Vol. 1, 2nd ed.; Lattice Press, 2000.
+        </div>
+        <div style="margin-top:.3rem;color:#6b7280">El libro de proceso FAB por excelencia. Más orientado a fabricación que Sze — explica exactamente lo que pasa en un cleanroom real.</div>
+      </div>
+    </div>
+
+    <!-- Recursos online -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid var(--success)">
+      <div style="font-weight:700;font-size:.9rem">🌐 Recursos online gratuitos</div>
+      <ul style="margin:.4rem 0 0 1.2rem;font-size:.82rem;display:flex;flex-direction:column;gap:.4rem">
+        <li>
+          <a href="https://hyperphysics.phy-astr.gsu.edu/hbase/Solids/band.html" target="_blank" style="font-weight:600;color:#059669">HyperPhysics (EN) — Band Theory of Solids</a>
+          <span style="color:#475569"> — Diagramas de bandas, Bandlücke, metales/semiconductores/aislantes. Nivel: perfecto para IHK.</span>
+        </li>
+        <li>
+          <a href="https://www.leifiphysik.de/elektronik/einfuehrung-die-elektronik" target="_blank" style="font-weight:600;color:#059669">leifiphysik.de (DE) — Halbleiterphysik</a>
+          <span style="color:#475569"> — Portal de física alemán. Cubre Bändermodell, PN-Übergang, Dotierung con lenguaje IHK exacto.</span>
+          <div style="margin-top:.25rem;font-size:.79rem;padding-left:.5rem;display:flex;flex-wrap:wrap;gap:.4rem">
+            <a href="https://www.leifiphysik.de/elektronik/einfuehrung-die-elektronik/grundwissen/eigenleitung-im-siliziumkristall" target="_blank" style="color:#059669">↳ Eigenleitung im Si-Kristall</a>
+            <a href="https://www.leifiphysik.de/elektronik/einfuehrung-die-elektronik/grundwissen/dotierte-halbleiter" target="_blank" style="color:#059669">↳ Dotierte Halbleiter</a>
+            <a href="https://www.leifiphysik.de/elektronik/halbleiterdiode/grundwissen/p-n-uebergang-halbleiterdiode" target="_blank" style="color:#059669">↳ PN-Übergang</a>
+          </div>
+        </li>
+        <li>
+          <a href="https://www.halbleiter.org" target="_blank" style="font-weight:600;color:#059669">halbleiter.org (DE) — Halbleitertechnologie von A bis Z</a>
+          <span style="color:#475569"> — Enfocado en tecnología FAB: Reinraum, Dotierverfahren, Prozessschritte. En alemán técnico.</span>
+          <div style="margin-top:.25rem;font-size:.79rem;padding-left:.5rem">
+            <a href="https://www.halbleiter.org/pdf/de/grundlagen/Grundlagen.pdf" target="_blank" style="color:#059669">↳ PDF: Grundlagen der Halbleitertechnologie (descarga directa)</a>
+          </div>
+        </li>
+        <li>
+          <a href="https://es.khanacademy.org/science/physics/quantum-physics" target="_blank" style="font-weight:600;color:#059669">Khan Academy ES — Física cuántica</a>
+          <span style="color:#475569"> — Niveles de energía, bandas, efecto fotoeléctrico. Base conceptual en español.</span>
+        </li>
+        <li>
+          <strong style="color:#059669">The Organic Chemistry Tutor (EN) — Semiconductor Physics</strong>
+          <span style="color:#475569"> — Busca en YouTube: <em>«Organic Chemistry Tutor semiconductors band gap»</em>. Explica Eg, dopaje n/p con ejemplos numéricos claros.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KMK Rahmenlehrplan -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="font-weight:700;font-size:.9rem">📋 Rahmenlehrplan KMK — LF 2, 3, 4, 9 oficiales</div>
+      <div style="font-size:.82rem;margin-top:.4rem">
+        <strong>LF 2</strong>: <em>«Chemische und physikalische Grundlagen der Halbleitertechnologie»</em> — 80 h.<br>
+        <strong>LF 3</strong>: <em>«Werkstoffe der Mikrotechnologie»</em> — 40 h.<br>
+        <strong>LF 4</strong>: <em>«Arbeiten im Reinraum»</em> — 20 h.<br>
+        <strong>LF 9</strong>: <em>«Dotierungsverfahren anwenden»</em> — 40 h.<br>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/Rahmenlehrplan_Mikrotechnologe_KMK_OFICIAL.pdf" style="color:#d97706;font-size:.8rem">📂 Rahmenlehrplan PDF local</a>
+        &nbsp;|&nbsp;
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="color:#d97706;font-size:.8rem">📂 Carpeta IHK local</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 10: Anki-Export
+════════════════════════════════════════════════════════════ -->
+<section id="sec-anki">
+  <h2>🃏 Anki-Export — LF 2 + LF 4 Vokabeln</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.8rem">Kopiere diese Tabelle in Anki (Tab-getrennt) oder lerne direkt mit den Flip-Karten oben.</p>
+  <button class="btn btn-primary" onclick="copyAnki()" style="margin-bottom:0.8rem">Alle kopieren (CSV)</button>
+  <span id="copy-notice">✓ Kopiert!</span>
+  <div id="anki-table">
+    <div class="anki-row"><div class="anki-front">Halbleiter</div><div class="anki-back">Semiconductor | Si, Ge, GaAs — Eg 0,67–3,4 eV</div></div>
+    <div class="anki-row"><div class="anki-front">Dotierung</div><div class="anki-back">Doping | Fremdatome → p-Typ (B) oder n-Typ (P, As)</div></div>
+    <div class="anki-row"><div class="anki-front">Bandlücke (Eg)</div><div class="anki-back">Band gap | Si=1,12 eV | GaAs=1,42 eV | SiO₂=9 eV</div></div>
+    <div class="anki-row"><div class="anki-front">Donator</div><div class="anki-back">Donor | V. Gruppe (P, As) → n-Typ → freies Elektron</div></div>
+    <div class="anki-row"><div class="anki-front">Akzeptor</div><div class="anki-back">Acceptor | III. Gruppe (B) → p-Typ → Loch (⊕)</div></div>
+    <div class="anki-row"><div class="anki-front">Ionenimplantation</div><div class="anki-back">Ion implantation | 10–500 keV | Annealing nötig</div></div>
+    <div class="anki-row"><div class="anki-front">Reinraum ISO 3</div><div class="anki-back">Cleanroom ISO 3 | max. 1.000 Partikel/m³ | Lithografie</div></div>
+    <div class="anki-row"><div class="anki-front">HEPA-Filter</div><div class="anki-back">HEPA filter | ≥99,97% @ ≥0,3 µm | DIN EN 1822</div></div>
+    <div class="anki-row"><div class="anki-front">laminare Strömung</div><div class="anki-back">Laminar flow | 0,3–0,5 m/s | gleichgerichtet → Partikelabfuhr</div></div>
+    <div class="anki-row"><div class="anki-front">ESD</div><div class="anki-back">Electrostatic Discharge | zerstört Gateoxid | IEC 61340</div></div>
+    <div class="anki-row"><div class="anki-front">thermische Oxidation</div><div class="anki-back">Thermal oxidation | Si+O₂→SiO₂ (trocken) | Si+2H₂O→SiO₂+2H₂ (nass)</div></div>
+    <div class="anki-row"><div class="anki-front">RCA SC-1</div><div class="anki-back">NH₄OH:H₂O₂:H₂O (1:1:5) @ 75°C | Partikel + organisch</div></div>
+    <div class="anki-row"><div class="anki-front">Piranha-Lösung</div><div class="anki-back">H₂SO₄:H₂O₂ (3:1) @ 120°C | Photoresist-Entfernung</div></div>
+    <div class="anki-row"><div class="anki-front">Ätzrate / Selektivität</div><div class="anki-back">Etch rate / Selectivity | nm/min | Ratio Ziel/Maske</div></div>
+    <div class="anki-row"><div class="anki-front">Silan (SiH₄)</div><div class="anki-back">Silane | pyrophor | CVD-Precursor | GHS02+04 | gefährlich!</div></div>
+  </div>
+</section>
+
+</main>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE2_LF2_Chemie_LF4_Reinraum.html</strong> · Siguiente: <a href="FASE3_LF7_Lithografie_LF8_Schichten.html" style="color:var(--primary)">Fase 3 — LF7+LF8 (Litografía &amp; Deposición)</a>
+</div>
+
+<script>
+// ── Progress bar ────────────────────────────────────────────
+let progressState = { elements: 0, flips: 0, quiz: 0, writing1: false, writing2: false };
+
+function updateProgress() {
+  let score = 0;
+  score += Math.min(15, progressState.elements * 1.5);  // hasta 15% (10 elementos)
+  score += Math.min(30, progressState.flips * 1.1);     // hasta 30% (28 tarjetas)
+  score += progressState.quiz * 5;                       // hasta 25% (5 preguntas)
+  score += progressState.writing1 ? 10 : 0;             // 10%
+  score += progressState.writing2 ? 10 : 0;             // 10%
+  document.getElementById('progressBar').style.width = Math.min(100, Math.round(score)) + '%';
+}
+
+// ── Elementos interactivos ──────────────────────────────────
+let activeEl = null;
+function toggleEl(card) {
+  const panel = document.getElementById('el-panel');
+
+  if (activeEl === card) {
+    card.classList.remove('active');
+    panel.classList.remove('show');
+    activeEl = null;
+    return;
+  }
+
+  if (activeEl) activeEl.classList.remove('active');
+
+  if (!card.dataset.seen) {
+    card.dataset.seen = '1';
+    progressState.elements++;
+    updateProgress();
+  }
+
+  card.classList.add('active');
+  activeEl = card;
+
+  document.getElementById('el-p-sym').textContent = card.querySelector('.el-sym').textContent;
+  document.getElementById('el-p-num').textContent = 'Z = ' + card.dataset.num;
+  document.getElementById('el-p-de').textContent = card.dataset.de;
+  document.getElementById('el-p-es').textContent = card.dataset.es;
+  document.getElementById('el-p-en').textContent = card.dataset.en;
+  document.getElementById('el-p-info').innerHTML = card.dataset.info;
+  panel.classList.add('show');
+}
+
+// ── Flip cards ──────────────────────────────────────────────
+function flipCard(card) {
+  if (!card.classList.contains('flipped')) {
+    progressState.flips++;
+    const total = document.querySelectorAll('.flip-card').length;
+    document.getElementById('flipProgress').textContent = progressState.flips + ' / ' + total + ' Karten geflippt';
+    updateProgress();
+  }
+  card.classList.toggle('flipped');
+}
+
+// ── Quiz ────────────────────────────────────────────────────
+let quizAnswered = {};
+const quizCorrectMsg = {
+  'q1': 'Richtig! Bor (B, III. Gruppe) ist der Akzeptor → p-Typ-Dotierung.',
+  'q2': 'Richtig! ISO 5 = 100.000 Partikel/m³ (US Fed 209E: Klasse 100).',
+  'q3': 'Richtig! Nasse Oxidation: Si + 2H₂O → SiO₂ + 2H₂ (schneller als trocken).',
+  'q4': 'Richtig! ESD = Electrostatic Discharge — zerstört dünne Gateoxide sofort.',
+  'q5': 'Richtig! SC-1 (Standard Clean 1): NH₄OH:H₂O₂:H₂O entfernt Partikel + Organik.'
+};
+const quizWrongMsg = {
+  'q1': 'Falsch. Phosphor (P) und Arsen (As) sind n-Typ Dotierstoffe (V. Gruppe, Donatoren). Bor (B) ist der p-Typ Akzeptor.',
+  'q2': 'Falsch. ISO 3 = 1.000 Partikel/m³; ISO 4 = 10.000; ISO 5 = 100.000; ISO 7 = 10.000.000.',
+  'q3': 'Falsch. Option a) ist trockene Oxidation; c) ist HF-Ätzen von SiO₂; d) ist KOH-Ätzen von Si.',
+  'q4': 'Falsch. ESD steht für Electrostatic Discharge (Elektrostatische Entladung) — kritisch für Gateoxide.',
+  'q5': 'Falsch. SC-1 ist NH₄OH:H₂O₂:H₂O. SC-2 ist HCl:H₂O₂:H₂O. Piranha ist H₂SO₄:H₂O₂.'
+};
+
+function answer(qid, result, btn) {
+  if (quizAnswered[qid]) return;
+  quizAnswered[qid] = true;
+  btn.classList.add(result);
+  const fb = document.getElementById('fb-' + qid);
+  fb.textContent = result === 'correct' ? '✓ ' + quizCorrectMsg[qid] : '✗ ' + quizWrongMsg[qid];
+  fb.className = 'quiz-feedback show ' + result;
+  const opts = document.querySelectorAll('#' + qid + ' .quiz-option');
+  opts.forEach(o => o.disabled = true);
+  progressState.quiz = Object.keys(quizAnswered).length;
+  updateProgress();
+  if (Object.keys(quizAnswered).length === 5) showResult();
+}
+
+function showResult() {
+  const correct = Object.values(quizAnswered).filter((v, i) => {
+    const q = 'q' + (i+1);
+    const btn = document.querySelector('#' + q + ' .quiz-option.correct');
+    return btn !== null;
+  }).length;
+  const score = document.querySelectorAll('.quiz-option.correct').length;
+  const el = document.getElementById('quiz-result');
+  const scoreText = document.getElementById('quiz-score-text');
+  scoreText.textContent = score + ' / 5 Antworten korrekt — ' + (score >= 4 ? '🎉 Ausgezeichnet!' : score >= 3 ? '👍 Gut gemacht!' : '📚 Noch üben!');
+  el.style.display = 'block';
+  updateProgress();
+}
+
+function resetQuiz() {
+  quizAnswered = {};
+  progressState.quiz = 0;
+  updateProgress();
+  document.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.classList.remove('correct', 'wrong');
+    btn.disabled = false;
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(fb => fb.className = 'quiz-feedback');
+  document.getElementById('quiz-result').style.display = 'none';
+}
+
+// ── Schreibübungen ────────────────────────────────────────────
+function checkWortanzahl(textareaId, countId) {
+  const text = document.getElementById(textareaId).value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const el = document.getElementById(countId);
+  const target = 50;
+  if (words === 0) {
+    el.textContent = 'Noch keine Wörter eingegeben.';
+  } else if (words < target) {
+    el.textContent = words + ' Wörter — Ziel: ' + target + '+ Wörter (' + (target - words) + ' fehlen noch)';
+    el.style.color = 'var(--warning)';
+  } else {
+    el.textContent = '✓ ' + words + ' Wörter — Gute Länge für IHK-Antwort!';
+    el.style.color = 'var(--success)';
+  }
+}
+
+function toggleMuster(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+function korrigieren1() {
+  const text = document.getElementById('schreibTextarea1').value.trim();
+  const box  = document.getElementById('korrekturBox1');
+  const fach = [
+    {r:/donator/i,           label:'Donator'},
+    {r:/akzeptor/i,          label:'Akzeptor'},
+    {r:/n-typ/i,             label:'n-Typ'},
+    {r:/p-typ/i,             label:'p-Typ'},
+    {r:/valenzband/i,        label:'Valenzband'},
+    {r:/leitungsband/i,      label:'Leitungsband'},
+    {r:/ionenimplantation/i, label:'Ionenimplantation'},
+    {r:/loch|l[öo]cher/i,   label:'Loch / Löcher'},
+  ];
+  _korrekturEngine(text, fach, box);
+  if (text.length > 50) { progressState.writing1 = true; updateProgress(); }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('schreibTextarea1').addEventListener('input', function() {
+    if (this.value.length > 80) { progressState.writing1 = true; updateProgress(); }
+  });
+  document.getElementById('schreibTextarea').addEventListener('input', function() {
+    if (this.value.length > 80) { progressState.writing2 = true; updateProgress(); }
+  });
+});
+
+function korrigieren() {
+  const text = document.getElementById('schreibTextarea').value.trim();
+  const box  = document.getElementById('korrekturBox');
+  const fach = [
+    {r:/reinraumklasse/i,           label:'Reinraumklasse'},
+    {r:/iso\s*14644/i,              label:'ISO 14644'},
+    {r:/partikelkonzentration/i,    label:'Partikelkonzentration'},
+    {r:/laminare?\s*str[öo]mung/i,  label:'laminare Strömung'},
+    {r:/hepa/i,                     label:'HEPA-Filter'},
+    {r:/[üu]berdruck/i,             label:'Überdruck'},
+    {r:/schleuse/i,                 label:'Schleuse'},
+    {r:/kontaminier/i,              label:'kontaminiert/Kontamination'},
+  ];
+  _korrekturEngine(text, fach, box);
+  if (text.length > 50) { progressState.writing2 = true; updateProgress(); }
+}
+
+// ── Anki Export ─────────────────────────────────────────────
+function copyAnki() {
+  const rows = document.querySelectorAll('.anki-row');
+  let csv = '';
+  rows.forEach(row => {
+    const front = row.querySelector('.anki-front').textContent.trim();
+    const back = row.querySelector('.anki-back').textContent.trim();
+    csv += front + '\t' + back + '\n';
+  });
+  navigator.clipboard.writeText(csv).then(() => {
+    const notice = document.getElementById('copy-notice');
+    notice.style.display = 'inline';
+    setTimeout(() => notice.style.display = 'none', 2000);
+  });
+}
+
+</script>
+<script src="korrektur_engine.js"></script>
+</body>
+</html>

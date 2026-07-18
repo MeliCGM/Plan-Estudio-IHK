@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección 1 v3: Fundamentos Técnicos Avanzados (IHK/PhD)</title>
+    <style>
+        :root { --primary: #002855; --secondary: #00509d; --accent: #c1121f; --success: #386641; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.8; color: #333; background-color: var(--bg); margin: 0; padding: 0; }
+        .container { max-width: 1100px; margin: 40px auto; background: white; padding: 50px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        
+        h1 { color: var(--primary); text-align: center; border-bottom: 4px solid var(--secondary); padding-bottom: 15px; }
+        h2 { color: var(--secondary); border-left: 6px solid var(--secondary); padding-left: 15px; margin-top: 40px; }
+        
+        /* Tooltips Interactivos */
+        .term { color: var(--accent); font-weight: bold; border-bottom: 2px dotted var(--accent); cursor: help; position: relative; display: inline-block; }
+        .term:hover::after {
+            content: attr(data-def); position: absolute; left: 50%; bottom: 125%; transform: translateX(-50%);
+            background: #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 0.85em; width: 280px; z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: normal; line-height: 1.4;
+        }
+
+        .lang-group { color: #666; font-style: italic; font-size: 0.9em; }
+
+        /* Cuadros de Fórmulas Humanizadas */
+        .formula-card { background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 25px; margin: 30px 0; }
+        .formula-display { font-size: 1.8em; text-align: center; color: var(--primary); margin-bottom: 20px; font-family: 'Cambria Math', serif; }
+        .formula-explanation { background: #f1f3f5; padding: 15px; border-radius: 8px; font-size: 0.95em; }
+        .formula-logic { border-top: 2px solid var(--secondary); margin-top: 15px; padding-top: 15px; font-weight: bold; color: var(--secondary); }
+
+        /* Enlaces a Fuentes */
+        .source-link { display: inline-block; background: #e9ecef; color: #495057; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-top: 10px; font-size: 0.85em; transition: 0.3s; }
+        .source-link:hover { background: #dee2e6; color: var(--accent); }
+
+        /* Flashcards Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 40px; }
+        .card { perspective: 1000px; height: 220px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; border-radius: 12px; }
+        .card-front { background-color: var(--primary); color: white; }
+        .card-back { background-color: var(--success); color: white; transform: rotateY(180deg); }
+        .q-de { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
+        .q-es { font-size: 0.85em; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Lección 1: Microtecnología e Ingeniería de Procesos</h1>
+
+    <!-- SECCIÓN 1: SILICIO -->
+    <h2>1. El Sustrato Industrial: Silicio <span class="lang-group">(das Silizium, Silicon)</span></h2>
+    <p>
+        El silicio es el elemento fundamental. Para que sea útil en microelectrónica, su estructura de red de diamante debe alterarse mediante el 
+        <span class="term" data-def="Introducción controlada de átomos de otro elemento para cambiar las propiedades eléctricas.">dopaje</span> <span class="lang-group">(die Dotierung, Doping)</span>.
+    </p>
+    <ul>
+        <li><b>Dopaje Tipo N <span class="lang-group">(n-Dotierung)</span>:</b> Se usan elementos del grupo 15 (Fósforo, Arsénico). Como tienen 5 electrones en su capa externa y el silicio 4, sobra un <span class="term" data-def="Carga negativa que puede moverse libremente por la red cristalina.">electrón libre</span> <span class="lang-group">(freies Elektron, free electron)</span>.</li>
+        <li><b>Dopaje Tipo P <span class="lang-group">(p-Dotierung)</span>:</b> Se usa Boro (grupo 13). Al tener solo 3 electrones, se crea un <span class="term" data-def="Ausencia de un electrón que se comporta como una carga positiva móvil.">hueco</span> <span class="lang-group">(das Loch / Defektelektron, hole)</span>.</li>
+    </ul>
+    <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/Industrial_Semiconductor_Manufacturing/IHK_Pr%C3%BCfungsvorbereitung/IHK_Dresden_Mikrotechnologe_Rahmenlehrplan.md" class="source-link">📄 Fuente: Programa Oficial IHK (Lernfeld 3)</a>
+
+    <!-- SECCIÓN 2: REINRAUM -->
+    <h2>2. Ingeniería del Cuarto Limpio <span class="lang-group">(der Reinraum, Cleanroom)</span></h2>
+    <p>
+        La pureza ambiental se define por la cantidad de partículas. La norma alemana <span class="term" data-def="Verein Deutscher Ingenieure: Asociación de Ingenieros Alemanes. La norma 2083 rige las salas limpias.">VDI 2083</span> es la referencia absoluta para tu examen.
+    </p>
+    
+    <h3>Dinámica de los Flujos de Aire</h3>
+    <ul>
+        <li><b>Flujo Turbulento <span class="lang-group">(turbulente Mischströmung, Turbulent Airflow)</span>:</b> El aire entra y se mezcla, diluyendo las partículas. Se usa en zonas menos críticas.</li>
+        <li><b>Flujo Laminar <span class="lang-group">(turbulenzarme Verdrängungsströmung - TAV, Laminar Airflow - LAF)</span>:</b> El aire se mueve en líneas paralelas desde el techo al suelo a una velocidad de <b>0.45 m/s</b>. Esto "empuja" cualquier partícula fuera del área de trabajo.</li>
+    </ul>
+
+    <div class="formula-card">
+        <div class="formula-display">Cn = 10<sup>N</sup> · (0.1 / D)<sup>2.08</sup></div>
+        <div class="formula-explanation">
+            <b>Cn:</b> Concentración máxima de partículas por m³.<br>
+            <b>N:</b> Clase de pureza ISO (Cuanto menor es N, más limpia es la sala).<br>
+            <b>D:</b> Diámetro de la partícula en micrómetros (µm).
+        </div>
+        <div class="formula-logic">
+            💡 Lógica Humana: Si el número de clase (N) sube, la concentración (Cn) aumenta drásticamente. Una sala ISO 5 es 10 veces más sucia que una ISO 4.
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: QUÍMICA -->
+    <h2>3. Química de Procesos: Limpieza RCA y Ataque</h2>
+    <p>
+        La <span class="term" data-def="Radio Corporation of America: Desarrollaron este estándar de limpieza en 1965.">Limpieza RCA</span> <span class="lang-group">(die RCA-Reinigung)</span> consiste en dos pasos principales: 
+        <b>SC1</b> (Standard Clean 1: elimina partículas y orgánicos) y <b>SC2</b> (Standard Clean 2: elimina metales).
+    </p>
+    <p>
+        En el ataque químico, buscamos una alta <span class="term" data-def="Capacidad de un químico para disolver un material específico sin afectar a los demás.">selectividad</span> <span class="lang-group">(die Selektivität, selectivity)</span>. 
+        El <span class="term" data-def="Ácido Fluorhídrico (HF). El único capaz de disolver el cristal (SiO2) de forma eficiente.">Ácido Fluorhídrico</span> <span class="lang-group">(die Flusssäure, Hydrofluoric Acid)</span> es el ejemplo perfecto: elimina el óxido pero respeta el silicio.
+    </p>
+    <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/Industrial_Semiconductor_Manufacturing/Seguridad_y_Gefahrstoffe/Silane_SOP_Technical.pdf" class="source-link">⚠️ Fuente Original: Seguridad del Silano (PDF)</a>
+
+    <!-- SECCIÓN 4: LITOGRAFÍA -->
+    <h2>4. Fotolitografía: El Sistema ASML <span class="lang-group">(die Fotolithografie)</span></h2>
+    <p>
+        La resolución de los chips depende de la <b>Ecuación de Rayleigh</b>. Es la que define qué tan pequeño puede ser un transistor.
+    </p>
+
+    <div class="formula-card">
+        <div class="formula-display">CD = k<sub>1</sub> · (λ / NA)</div>
+        <div class="formula-explanation">
+            <b>CD (Critical Dimension):</b> El tamaño mínimo que podemos "dibujar". Queremos que sea lo más pequeño posible.<br>
+            <b>λ (Lambda):</b> Longitud de onda de la luz (ej. 13.5 nm para máquinas EUV).<br>
+            <b>NA (Numerical Aperture):</b> Apertura numérica (capacidad de la lente para captar luz).<br>
+            <b>k<sub>1</sub>:</b> Factor de proceso (calidad de la resina y el operario).
+        </div>
+        <div class="formula-logic">
+            💡 Lógica Humana: Para hacer chips más pequeños (bajar CD), tenemos dos caminos: usar una luz más fina (bajar λ) o una lente más grande/mejor (subir NA).
+        </div>
+    </div>
+
+    <!-- FLASHCARDS AMPLIADAS -->
+    <h2 style="color: var(--success); border-left-color: var(--success);">🃏 Flashcards de Entrenamiento (10 tarjetas)</h2>
+    <div class="grid">
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Was ist ein Halbleiter?</div><div class="q-es">¿Qué es un semiconductor?</div></div>
+            <div class="card-back"><div>Ein Material mit mittlerer Leitfähigkeit.</div><div class="q-es">Un material con conductividad media.</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Was bedeutet n-Dotierung?</div><div class="q-es">¿Qué significa dopaje tipo N?</div></div>
+            <div class="card-back"><div>Einbringen von Elektronen-Donatoren.</div><div class="q-es">Introducción de donadores de electrones.</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Was ist TAV?</div><div class="q-es">¿Qué es TAV (Flujo Laminar)?</div></div>
+            <div class="card-back"><div>Turbulenzarme Verdrängungsströmung.</div><div class="q-es">Flujo de desplazamiento de baja turbulencia.</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Typische TAV-Geschwindigkeit?</div><div class="q-es">¿Velocidad típica del flujo laminar?</div></div>
+            <div class="card-back"><div>Ca. 0,45 m/s.</div><div class="q-es">Aproximadamente 0.45 m/s.</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Was bedeutet RCA?</div><div class="q-es">¿Qué significa RCA?</div></div>
+            <div class="card-back"><div>Radio Corporation of America.</div><div class="q-es">Radio Corporation of America (estándar de limpieza).</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Wozu dient die Selektivität?</div><div class="q-es">¿Para qué sirve la selectividad?</div></div>
+            <div class="card-back"><div>Gezieltes Ätzen einer Schicht.</div><div class="q-es">Ataque químico dirigido de una sola capa.</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Wellenlänge von EUV?</div><div class="q-es">¿Longitud de onda de EUV?</div></div>
+            <div class="card-back"><div>13,5 nm.</div><div class="q-es">13.5 nanómetros.</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Was ist Silan (SiH4)?</div><div class="q-es">¿Qué es el Silano?</div></div>
+            <div class="card-back"><div>Ein pyrophores Gas.</div><div class="q-es">Un gas pirofórico (se inflama solo).</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Was bedeutet CD?</div><div class="q-es">¿Qué significa CD?</div></div>
+            <div class="card-back"><div>Critical Dimension (Strukturbreite).</div><div class="q-es">Dimensión Crítica (ancho de la estructura).</div></div>
+        </div></div>
+        <div class="card" onclick="this.classList.toggle('flipped')"><div class="card-inner">
+            <div class="card-front"><div class="q-de">Womit ätzt man SiO2?</div><div class="q-es">¿Con qué se ataca el SiO2?</div></div>
+            <div class="card-back"><div>Mit Flusssäure (HF).</div><div class="q-es">Con ácido fluorhídrico (HF).</div></div>
+        </div></div>
+    </div>
+</div>
+
+</body>
+</html>

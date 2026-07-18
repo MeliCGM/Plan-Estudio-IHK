@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fase 0 — Orientación: El FAB y los 13 Lernfelder</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,Arial,sans-serif;background:#f0f4f8;color:#1e293b;line-height:1.6}
+header{background:linear-gradient(135deg,#1e3a5f,#1a56db);color:#fff;padding:24px 32px}
+header h1{font-size:1.5rem;margin-bottom:4px}
+header p{opacity:.85;font-size:.9rem}
+.meta{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
+.badge{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 12px;font-size:.8rem}
+.progress-bar{background:rgba(255,255,255,.2);height:6px;border-radius:3px;margin-top:16px}
+.progress-fill{background:#34d399;height:100%;border-radius:3px;width:0%;transition:width .5s}
+main{max-width:900px;margin:0 auto;padding:24px 16px}
+.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{color:#1e3a5f;font-size:1.2rem;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}
+h3{color:#1a56db;font-size:1rem;margin:12px 0 8px}
+.highlight{background:#eff6ff;border-left:4px solid #1a56db;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0}
+.success{background:#ecfdf5;border-left:4px solid #0e9f6e;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0}
+.warn{background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0}
+
+/* FAB Flow */
+.fab-flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;margin:16px 0}
+.fab-step{background:#1e3a5f;color:#fff;padding:8px 12px;border-radius:8px;font-size:.78rem;text-align:center;min-width:80px}
+.fab-step span{display:block;font-size:.65rem;opacity:.8;margin-top:2px}
+.fab-arrow{color:#94a3b8;font-size:1.2rem;padding:0 2px}
+
+/* Lernfelder Accordion */
+.lf-grid{display:grid;gap:8px}
+.lf-item{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
+.lf-header{background:#f8fafc;padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.lf-header:hover{background:#eff6ff}
+.lf-header .lf-title{font-weight:600;font-size:.9rem}
+.lf-header .lf-meta{display:flex;gap:8px;align-items:center}
+.lf-year{background:#1a56db;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:10px}
+.lf-hours{color:#64748b;font-size:.8rem}
+.lf-body{display:none;padding:14px 16px;background:#fff;font-size:.88rem;border-top:1px solid #e2e8f0}
+.lf-body.open{display:block}
+.lf-body ul{list-style:disc;padding-left:20px;margin-top:6px}
+.lf-body li{margin-bottom:3px}
+.lf-body .de-term{font-weight:600;color:#1e3a5f}
+.lf-arrow{transition:transform .2s;color:#94a3b8}
+.lf-arrow.open{transform:rotate(90deg)}
+
+/* Chemistry bridge */
+.bridge-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:12px 0}
+.bridge-left{background:#fef3c7;padding:10px 14px;border-radius:8px;font-size:.85rem}
+.bridge-arrow{text-align:center;font-size:1.4rem;color:#1a56db}
+.bridge-right{background:#eff6ff;padding:10px 14px;border-radius:8px;font-size:.85rem}
+.bridge-label{font-size:.7rem;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:4px}
+
+/* Vocab table */
+.vocab-search{width:100%;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:.9rem;margin-bottom:12px}
+.vocab-search:focus{outline:none;border-color:#1a56db}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#1e3a5f;color:#fff;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #f1f5f9}
+tr:hover td{background:#f8fafc}
+.de{font-weight:700;color:#1e3a5f}
+.hidden-row{display:none}
+
+/* Quiz */
+.quiz-q{margin-bottom:20px}
+.quiz-q p{font-weight:600;margin-bottom:8px;font-size:.95rem}
+.quiz-opt{display:block;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:.88rem;transition:.2s}
+.quiz-opt:hover{border-color:#1a56db;background:#eff6ff}
+.quiz-opt.correct{border-color:#0e9f6e;background:#ecfdf5;color:#065f46}
+.quiz-opt.wrong{border-color:#e02424;background:#fef2f2;color:#991b1b}
+.quiz-feedback{display:none;margin-top:6px;padding:8px 12px;border-radius:6px;font-size:.85rem}
+.quiz-score{text-align:center;padding:16px;font-size:1.1rem;font-weight:700;color:#1e3a5f;display:none}
+
+/* IHK Writing */
+.de-exercise{background:#f8fafc;border-radius:8px;padding:16px;margin-top:12px}
+.de-question{font-weight:700;color:#1e3a5f;font-size:.95rem;margin-bottom:10px;font-style:italic}
+textarea{width:100%;height:90px;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-size:.88rem;resize:vertical;font-family:inherit}
+textarea:focus{outline:none;border-color:#1a56db}
+.btn{background:#1a56db;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.88rem;margin-top:8px}
+.btn:hover{background:#1e40af}
+.btn-outline{background:transparent;color:#1a56db;border:2px solid #1a56db}
+.btn-outline:hover{background:#eff6ff}
+.answer-box{display:none;margin-top:12px;padding:12px;background:#ecfdf5;border-radius:8px;font-size:.88rem}
+
+  /* Citas en línea */
+  a.ref { display:inline-block; font-size:.68rem; font-weight:700; text-decoration:none; background:#dbeafe; color:#1a56db; border-radius:3px; padding:0 4px; vertical-align:super; line-height:1.5; white-space:nowrap; margin-left:2px; }
+  a.ref:hover { background:#1a56db; color:white; }
+  a.ref.wolf { background:#ede9fe; color:#7c3aed; }
+  a.ref.wolf:hover { background:#7c3aed; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fase 0 — Orientación: El FAB y los 13 Lernfelder</h1>
+  <p>IHK Mikrotechnologe · Dresden Chip Academy · Preparación autónoma</p>
+  <div class="meta">
+    <span class="badge">⏱ ~45 min</span>
+    <span class="badge">📋 Visión general</span>
+    <span class="badge">🇩🇪 Vocabulario: 20 términos</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+</header>
+
+<main>
+
+<!-- SECCIÓN 1: FAB Overview -->
+<div class="card">
+  <h2>1. El proceso semiconductor: de oblea a chip</h2>
+  <p style="margin-bottom:14px">Todo lo que aprenderás en la Umschulung sirve para dominar este flujo:</p>
+
+  <div class="fab-flow">
+    <div class="fab-step">Silizium-Wafer<span>materia prima</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Oxidation<span>SiO₂ LF8</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Lithografie<span>patrón LF7</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Ätzprozess<span>estructura LF8</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Dotierung<span>dopaje LF9</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Schicht-<br>abscheidung<span>CVD/PVD LF8</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Metallisierung<span>contactos LF8</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Backend<span>packaging LF10</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step">Funktions-<br>prüfung<span>test LF11</span></div>
+  </div>
+
+  <div class="highlight">
+    <strong>Perspectiva de química:</strong> Cada paso es esencialmente una transformación química o físico-química controlada. Tu ventaja: entiendes mecanismos de reacción, cinética, termodinámica. Eso es exactamente lo que gobierna CVD, ALD, etching, oxidación.
+  </div>
+
+  <h3>Estructura del Umschulung (24 meses)</h3>
+  <div class="fab-flow" style="justify-content:flex-start">
+    <div class="fab-step" style="background:#065f46">TQ1<span>Fundamentos</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step" style="background:#1e40af">TQ2<span>Prozesse</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step" style="background:#1e40af">TQ3<span>Schichten</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step" style="background:#7c3aed">TQ4<span>Mikrosysteme</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step" style="background:#7c3aed">TQ5<span>Instandhaltung</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step" style="background:#b45309">TQ6<span>Integration</span></div>
+    <div class="fab-arrow">→</div>
+    <div class="fab-step" style="background:#991b1b">IHK-<br>Prüfung<span>Jul 2028</span></div>
+  </div>
+  <p style="margin-top:10px;font-size:.85rem;color:#64748b">Cada TQ incluye 540 Unterrichtseinheiten de teoría + 192 horas de práctica en el FAB de la dresden chip academy.</p>
+</div>
+
+<!-- SECCIÓN 2: 13 Lernfelder -->
+<div class="card">
+  <h2>2. Los 13 Lernfelder — Plan de estudios oficial KMK</h2>
+  <p style="margin-bottom:14px;font-size:.9rem">Haz clic en cada Lernfeld para ver el contenido detallado.</p>
+
+  <div class="lf-grid">
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 1 — Erfassung und Darstellung von Signalverarbeitungsvorgängen und elektrischen Grundgrößen</span>
+        <div class="lf-meta"><span class="lf-year">Año 1</span><span class="lf-hours">80 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐⭐⭐⭐ (más alejado de tu background)</strong>
+        <ul>
+          <li>Magnitudes eléctricas: tensión <span class="de-term">die Spannung (U)</span>, corriente <span class="de-term">die Stromstärke (I)</span>, resistencia <span class="de-term">der Widerstand (R)</span>, potencia <span class="de-term">die Leistung (P)</span></li>
+          <li>Ley de Ohm: U = R × I</li>
+          <li>Leyes de Kirchhoff: <span class="de-term">der Knotenpunktsatz</span> (corrientes), <span class="de-term">der Maschensatz</span> (tensiones)</li>
+          <li>Señales analógicas y digitales</li>
+          <li>Componentes pasivos: R, L, C en DC y AC</li>
+          <li>Normas de seguridad: <span class="de-term">Schutzbestimmungen, Schutzmaßnahmen</span></li>
+        </ul>
+        <div class="warn" style="margin-top:10px">📖 Fuente: Boylestad cap 1–5 · <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/02_Electronica_y_Dispositivos/Electronic_Devices_Circuit_Theory_Boylestad_Nashelsky.pdf" style="color:#1a56db">Abrir PDF</a></div>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 2 — Beurteilung von chemischen Zusammenhängen für die Halbleiterherstellung</span>
+        <div class="lf-meta"><span class="lf-year">Año 1</span><span class="lf-hours">80 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐ (tu mayor ventaja — PhD directo)</strong>
+        <ul>
+          <li><span class="de-term">Gefahrstoffverordnung</span>: manejo, etiquetado, eliminación de residuos químicos</li>
+          <li>Ácidos, bases, pH — <span class="de-term">Säuren, Laugen, pH-Wert</span></li>
+          <li>Compuestos de carbono, alcoholes, solventes usados en FAB</li>
+          <li>Gases reactivos: SiH₄, HCl, HF, NH₃ — <span class="de-term">reaktive Gase und deren Spaltprodukte</span></li>
+          <li>Agua ultrapura: <span class="de-term">Reinwasser, Deionisiertes Wasser (DI-Wasser)</span></li>
+          <li>Ecuaciones de reacción: <span class="de-term">Reaktionsgleichungen</span></li>
+        </ul>
+        <div class="success" style="margin-top:10px">✅ Tu PhD cubre esto con creces. Enfocar en terminología DE y Gefahrstoffverordnung alemana.</div>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 3 — Funktionsanalyse ausgewählter Halbleiterwerkstoffe</span>
+        <div class="lf-meta"><span class="lf-year">Año 1</span><span class="lf-hours">40 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐⭐</strong>
+        <ul>
+          <li>Mecanismos de conducción: <span class="de-term">Leitungsvorgänge in Metallen, Halbleitern und Nichtleitern</span></li>
+          <li>Si poli y monocristalino: <span class="de-term">polykristalline und einkristalline Halbleiter</span></li>
+          <li>Dopaje y defectos: <span class="de-term">gestörte Halbleiter, Fremdatome</span></li>
+          <li>Unión p-n: <span class="de-term">PN-Übergang</span> — curva I-V, zona de deplexión</li>
+          <li>Diodo: funcionamiento y curva característica</li>
+        </ul>
+        <div class="highlight" style="margin-top:10px">📖 Fuente: Sze cap 1–2 · <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/02_Electronica_y_Dispositivos/Physics_of_Semiconductor_Devices_Sze_Ng_3rd_Ed.pdf" style="color:#1a56db">Abrir PDF</a></div>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 4 — Einhaltung von Reinraumbedingungen</span>
+        <div class="lf-meta"><span class="lf-year">Año 1</span><span class="lf-hours">20 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐</strong>
+        <ul>
+          <li>Clasificación ISO 14644: <span class="de-term">Reinraumklassifizierung ISO 1–9</span></li>
+          <li>Fuentes de contaminación: <span class="de-term">Ursachen, Arten und Auswirkungen von Verunreinigungen</span></li>
+          <li>Medición de partículas: <span class="de-term">Partikelmessung</span></li>
+          <li>Ventilación: flujo laminar <span class="de-term">turbulenzarme Verdrängungsströmung (TAV)</span>, HEPA/ULPA</li>
+          <li>Medidas técnicas: <span class="de-term">technische Maßnahmen zur Luftreinhaltung</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 5 — Anwendung von Standardsoftware</span>
+        <div class="lf-meta"><span class="lf-year">Año 1</span><span class="lf-hours">60 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐ (nivel académico supera lo requerido)</strong>
+        <ul>
+          <li>Office: Word, Excel para documentación de procesos y gráficas SPC</li>
+          <li>Fundamentos del sistema operativo</li>
+          <li>Respaldo y gestión de datos</li>
+          <li><span class="de-term">Englischsprachige Anleitungen</span>: leer instrucciones técnicas en inglés</li>
+        </ul>
+        <div class="success" style="margin-top:10px">✅ No requiere preparación previa.</div>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 6 — Vergleich von Funktionseinheiten diskreter und integrierter Schaltungen</span>
+        <div class="lf-meta"><span class="lf-year">Año 2</span><span class="lf-hours">140 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐⭐⭐ (el LF más extenso — 140h)</strong>
+        <ul>
+          <li>Componentes activos y pasivos: <span class="de-term">bipolare und unipolare Technik</span></li>
+          <li>Amplificadores: <span class="de-term">Grundschaltungen der Verstärkertechnik</span></li>
+          <li>Lógica digital: puertas, memoria — <span class="de-term">logische Grundschaltungen, Speicherzellen</span></li>
+          <li>Medición wafers: estructuras de test — <span class="de-term">Teststrukturen</span></li>
+          <li>ESD y EMI: <span class="de-term">Empfindlichkeit gegenüber physikalischen und chemischen Einflüssen</span></li>
+          <li>Datasheets en DE e EN: <span class="de-term">Datenblätter</span></li>
+        </ul>
+        <div class="highlight" style="margin-top:10px">📖 Fuente: Boylestad completo + Sze cap 3–4</div>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 7 — Anwendung fototechnischer Verfahren in der Mikrotechnologie</span>
+        <div class="lf-meta"><span class="lf-year">Año 2</span><span class="lf-hours">60 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐⭐ (conexión química fuerte)</strong>
+        <ul>
+          <li>Fotoresist: <span class="de-term">physikalische und chemische Eigenschaften von Fotolacken</span>, positivo vs. negativo</li>
+          <li>Proceso completo: Beschichtung → Belackung → Belichtung → Entwicklung → Reinigung</li>
+          <li>Sistemas de exposición: contacto, proyección, ASML TWINSCAN</li>
+          <li>DUV (193 nm) y EUV (13.5 nm): <span class="de-term">Belichtungsverfahren</span></li>
+          <li>Inspección y defectos: <span class="de-term">Prüfverfahren</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 8 — Erstellung von Schichten und deren Strukturierung</span>
+        <div class="lf-meta"><span class="lf-year">Año 2</span><span class="lf-hours">80 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <strong>Tu prioridad de preparación: ⭐⭐⭐ (CVD/ALD = química de superficie)</strong>
+        <ul>
+          <li>Tipos de capa: SiO₂, Si₃N₄, polisiliicio, metal, epitaxia — <span class="de-term">Oxidschichten, Nitridschichten</span></li>
+          <li>CVD, LPCVD, PECVD, ALD, PVD (sputtering, evaporación)</li>
+          <li>Estructuración: nasschemisches Ätzen y Trockenätzen (RIE, plasma)</li>
+          <li>Influencia del vacío: <span class="de-term">Einfluß des Vakuums auf den Prozeß</span></li>
+          <li>Medición de capas: <span class="de-term">Meß- und Prüfverfahren zur Schichtkontrolle</span></li>
+        </ul>
+        <div class="highlight" style="margin-top:10px">📖 May &amp; Spanos cap 3,4,6 · Wolf VLSI Vol1 · <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Fundamentals_Semiconductor_Manufacturing_ProcessControl_May_Spanos.pdf" style="color:#1a56db">Abrir PDF</a></div>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 9 — Veränderung der Leitfähigkeit durch Dotierungsverfahren</span>
+        <div class="lf-meta"><span class="lf-year">Año 3</span><span class="lf-hours">40 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <ul>
+          <li>Selección de dopantes: <span class="de-term">Eigenschaften und Auswahl der Dotierstoffe</span> — coeficiente de difusión, solubilidad</li>
+          <li>Difusión: ley de Fick, hornos — <span class="de-term">Diffusionsverfahren, Diffusionsanlagen</span></li>
+          <li>Implantación iónica: <span class="de-term">Ionenimplantationsverfahren</span> — energía, dosis, distribución</li>
+          <li>Recocido (Annealing): activación eléctrica</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 10 — Fertigstellung mikrotechnischer Produkte (Backend)</span>
+        <div class="lf-meta"><span class="lf-year">Año 3</span><span class="lf-hours">80 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <ul>
+          <li>Procesos cara posterior: <span class="de-term">Rückseitenprozesse</span></li>
+          <li>Dicing: <span class="de-term">Trennen der Scheibe</span></li>
+          <li>Montaje de chip: <span class="de-term">Chipmontage, Bestückung</span></li>
+          <li>Wire bonding: <span class="de-term">Kontaktierung</span></li>
+          <li>Packaging: <span class="de-term">Häusen</span></li>
+          <li>Prueba funcional: <span class="de-term">Funktionsprüfung</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 11 — Einhaltung von Qualitätsstandards</span>
+        <div class="lf-meta"><span class="lf-year">Año 3</span><span class="lf-hours">40 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <ul>
+          <li>QM: criterios y medidas — <span class="de-term">Kriterien zur Festlegung von Qualitätsstandards</span></li>
+          <li>Estadística: distribución normal, media, desv. estándar — <span class="de-term">Normalverteilung, Mittelwert, Standardabweichung</span></li>
+          <li>SPC: <span class="de-term">statistische Prozeßregelung</span> — cartas de control Shewhart, Cp, Cpk</li>
+          <li>Acciones correctoras: <span class="de-term">notwendige Änderungsmaßnahmen für den Fertigungsprozeß</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 12 — Beschreibung von Mikrosystemen (MEMS)</span>
+        <div class="lf-meta"><span class="lf-year">Año 3</span><span class="lf-hours">60 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <ul>
+          <li>Sensores: temperatura, presión, aceleración, flujo — <span class="de-term">Sensoren zur Erfassung von Temperatur, Durchflußmenge, Druck, Beschleunigung</span></li>
+          <li>Actuadores: micromotores — <span class="de-term">Aktoren (z.B. Mikromotor)</span></li>
+          <li>Aplicaciones: airbag, inkjet — <span class="de-term">Einsatz von Mikrosystemen</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lf-item">
+      <div class="lf-header" onclick="toggleLF(this)">
+        <span class="lf-title">LF 13 — Einstellung, Prüfung und Optimierung verfahrenstechnischer Anlagen</span>
+        <div class="lf-meta"><span class="lf-year">Año 3</span><span class="lf-hours">60 h</span><span class="lf-arrow">▶</span></div>
+      </div>
+      <div class="lf-body">
+        <ul>
+          <li>Controles: <span class="de-term">Steuerungen (Ablaufsteuerung), Regelstrecken</span></li>
+          <li>Reguladores PID: <span class="de-term">stetige und unstetige Regler</span></li>
+          <li>Sensores de proceso: temperatura, presión, pH, flujo</li>
+          <li>Transmisión de datos analógica/digital</li>
+          <li>Diagnóstico de fallos: <span class="de-term">Fehlerdiagnose, Fließbilder, Meßprotokoll</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SECCIÓN 3: Tu ventaja de química -->
+<div class="card">
+  <h2>3. Tu PhD en Química como ventaja estratégica</h2>
+  <p style="margin-bottom:14px;font-size:.9rem">La mayoría de tus compañeros en el Umschulung no tendrán base química. Estos son tus puentes cognitivos:</p>
+
+  <div class="bridge-grid">
+    <div class="bridge-left"><div class="bridge-label">Tu background</div>Síntesis orgánica en fase líquida, mecanismos de reacción, catálisis homogénea</div>
+    <div class="bridge-arrow">→</div>
+    <div class="bridge-right"><div class="bridge-label">En el FAB</div>Química húmeda (wet clean), grabado ácido, RCA clean — LF2, LF7, LF8</div>
+  </div>
+
+  <div class="bridge-grid">
+    <div class="bridge-left"><div class="bridge-label">Tu background</div>Termodinámica de reacción, cinética química, constantes de velocidad</div>
+    <div class="bridge-arrow">→</div>
+    <div class="bridge-right"><div class="bridge-label">En el FAB</div>CVD (reacción en fase gas), ALD (ciclos de superficie), velocidad de crecimiento de óxido — LF8, LF9</div>
+  </div>
+
+  <div class="bridge-grid">
+    <div class="bridge-left"><div class="bridge-label">Tu background</div>Espectroscopía, caracterización de materiales, análisis de pureza</div>
+    <div class="bridge-arrow">→</div>
+    <div class="bridge-right"><div class="bridge-label">En el FAB</div>Metrología óptica, XRF, elipsometría, análisis de defectos — LF8, LF11</div>
+  </div>
+
+  <div class="bridge-grid">
+    <div class="bridge-left"><div class="bridge-label">Tu background</div>Manejo de Schlenk, trabajo bajo atmósfera inerte, líquidos criogénicos</div>
+    <div class="bridge-arrow">→</div>
+    <div class="bridge-right"><div class="bridge-label">En el FAB</div>Gases peligrosos (SiH₄ pirofórico), sistemas de vacío, gases UHP — LF2, LF8</div>
+  </div>
+
+  <div class="bridge-grid">
+    <div class="bridge-left"><div class="bridge-label">Tu background</div>Estadística experimental, análisis de datos, reproducibilidad</div>
+    <div class="bridge-arrow">→</div>
+    <div class="bridge-right"><div class="bridge-label">En el FAB</div>SPC, cartas de control, Cp/Cpk, análisis de varianza — LF11</div>
+  </div>
+</div>
+
+<!-- SECCIÓN 4: Vocabulario -->
+<div class="card">
+  <h2>4. Vocabulario esencial — 20 términos IHK</h2>
+  <input type="text" class="vocab-search" id="vocabSearch" placeholder="Buscar término..." oninput="filterVocab()">
+  <table id="vocabTable">
+    <thead><tr><th>Deutsch (Artikel)</th><th>Español</th><th>English</th><th>Contexto FAB</th></tr></thead>
+    <tbody>
+      <tr><td class="de">die Halbleitertechnologie</td><td>tecnología de semiconductores</td><td>semiconductor technology</td><td>nombre del campo completo</td></tr>
+      <tr><td class="de">der Wafer</td><td>oblea de silicio</td><td>wafer</td><td>substrato sobre el que se fabrican los chips</td></tr>
+      <tr><td class="de">die Umschulung</td><td>reconversión profesional</td><td>retraining / career change</td><td>tu programa en la Dresden Chip Academy</td></tr>
+      <tr><td class="de">das Lernfeld</td><td>campo de aprendizaje</td><td>learning field</td><td>unidad curricular del plan KMK</td></tr>
+      <tr><td class="de">der Reinraum</td><td>sala limpia</td><td>cleanroom</td><td>entorno controlado de partículas para fabricación</td></tr>
+      <tr><td class="de">die Dotierung</td><td>dopaje</td><td>doping</td><td>introducción controlada de impurezas en Si</td></tr>
+      <tr><td class="de">die Fotolithografie</td><td>fotolitografía</td><td>photolithography</td><td>transferencia de patrón usando luz y fotoresist</td></tr>
+      <tr><td class="de">das Ätzen</td><td>grabado</td><td>etching</td><td>remoción selectiva de material (wet o dry)</td></tr>
+      <tr><td class="de">die Schichtabscheidung</td><td>deposición de capas</td><td>thin film deposition</td><td>CVD, PVD, ALD — crear capas funcionales</td></tr>
+      <tr><td class="de">die Oxidation</td><td>oxidación</td><td>oxidation</td><td>crecimiento térmico de SiO₂ sobre Si</td></tr>
+      <tr><td class="de">der Fotolack</td><td>fotoresist</td><td>photoresist</td><td>resina sensible a la luz para patrón litográfico</td></tr>
+      <tr><td class="de">die Prozesskontrolle</td><td>control de proceso</td><td>process control</td><td>monitoreo y ajuste de parámetros en FAB</td></tr>
+      <tr><td class="de">der Gefahrstoff</td><td>sustancia peligrosa</td><td>hazardous substance</td><td>HF, SiH₄, NH₃ — requieren protocolo especial</td></tr>
+      <tr><td class="de">die Qualitätssicherung</td><td>aseguramiento de calidad</td><td>quality assurance</td><td>SPC, inspección, control de defectos</td></tr>
+      <tr><td class="de">die Abschlußprüfung</td><td>examen final</td><td>final exam</td><td>examen IHK ante la cámara de comercio</td></tr>
+      <tr><td class="de">das Betriebspraktikum</td><td>práctica empresarial</td><td>industrial internship</td><td>25 semanas en empresa (Infineon, GlobalFoundries...)</td></tr>
+      <tr><td class="de">die Unterrichtseinheit (UE)</td><td>unidad didáctica</td><td>teaching unit (45 min)</td><td>medida de tiempo en formación alemana: 1 UE = 45 min</td></tr>
+      <tr><td class="de">der Ausbildungsberuf</td><td>profesión de formación dual</td><td>vocational training occupation</td><td>Mikrotechnologe/in es un Ausbildungsberuf</td></tr>
+      <tr><td class="de">das Vakuum</td><td>vacío</td><td>vacuum</td><td>condición necesaria para CVD, PVD, implantación iónica</td></tr>
+      <tr><td class="de">die Messtechnik</td><td>técnica de medición</td><td>measurement technology</td><td>elipsometría, SEM, AFM, inspección óptica</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECCIÓN 5: Quiz -->
+<div class="card">
+  <h2>5. Autoevaluación — Preguntas tipo IHK</h2>
+  <div id="quiz">
+    <div class="quiz-q" id="q1">
+      <p>1. In welchem Lernfeld werden die Grundlagen der Elektrotechnik (Spannung, Stromstärke, Widerstand) behandelt?</p>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q1')">Lernfeld 2</label>
+      <label class="quiz-opt" onclick="answer(this,'correct','q1')">Lernfeld 1</label>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q1')">Lernfeld 6</label>
+      <div class="quiz-feedback" id="fb-q1"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p>2. Was bedeutet die Abkürzung "TQ" im Angebot der Dresden Chip Academy?</p>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q2')">Technische Qualifizierung</label>
+      <label class="quiz-opt" onclick="answer(this,'correct','q2')">Teilqualifikation</label>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q2')">Trainingsqualität</label>
+      <div class="quiz-feedback" id="fb-q2"></div>
+    </div>
+    <div class="quiz-q" id="q3">
+      <p>3. Welches Lernfeld hat mit 140 Stunden den größten Zeitrichtwert im 2. Ausbildungsjahr?</p>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q3')">LF 7 (Fototechnische Verfahren)</label>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q3')">LF 8 (Schichten und Strukturierung)</label>
+      <label class="quiz-opt" onclick="answer(this,'correct','q3')">LF 6 (Diskrete und integrierte Schaltungen)</label>
+      <div class="quiz-feedback" id="fb-q3"></div>
+    </div>
+    <div class="quiz-q" id="q4">
+      <p>4. Was ist der "Fotolack" (Fotoresist) und in welchem Lernfeld kommt er vor?</p>
+      <label class="quiz-opt" onclick="answer(this,'correct','q4')">Lichtempfindliche Schicht zur Strukturübertragung — LF 7</label>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q4')">Reinigungsmittel für Wafer — LF 2</label>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q4')">Dotierungsstoff für Silizium — LF 9</label>
+      <div class="quiz-feedback" id="fb-q4"></div>
+    </div>
+    <div class="quiz-q" id="q5">
+      <p>5. Die statistische Prozesskontrolle (SPC) ist Inhalt von welchem Lernfeld?</p>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q5')">LF 10</label>
+      <label class="quiz-opt" onclick="answer(this,'correct','q5')">LF 11</label>
+      <label class="quiz-opt" onclick="answer(this,'wrong','q5')">LF 13</label>
+      <div class="quiz-feedback" id="fb-q5"></div>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 6: Escritura en alemán -->
+<div class="card">
+  <h2>6. Ejercicio de escritura IHK — Alemán técnico</h2>
+  <div class="de-exercise">
+    <div class="de-question">„Beschreiben Sie kurz die Struktur der Umschulung zum Mikrotechnologen und nennen Sie drei Fachbereiche, die in der Ausbildung vermittelt werden."</div>
+    <p style="font-size:.82rem;color:#64748b;margin-bottom:8px">💡 Intenta responder en alemán (3–5 oraciones). Puedes usar vocabulario de la sección 4.</p>
+    <textarea id="deAnswer" placeholder="Ihre Antwort auf Deutsch..."></textarea>
+    <br>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn" onclick="korrigieren()">✏ Korrigieren &amp; Feedback</button>
+      <button class="btn btn-outline" onclick="showAnswer()">📄 Musterlösung anzeigen</button>
+    </div>
+    <!-- Corrección -->
+    <div id="korrekturBox" style="display:none;margin-top:14px;font-size:.85rem"></div>
+    <!-- Musterlösung -->
+    <div class="answer-box" id="answerBox">
+      <strong>Musterlösung:</strong><br><br>
+      Die Umschulung zum Mikrotechnologen dauert 24 Monate und findet an der Dresden Chip Academy statt. Sie besteht aus sechs Teilqualifikationen (TQ1 bis TQ6), die jeweils mit einem betrieblichen Praktikum abschließen. Die Ausbildung vermittelt unter anderem folgende Fachbereiche: <em>Halbleitertechnologie</em> (Grundlagen und Prozesse), <em>Reinraumtechnik</em> (Einhaltung strenger Sauberkeitsstandards) sowie <em>Qualitätssicherung</em> (statistische Prozesskontrolle und Fehleranalyse). Das Ziel ist die erfolgreiche Abschlussprüfung vor der IHK Dresden.
+      <br><br>
+      <strong>Schlüsselbegriffe:</strong> dauert 24 Monate · besteht aus TQ1–TQ6 · vermittelt Fachbereiche · Ziel ist die IHK-Prüfung
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN: Bibliografía / Quellen
+════════════════════════════════════════════════════════════ -->
+<div class="card" id="sec-quellen">
+  <h2>📚 Quellen &amp; Bibliografía — Todos los LFs (Fase 0)</h2>
+  <p style="font-size:.83rem;color:#64748b;margin-bottom:1rem">Fuentes para esta FASE. Los capítulos indicados cubren exactamente el contenido aquí tratado.</p>
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- Wolf & Tauber — azul -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #1a56db">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Wolf &amp; Tauber — <em>Silicon Processing for the VLSI Era</em>, Vol. 1–2</div>
+          <div style="font-size:.8rem;color:#64748b;margin-top:.2rem">Referencia principal: visión completa del proceso FAB</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Silicon_Processing_for_VLSI_Era_Vol1-2_Wolf_Tauber.pdf" style="background:#1a56db;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Cap. 2, pp. 25–80</strong> — Si material: cristalografía, propiedades eléctricas, dopaje intrínseco</li>
+        <li><strong>Cap. 4, pp. 95–143</strong> — Cleanrooms: clasificación ISO, flujo laminar, partículas</li>
+        <li><strong>Cap. 5, pp. 145–198</strong> — Oxidation: Deal-Grove model, SiO₂ térmico</li>
+        <li><strong>Cap. 10, pp. 421–550</strong> — Lithografie: resist, Belichtung, Entwicklung, Alignment</li>
+        <li><strong>Cap. 8, pp. 280–356</strong> — Ionenimplantation: distribuciones de dopaje, annealing</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#e0f2fe;border-radius:6px;padding:.4rem .6rem;color:#0369a1;font-family:monospace">
+        Wolf, S.; Tauber, R. N. <em>Silicon Processing for the VLSI Era, Vol. 1–2</em>; Lattice Press, 2000.
+      </div>
+    </div>
+
+    <!-- Online resources — verde -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid #0e9f6e">
+      <div style="font-weight:700;font-size:.92rem;margin-bottom:.5rem">Recursos Online — Portales técnicos</div>
+      <ul style="font-size:.83rem;padding-left:1.2rem">
+        <li><a href="https://www.halbleiter.org" style="color:#1a56db;font-weight:600">halbleiter.org</a> (DE) — Halbleitertechnologie von A bis Z — Portal técnico en alemán con todos los procesos FAB</li>
+        <li><a href="https://hyperphysics.phy-astr.gsu.edu/hbase/Solids/band.html" style="color:#1a56db;font-weight:600">HyperPhysics</a> (EN) — Solid State Physics — Base de física del estado sólido</li>
+        <li><a href="https://www.leifiphysik.de/elektronik/einfuehrung-die-elektronik" style="color:#1a56db;font-weight:600">leifiphysik.de</a> (DE) — Halbleiterphysik — Portal alemán IHK-nivel</li>
+      </ul>
+    </div>
+
+    <!-- KMK — amarillo -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Rahmenlehrplan KMK — Mikrotechnologe/in</div>
+          <div style="font-size:.8rem;color:#64748b;margin-top:.2rem">Plan oficial: todos los 13 Lernfelder con horas</div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/Rahmenlehrplan_Mikrotechnologe_KMK_OFICIAL.pdf" style="background:#d97706;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF KMK</a>
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="background:#92400e;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Carpeta IHK</a>
+        </div>
+      </div>
+      <table style="width:100%;font-size:.79rem;margin-top:.7rem;border-collapse:collapse">
+        <thead><tr style="background:#fef3c7"><th style="padding:.3rem .5rem;text-align:left">LF</th><th style="padding:.3rem .5rem;text-align:left">Titel</th><th style="padding:.3rem .5rem;text-align:right">Stunden</th><th style="padding:.3rem .5rem;text-align:left">Jahr</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:.25rem .5rem">LF 1</td><td>Elektrotechnik (Grundlagen)</td><td style="text-align:right">80h</td><td>Año 1</td></tr>
+          <tr style="background:#fef9c3"><td style="padding:.25rem .5rem">LF 2</td><td>Chemische Grundlagen</td><td style="text-align:right">80h</td><td>Año 1</td></tr>
+          <tr><td style="padding:.25rem .5rem">LF 3</td><td>Werkstoffe</td><td style="text-align:right">40h</td><td>Año 1</td></tr>
+          <tr style="background:#fef9c3"><td style="padding:.25rem .5rem">LF 4</td><td>Reinraum</td><td style="text-align:right">20h</td><td>Año 1</td></tr>
+          <tr><td style="padding:.25rem .5rem">LF 5</td><td>Standardsoftware</td><td style="text-align:right">40h</td><td>Año 2 Sem.1</td></tr>
+          <tr style="background:#fef9c3"><td style="padding:.25rem .5rem">LF 6</td><td>Schaltungen</td><td style="text-align:right">80h</td><td>Año 2 Sem.1</td></tr>
+          <tr><td style="padding:.25rem .5rem">LF 7</td><td>Lithografie</td><td style="text-align:right">80h</td><td>Año 2 Sem.1</td></tr>
+          <tr style="background:#fef9c3"><td style="padding:.25rem .5rem">LF 8</td><td>Schichten</td><td style="text-align:right">80h</td><td>Año 2 Sem.1</td></tr>
+          <tr><td style="padding:.25rem .5rem">LF 9</td><td>Dotierung</td><td style="text-align:right">40h</td><td>Año 2 Sem.2</td></tr>
+          <tr style="background:#fef9c3"><td style="padding:.25rem .5rem">LF 10</td><td>Vakuum</td><td style="text-align:right">40h</td><td>Año 2 Sem.2</td></tr>
+          <tr><td style="padding:.25rem .5rem">LF 11</td><td>Qualität</td><td style="text-align:right">40h</td><td>Año 2 Sem.2</td></tr>
+          <tr style="background:#fef9c3"><td style="padding:.25rem .5rem">LF 12</td><td>MEMS</td><td style="text-align:right">40h</td><td>Año 2 Sem.2</td></tr>
+          <tr><td style="padding:.25rem .5rem">LF 13</td><td>Anlagen</td><td style="text-align:right">80h</td><td>Año 2 Sem.2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE0_Orientacion_FAB_Lernfelder.html</strong> ·
+  Siguiente: <a href="FASE1_LF1_Elektrotechnik_Grundlagen.html">Fase 1 — LF1 Elektrotechnik</a> →
+</div>
+
+<script>
+function toggleLF(header){
+  const body=header.nextElementSibling;
+  const arrow=header.querySelector('.lf-arrow');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  arrow.classList.toggle('open',!isOpen);
+  updateProgress();
+}
+
+let scores={};
+function answer(el,type,qid){
+  if(document.getElementById(qid).classList.contains('answered')) return;
+  document.getElementById(qid).classList.add('answered');
+  const opts=el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.style.pointerEvents='none');
+  el.classList.add(type);
+  const fb=document.getElementById('fb-'+qid);
+  fb.style.display='block';
+  if(type==='correct'){
+    fb.style.background='#ecfdf5';fb.style.color='#065f46';fb.style.padding='8px 12px';fb.style.borderRadius='6px';
+    fb.textContent='✓ Korrekt!';
+    scores[qid]=1;
+  } else {
+    fb.style.background='#fef2f2';fb.style.color='#991b1b';fb.style.padding='8px 12px';fb.style.borderRadius='6px';
+    fb.textContent='✗ Leider falsch. Markieren Sie die richtige Antwort.';
+    scores[qid]=0;
+    // highlight correct
+    opts.forEach(o=>{if(o.onclick.toString().includes('correct')) o.classList.add('correct');});
+  }
+  if(Object.keys(scores).length===5){
+    const total=Object.values(scores).reduce((a,b)=>a+b,0);
+    const sc=document.getElementById('quiz-score');
+    sc.style.display='block';
+    sc.textContent=`Ergebnis: ${total}/5 korrekt ${total>=4?'— Sehr gut! ✓':total>=3?'— Gut ✓':'— Wiederholen empfohlen'}`;
+    sc.style.color=total>=4?'#065f46':total>=3?'#1e3a5f':'#991b1b';
+  }
+  updateProgress();
+}
+
+function filterVocab(){
+  const q=document.getElementById('vocabSearch').value.toLowerCase();
+  document.querySelectorAll('#vocabTable tbody tr').forEach(tr=>{
+    tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+
+function showAnswer(){
+  const box=document.getElementById('answerBox');
+  box.style.display=box.style.display==='block'?'none':'block';
+}
+
+function korrigieren(){
+  const text=document.getElementById('deAnswer').value.trim();
+  const box=document.getElementById('korrekturBox');
+  if(!text){box.style.display='block';box.innerHTML='<div style="color:#991b1b;padding:8px;background:#fef2f2;border-radius:6px">⚠ Bitte schreiben Sie zuerst Ihre Antwort.</div>';return;}
+
+  // ── 1. Estadísticas ──
+  const words=text.split(/\s+/).filter(w=>w.length>0);
+  const sentences=text.split(/(?<=[.!?])\s+/).filter(s=>s.trim().length>1);
+  const wc=words.length, sc=sentences.length;
+  const avgLen=sc>0?Math.round(wc/sc):0;
+
+  // ── 2. Fachbegriffe (FASE 0: Orientación / estructura IHK) ──
+  const fach=[
+    {r:/umschulung/i,      label:'Umschulung'},
+    {r:/mikrotechnolog/i,  label:'Mikrotechnologe/n'},
+    {r:/lernfeld|lernfelder/i, label:'Lernfeld/er'},
+    {r:/teilqualifikation|tq\s?\d/i, label:'Teilqualifikation / TQ'},
+    {r:/\bihk\b/i,         label:'IHK'},
+    {r:/reinraum|halbleiter|lithografie|dotier|schicht|vakuum/i, label:'mind. 1 Fachbereich (Reinraum, Halbleiter…)'},
+    {r:/ausbildung|berufsausbildung/i, label:'Ausbildung'},
+    {r:/dresden|chip academy|sbh/i, label:'Dresden / Chip Academy'},
+  ];
+
+  // ── 3. Informalidad → sugerencias formales ──
+  const informal=[
+    {r:/\bich\b/ig,                  hint:'«<b>Ich</b>» → en alemán técnico/IHK se prefiere la voz pasiva o construcciones impersonales. Ej: «Die Umschulung <em>vermittelt</em>…» en lugar de «<em>Ich lerne</em>…»'},
+    {r:/\bman\b/ig,                   hint:'«<b>man</b>» → mejor usar Passiv: «<em>…wird vermittelt</em>» en lugar de «<em>man lernt</em>»'},
+    {r:/\bund dann\b/ig,              hint:'«<b>und dann</b>» → demasiado informal. Alternativas: <em>anschließend, danach, daraufhin</em>'},
+    {r:/\bund auch\b/ig,              hint:'«<b>und auch</b>» → preferir <em>sowie, darüber hinaus, zudem, außerdem</em>'},
+    {r:/\betc\b|\busw\b/ig,           hint:'«<b>etc./usw.</b>» → en texto formal: escribe todos los puntos o usa <em>«unter anderem (u. a.)»</em>'},
+    {r:/\bhalt\b|\bja\b(?! (?:nach|doch))/ig, hint:'Partícula coloquial «<b>halt/ja</b>» → eliminar en texto formal'},
+    {r:/\beigentlich\b/ig,            hint:'«<b>eigentlich</b>» → coloquial. Eliminar o sustituir por <em>«grundsätzlich», «im Wesentlichen»</em>'},
+    {r:/\bviele?\b/ig,                hint:'«<b>viel/viele</b>» → más preciso: <em>«zahlreiche», «umfangreiche», «verschiedene»</em>'},
+    {r:/\b(macht|machen)\b/ig,        hint:'«<b>machen</b>» → verbo comodín; preferir: <em>ermöglichen, gewährleisten, umfassen, durchführen, erlernen</em>'},
+    {r:/\b(sehr gut|super|toll)\b/ig, hint:'«<b>sehr gut/super/toll</b>» → registro demasiado informal para IHK'},
+    {r:/\bkriegen\b/ig,               hint:'«<b>kriegen</b>» → coloquial; usar <em>«erhalten», «bekommen»</em>'},
+    {r:/^(Aber|Weil|Denn|Oder) /im,   hint:'Frase que empieza con «<b>Aber/Weil/Denn/Oder</b>» → en alemán formal esas conjunciones no inician oración. Reformular con <em>«Allerdings, Da, Denn (con V2), bzw.»</em>'},
+  ];
+
+  // ── 4. Errores gramaticales frecuentes ──
+  const gram=[];
+  if(/[a-zäöüß][.!?] [a-záöüßéàèê]/u.test(text))
+    gram.push('Inicio de oración sin mayúscula: en alemán, los sustantivos y el comienzo de oración llevan mayúscula.');
+  if(/  /.test(text))
+    gram.push('Espacios dobles detectados.');
+  if(/,[^ \d"»]/.test(text))
+    gram.push('Coma sin espacio después: «,palabra» → «, palabra».');
+  if(/\bdas (?:ich|er|sie|wir|man)\b/i.test(text))
+    gram.push('Posible confusión «<b>das</b>» / «<b>dass</b>»: si introduce una oración subordinada, debe ser <em>«dass»</em> (con doble s). Ej: «Er sagt, <em>dass</em> die Ausbildung…»');
+  if(/ae|oe(?!ff|ns)|ue\b/i.test(text))
+    gram.push('¿Umlauts sustituidos? «ae/oe/ue» → verificar si debería ser «ä/ö/ü».');
+  if(wc>0 && sc>0 && avgLen>25)
+    gram.push(`Frases muy largas (promedio ${avgLen} palabras/oración). Para mayor claridad en IHK, intenta ≤20 palabras por oración.`);
+  if(sc>1){const starts=sentences.map(s=>s.trim().split(/\s/)[0]?.toLowerCase());const rep=starts.filter((v,i)=>starts.indexOf(v)!==i);if(rep.length)gram.push(`Inicio repetido de oración con «<b>${[...new Set(rep)].join(', ')}</b>» → variar con conectores: <em>Darüber hinaus, Zudem, Außerdem, Darüber hinaus, Ergänzend</em>.`);}
+
+  // ── 5. Conectores formales ausentes ──
+  const connectors=['darüber hinaus','zudem','außerdem','jedoch','allerdings','einerseits','andererseits','dabei','insbesondere','im Rahmen','abschließend','ferner'];
+  const usedConnectors=connectors.filter(c=>new RegExp(c,'i').test(text));
+
+  // ── Construcción del reporte HTML ──
+  let html='<div style="border:2px solid #1a56db;border-radius:10px;overflow:hidden">';
+  html+='<div style="background:#1a56db;color:white;padding:8px 14px;font-weight:700;font-size:.9rem">✏ Korrektur &amp; Feedback</div>';
+  html+='<div style="padding:14px;display:flex;flex-direction:column;gap:12px">';
+
+  // Stats
+  html+=`<div style="background:#f0f9ff;border-radius:8px;padding:10px;font-size:.82rem">
+    <b>📊 Statistik:</b> ${wc} Wörter · ${sc} Sätze · ⌀ ${avgLen} Wörter/Satz
+    ${wc<25?'<span style="color:#d97706"> — zu kurz für IHK (Ziel: 40+ Wörter)</span>':wc>120?'<span style="color:#0e9f6e"> — gute Länge ✓</span>':'<span style="color:#0e9f6e"> — angemessene Länge ✓</span>'}
+  </div>`;
+
+  // Fachbegriffe
+  html+='<div style="background:#f0fdf4;border-radius:8px;padding:10px"><b>🔑 Fachbegriffe:</b><div style="margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px">';
+  let fachScore=0;
+  fach.forEach(f=>{
+    const found=f.r.test(text);
+    if(found)fachScore++;
+    html+=`<div style="font-size:.8rem">${found?'<span style="color:#0e9f6e">✅':'<span style="color:#dc2626">❌'} ${f.label}</span></div>`;
+  });
+  html+=`</div><div style="margin-top:6px;font-size:.8rem;color:${fachScore>=5?'#0e9f6e':'#d97706'}">${fachScore}/${fach.length} Fachbegriffe verwendet${fachScore<5?' — versuche mehr einzubauen':' ✓'}</div></div>`;
+
+  // Informalidad
+  const infFound=informal.filter(i=>i.r.test(text));
+  if(infFound.length){
+    html+='<div style="background:#fffbeb;border-radius:8px;padding:10px"><b>⚠ Stil &amp; Formalität — Verbesserungsvorschläge:</b><ul style="margin:6px 0 0 16px;font-size:.82rem;display:flex;flex-direction:column;gap:5px">';
+    infFound.forEach(i=>html+=`<li>${i.hint}</li>`);
+    html+='</ul></div>';
+  } else {
+    html+='<div style="background:#f0fdf4;border-radius:8px;padding:8px;font-size:.82rem;color:#065f46">✅ <b>Stil:</b> Kein umgangssprachlicher Ausdruck gefunden.</div>';
+  }
+
+  // Gramática
+  if(gram.length){
+    html+='<div style="background:#fff1f2;border-radius:8px;padding:10px"><b>📝 Grammatik &amp; Rechtschreibung:</b><ul style="margin:6px 0 0 16px;font-size:.82rem;display:flex;flex-direction:column;gap:5px">';
+    gram.forEach(g=>html+=`<li>${g}</li>`);
+    html+='</ul></div>';
+  } else {
+    html+='<div style="background:#f0fdf4;border-radius:8px;padding:8px;font-size:.82rem;color:#065f46">✅ <b>Grammatik:</b> Keine offensichtlichen Fehler gefunden.</div>';
+  }
+
+  // Conectores
+  if(usedConnectors.length){
+    html+=`<div style="background:#f0fdf4;border-radius:8px;padding:8px;font-size:.82rem;color:#065f46">✅ <b>Konnektoren:</b> Gut eingesetzt: <em>${usedConnectors.join(', ')}</em></div>`;
+  } else if(sc>1){
+    html+='<div style="background:#f0f9ff;border-radius:8px;padding:8px;font-size:.82rem;color:#1e429f">💡 <b>Tipp:</b> Füge formale Konnektoren ein: <em>darüber hinaus, zudem, außerdem, im Rahmen, insbesondere, dabei</em></div>';
+  }
+
+  // Puntuación global
+  let totalScore=Math.round((fachScore/fach.length)*60 + (infFound.length===0?20:Math.max(0,20-infFound.length*5)) + (gram.length===0?20:Math.max(0,20-gram.length*7)));
+  const level=totalScore>=80?['🟢','Sehr gut — IHK-tauglich!','#0e9f6e']:totalScore>=60?['🟡','Gut — kleine Verbesserungen nötig','#d97706']:['🔴','Noch üben — Musterlösung vergleichen','#dc2626'];
+  html+=`<div style="background:${level[2]}22;border:2px solid ${level[2]};border-radius:8px;padding:10px;text-align:center;font-weight:700;font-size:.9rem">${level[0]} ${totalScore}/100 — ${level[1]}</div>`;
+
+  html+='</div></div>';
+  box.innerHTML=html;
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function updateProgress(){
+  const sections=4;
+  let done=0;
+  if(document.querySelector('.lf-body.open')) done++;
+  if(Object.keys(scores).length>0) done++;
+  if(Object.keys(scores).length===5) done++;
+  if(document.getElementById('deAnswer').value.length>10) done++;
+  document.getElementById('prog').style.width=Math.min(100,(done/sections)*100)+'%';
+}
+document.getElementById('deAnswer').addEventListener('input',updateProgress);
+</script>
+</body>
+</html>
+<!-- Guardar como: Plan_Estudio_IHK/FASE0_Orientacion_FAB_Lernfelder.html -->

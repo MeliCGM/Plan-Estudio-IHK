@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FASE 4 — LF6 Schaltungen + LF10 Vakuumtechnik | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1e429f;
+    --success: #0e9f6e;
+    --warning: #e3a008;
+    --danger: #e02424;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --lf6: #d97706;
+    --lf10: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  header { background: linear-gradient(135deg, var(--lf6), var(--lf10)); color: white; padding: 2rem 1.5rem; text-align: center; }
+  header h1 { font-size: 1.6rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.95rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem; }
+  .progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 8px; margin-top: 1rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .progress-bar { background: white; height: 8px; border-radius: 999px; width: 0%; transition: width 0.5s; }
+  main { max-width: 860px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--primary-dark); }
+  .lf-tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: white; }
+  .lf6 { background: var(--lf6); }
+  .lf10 { background: var(--lf10); }
+
+  /* ── Dioden-Kennlinie interaktiv ── */
+  .diode-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem; }
+  .diode-box { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; }
+  .diode-box h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .formula-box { background: #fef3c7; border: 2px solid var(--warning); border-radius: 8px; padding: 0.8rem; text-align: center; font-size: 0.95rem; margin: 0.5rem 0; }
+  .formula-box .formula { font-weight: 700; font-size: 1.05rem; }
+
+  /* ── Transistor-Tabelle ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 0.8rem; }
+  .data-table th { background: #f3f4f6; padding: 0.5rem 0.7rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  .data-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .data-table tr:hover td { background: #f9fafb; }
+
+  /* ── Digitale Logik ── */
+  .logic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .gate-card { border: 2px solid var(--border); border-radius: 10px; padding: 0.8rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .gate-card:hover, .gate-card.active { border-color: var(--lf6); background: #fffbeb; }
+  .gate-name { font-size: 1rem; font-weight: 700; color: var(--lf6); }
+  .gate-symbol { font-size: 1.8rem; margin: 0.3rem 0; }
+  .gate-desc { font-size: 0.75rem; color: var(--muted); }
+  .gate-table { display: none; margin-top: 0.5rem; width: 100%; font-size: 0.72rem; border-collapse: collapse; }
+  .gate-table td { border: 1px solid var(--border); padding: 0.2rem 0.3rem; text-align: center; }
+  .gate-table tr:first-child td { background: #f3f4f6; font-weight: 700; }
+  .gate-card.active .gate-table { display: table; }
+  .out-1 { color: var(--success); font-weight: 700; }
+  .out-0 { color: var(--danger); }
+
+  /* ── Rechner (Spannungsteiler) ── */
+  .calc-box { background: #eff6ff; border: 2px solid var(--primary); border-radius: 10px; padding: 1rem; margin-top: 0.8rem; }
+  .calc-box h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.7rem; color: var(--primary); }
+  .calc-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0; flex-wrap: wrap; font-size: 0.88rem; }
+  .calc-row label { width: 60px; font-weight: 600; }
+  .calc-input { border: 2px solid var(--border); border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.88rem; width: 90px; }
+  .calc-input:focus { outline: none; border-color: var(--primary); }
+  .calc-unit { color: var(--muted); font-size: 0.82rem; }
+  .calc-result { background: white; border: 2px solid var(--success); border-radius: 8px; padding: 0.6rem 1rem; margin-top: 0.5rem; font-weight: 700; color: var(--success); font-size: 0.9rem; }
+
+  /* ── Vakuum Pumpen ── */
+  .pump-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; margin-top: 0.8rem; }
+  .pump-card { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
+  .pump-card:hover, .pump-card.open { border-color: var(--lf10); background: #f5f3ff; }
+  .pump-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--lf10); margin-bottom: 0.3rem; }
+  .pump-range { font-size: 0.75rem; font-weight: 600; background: #ede9fe; color: #5b21b6; padding: 0.15rem 0.4rem; border-radius: 4px; display: inline-block; margin-bottom: 0.4rem; }
+  .pump-desc { font-size: 0.78rem; color: var(--muted); }
+  .pump-detail { display: none; font-size: 0.75rem; margin-top: 0.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
+  .pump-card.open .pump-detail { display: block; }
+
+  /* ── Druckbereiche ── */
+  .pressure-scale { margin-top: 1rem; }
+  .pressure-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.3rem 0; font-size: 0.82rem; }
+  .pressure-label { width: 100px; font-weight: 600; text-align: right; flex-shrink: 0; }
+  .pressure-bar { height: 20px; border-radius: 4px; display: flex; align-items: center; padding: 0 0.5rem; color: white; font-size: 0.72rem; font-weight: 600; }
+  .pressure-val { color: var(--muted); font-size: 0.75rem; margin-left: 0.3rem; }
+
+  /* ── Flip cards ── */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .flip-card { height: 110px; perspective: 600px; cursor: pointer; }
+  .flip-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.6rem; text-align: center; }
+  .flip-front { background: linear-gradient(135deg, var(--lf6), var(--lf10)); color: white; }
+  .flip-back { background: var(--card); border: 2px solid var(--border); transform: rotateY(180deg); }
+  .flip-front .term { font-size: 0.82rem; font-weight: 700; }
+  .flip-front .hint { font-size: 0.62rem; opacity: 0.8; margin-top: 0.3rem; }
+  .flip-back .trans { font-size: 0.75rem; font-weight: 600; color: var(--lf6); }
+  .flip-back .context { font-size: 0.62rem; color: var(--muted); margin-top: 0.3rem; }
+  .flip-progress { text-align: center; margin-top: 0.8rem; font-size: 0.85rem; color: var(--muted); }
+
+  /* ── Quiz ── */
+  .quiz-question { margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 10px; border-left: 4px solid var(--lf6); }
+  .quiz-question p { font-weight: 600; margin-bottom: 0.7rem; }
+  .quiz-option { display: block; width: 100%; text-align: left; padding: 0.5rem 0.8rem; margin: 0.3rem 0; border: 2px solid var(--border); border-radius: 8px; background: white; cursor: pointer; font-size: 0.88rem; transition: all 0.2s; }
+  .quiz-option:hover { border-color: var(--lf6); background: #fffbeb; }
+  .quiz-option.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--danger); background: #fff1f2; color: #9f1239; }
+  .quiz-feedback { font-size: 0.82rem; margin-top: 0.5rem; padding: 0.4rem 0.7rem; border-radius: 6px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #d1fae5; color: #065f46; }
+  .quiz-feedback.wrong { background: #fee2e2; color: #991b1b; }
+  #quiz-result { text-align: center; padding: 1rem; background: #f0f9ff; border-radius: 10px; display: none; font-size: 1rem; font-weight: 600; }
+
+  /* ── Schreiben ── */
+  textarea { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 0.7rem; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 100px; }
+  textarea:focus { outline: none; border-color: var(--lf6); }
+  .btn { padding: 0.5rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: var(--lf6); color: white; }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .musterloesung { display: none; margin-top: 1rem; padding: 1rem; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; font-size: 0.88rem; }
+  .musterloesung.show { display: block; }
+  .musterloesung h4 { color: var(--success); font-weight: 700; margin-bottom: 0.5rem; }
+
+  /* Citas en línea */
+  a.ref { display:inline-block; font-size:.68rem; font-weight:700; text-decoration:none; background:#dbeafe; color:var(--primary); border-radius:3px; padding:0 4px; vertical-align:super; line-height:1.5; white-space:nowrap; margin-left:2px; }
+  a.ref:hover { background:var(--primary); color:white; }
+  a.ref.wolf { background:#ede9fe; color:#7c3aed; }
+  a.ref.wolf:hover { background:#7c3aed; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FASE 4 — Schaltungen &amp; Vakuumtechnik</h1>
+  <p>LF 6: Elektronische Bauelemente &amp; Schaltungen | LF 10: Vakuumsysteme &amp; Pumpen</p>
+  <div class="badges">
+    <span class="badge">⏱ ~60 min</span>
+    <span class="badge">LF 6 (140h KMK) — Herausforderung!</span>
+    <span class="badge">LF 10 (80h KMK)</span>
+    <span class="badge">FAB-Kernkompetenz</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 1: Dioden
+════════════════════════════════════════════════════════════ -->
+<section id="sec-diode">
+  <h2>🔌 <span class="lf-tag lf6">LF 6</span> Dioden — pn-Übergang</h2>
+  <div class="diode-section">
+    <div class="diode-box">
+      <h4 style="color:var(--success)">Durchlassrichtung (Vorwärtsbias)</h4>
+      <p style="font-size:0.82rem">+ an Anode (p-Seite), − an Kathode (n-Seite).<br>
+      Sperrschicht wird kleiner → Strom fließt ab ~0,6–0,7 V (Si-Diode).</p>
+      <div class="formula-box" style="margin-top:0.7rem">
+        <div style="font-size:0.75rem; margin-bottom:0.3rem">Shockley-Gleichung:</div>
+        <div class="formula">I = I₀ (e^(qV/kT) − 1)</div>
+        <div style="font-size:0.72rem; color:var(--muted); margin-top:0.3rem">I₀ = Sättigungsstrom | T = Temperatur | k = Boltzmann-Konstante</div>
+      </div>
+    </div>
+    <div class="diode-box">
+      <h4 style="color:var(--danger)">Sperrrichtung (Rückwärtsbias)</h4>
+      <p style="font-size:0.82rem">− an Anode, + an Kathode.<br>
+      Sperrschicht wird breiter → kaum Strom. Bis zur Durchbruchspannung U_br.</p>
+      <div style="background:#fff1f2; border:2px solid var(--danger); border-radius:8px; padding:0.7rem; margin-top:0.7rem; font-size:0.82rem;">
+        <strong>Durchbruchmechanismen:</strong><br>
+        • <strong>Zener-Effekt:</strong> &lt;5 V — Quantentunnelung<br>
+        • <strong>Lawinendurchbruch:</strong> &gt;7 V — Stoßionisation<br>
+        • <strong>Zener-Diode:</strong> nutzt Durchbruch definiert → Spannungsreferenz
+      </div>
+    </div>
+  </div>
+
+  <h3>Dioden-Typen und FAB-Anwendungen</h3>
+  <table class="data-table">
+    <thead><tr><th>Dioden-Typ</th><th>Prinzip</th><th>Anwendung</th></tr></thead>
+    <tbody>
+      <tr><td><strong>pn-Diode (Si)</strong></td><td>Standard-Gleichrichter, Uf ≈ 0,7 V</td><td>Gleichrichtung, ESD-Schutz in ICs</td></tr>
+      <tr><td><strong>Schottky-Diode</strong></td><td>Metall-Halbleiter-Kontakt, Uf ≈ 0,3 V, sehr schnell</td><td>HF-Schaltungen, Leistungselektronik</td></tr>
+      <tr><td><strong>Zener-Diode</strong></td><td>Kontrollierter Durchbruch, definierte U_z</td><td>Spannungsreferenz, Spannungsstabilisierung</td></tr>
+      <tr><td><strong>LED</strong></td><td>Rekombination → Photon (direkte Bandlücke: GaAs, GaN)</td><td>Beleuchtung, optische Koppler, Displays</td></tr>
+      <tr><td><strong>Photodiode</strong></td><td>Licht → Elektron-Loch-Paare → Strom</td><td>Litho-Alignment-Sensoren, Detektoren</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.5rem">
+    <strong>PhD-Brücke:</strong> pn-Übergang ≈ Grenzfläche zwischen zwei Phasen mit unterschiedlichem Redoxpotential (Elektrochemie).
+    Shockley-Gleichung ≈ Butler-Volmer-Gleichung für Elektrodenprozesse.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 2: Transistoren
+════════════════════════════════════════════════════════════ -->
+<section id="sec-transistor">
+  <h2>🔧 <span class="lf-tag lf6">LF 6</span> Transistoren — BJT &amp; MOSFET</h2>
+  <table class="data-table">
+    <thead><tr><th>Typ</th><th>Aufbau</th><th>Steuerung</th><th>Anwendung FAB</th><th>Formel</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>npn-BJT</strong></td>
+        <td>n-Emitter | p-Basis | n-Kollektor</td>
+        <td>Strom (I_B → I_C = β × I_B)</td>
+        <td>HF-Transistoren, analoge ICs (BiCMOS)</td>
+        <td>I_C = β × I_B</td>
+      </tr>
+      <tr>
+        <td><strong>nMOS-FET</strong></td>
+        <td>p-Substrat, n⁺-Source/Drain, SiO₂-Gate</td>
+        <td>Spannung (V_GS ≥ V_th → Kanal öffnet)</td>
+        <td>CMOS-Logik (nMOS + pMOS), SRAM, Flash</td>
+        <td>I_D = µ_n C_ox W/L (V_GS−V_th)²/2</td>
+      </tr>
+      <tr>
+        <td><strong>pMOS-FET</strong></td>
+        <td>n-Substrat, p⁺-Source/Drain</td>
+        <td>Spannung (V_GS ≤ −V_th)</td>
+        <td>Komplementär zu nMOS in CMOS-Schaltungen</td>
+        <td>Analog nMOS, Löcher als Träger</td>
+      </tr>
+      <tr>
+        <td><strong>FinFET</strong></td>
+        <td>Fin-förmiger Si-Kanal, 3D-Gate umschließt Fin</td>
+        <td>Spannung (besser Short-Channel-Control)</td>
+        <td>Sub-22 nm Nodes (Intel, TSMC, GF)</td>
+        <td>Multiple Gates → weniger Leckstrom</td>
+      </tr>
+      <tr>
+        <td><strong>IGBT</strong></td>
+        <td>BJT + MOSFET-Kombination</td>
+        <td>Spannung (Gate), hoher Strom</td>
+        <td>Leistungselektronik (Infineon Dresden, SiC-Chips)</td>
+        <td>Schaltet Ströme &gt;100 A bei &gt;600 V</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Spannungsteiler Rechner -->
+  <h3>Spannungsteiler — interaktiver Rechner</h3>
+  <div class="calc-box">
+    <h4>Resistiver Spannungsteiler: U₂ = U_ein × R₂ / (R₁ + R₂)</h4>
+    <div class="calc-row">
+      <label>U_ein:</label>
+      <input class="calc-input" id="u_ein" type="number" value="12" step="0.1">
+      <span class="calc-unit">V</span>
+    </div>
+    <div class="calc-row">
+      <label>R₁:</label>
+      <input class="calc-input" id="r1" type="number" value="1000" step="100">
+      <span class="calc-unit">Ω</span>
+    </div>
+    <div class="calc-row">
+      <label>R₂:</label>
+      <input class="calc-input" id="r2" type="number" value="2200" step="100">
+      <span class="calc-unit">Ω</span>
+    </div>
+    <button class="btn btn-primary" onclick="calcVdiv()" style="margin-top:0.5rem">Berechnen</button>
+    <div class="calc-result" id="vdiv-result" style="display:none"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 3: Digitale Logik
+════════════════════════════════════════════════════════════ -->
+<section id="sec-digital">
+  <h2>💡 <span class="lf-tag lf6">LF 6</span> Digitale Grundgatter (klick = Wahrheitstabelle)</h2>
+  <div class="logic-grid">
+    <div class="gate-card" onclick="this.classList.toggle('active')">
+      <div class="gate-name">AND</div>
+      <div class="gate-symbol">⊓</div>
+      <div class="gate-desc">A UND B → 1 nur wenn beide = 1</div>
+      <table class="gate-table"><tr><td>A</td><td>B</td><td>Q</td></tr><tr><td>0</td><td>0</td><td class="out-0">0</td></tr><tr><td>0</td><td>1</td><td class="out-0">0</td></tr><tr><td>1</td><td>0</td><td class="out-0">0</td></tr><tr><td>1</td><td>1</td><td class="out-1">1</td></tr></table>
+    </div>
+    <div class="gate-card" onclick="this.classList.toggle('active')">
+      <div class="gate-name">OR</div>
+      <div class="gate-symbol">⊔</div>
+      <div class="gate-desc">A ODER B → 1 wenn mind. einer = 1</div>
+      <table class="gate-table"><tr><td>A</td><td>B</td><td>Q</td></tr><tr><td>0</td><td>0</td><td class="out-0">0</td></tr><tr><td>0</td><td>1</td><td class="out-1">1</td></tr><tr><td>1</td><td>0</td><td class="out-1">1</td></tr><tr><td>1</td><td>1</td><td class="out-1">1</td></tr></table>
+    </div>
+    <div class="gate-card" onclick="this.classList.toggle('active')">
+      <div class="gate-name">NOT</div>
+      <div class="gate-symbol">¬</div>
+      <div class="gate-desc">Invertiert den Eingang</div>
+      <table class="gate-table"><tr><td>A</td><td>Q</td></tr><tr><td>0</td><td class="out-1">1</td></tr><tr><td>1</td><td class="out-0">0</td></tr></table>
+    </div>
+    <div class="gate-card" onclick="this.classList.toggle('active')">
+      <div class="gate-name">NAND</div>
+      <div class="gate-symbol">⊓̄</div>
+      <div class="gate-desc">NOT-AND: 0 nur wenn beide = 1. Universalgatter!</div>
+      <table class="gate-table"><tr><td>A</td><td>B</td><td>Q</td></tr><tr><td>0</td><td>0</td><td class="out-1">1</td></tr><tr><td>0</td><td>1</td><td class="out-1">1</td></tr><tr><td>1</td><td>0</td><td class="out-1">1</td></tr><tr><td>1</td><td>1</td><td class="out-0">0</td></tr></table>
+    </div>
+    <div class="gate-card" onclick="this.classList.toggle('active')">
+      <div class="gate-name">NOR</div>
+      <div class="gate-symbol">⊔̄</div>
+      <div class="gate-desc">NOT-OR: 1 nur wenn beide = 0. Universalgatter!</div>
+      <table class="gate-table"><tr><td>A</td><td>B</td><td>Q</td></tr><tr><td>0</td><td>0</td><td class="out-1">1</td></tr><tr><td>0</td><td>1</td><td class="out-0">0</td></tr><tr><td>1</td><td>0</td><td class="out-0">0</td></tr><tr><td>1</td><td>1</td><td class="out-0">0</td></tr></table>
+    </div>
+    <div class="gate-card" onclick="this.classList.toggle('active')">
+      <div class="gate-name">XOR</div>
+      <div class="gate-symbol">⊕</div>
+      <div class="gate-desc">Exklusiv-ODER: 1 wenn genau einer = 1</div>
+      <table class="gate-table"><tr><td>A</td><td>B</td><td>Q</td></tr><tr><td>0</td><td>0</td><td class="out-0">0</td></tr><tr><td>0</td><td>1</td><td class="out-1">1</td></tr><tr><td>1</td><td>0</td><td class="out-1">1</td></tr><tr><td>1</td><td>1</td><td class="out-0">0</td></tr></table>
+    </div>
+  </div>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.8rem">
+    <strong>CMOS-Realisierung:</strong> Jedes Gatter besteht aus einem nMOS-Netzwerk (Pull-Down) + pMOS-Netzwerk (Pull-Up).
+    NAND = 2 nMOS in Serie + 2 pMOS parallel. Statischer Stromverbrauch ≈ 0 (kein direkter Pfad GND↔VDD).
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 4: Vakuum Druckbereiche
+════════════════════════════════════════════════════════════ -->
+<section id="sec-vakuum-bereiche">
+  <h2>💨 <span class="lf-tag lf10">LF 10</span> Vakuum — Druckbereiche &amp; FAB-Prozesse</h2>
+  <div class="pressure-scale">
+    <div class="pressure-row">
+      <div class="pressure-label">Atmosphäre</div>
+      <div class="pressure-bar" style="background:#6b7280; width:260px">1013 mbar</div>
+    </div>
+    <div class="pressure-row">
+      <div class="pressure-label">Grobvakuum</div>
+      <div class="pressure-bar" style="background:#92400e; width:220px">1–1000 mbar</div>
+      <div class="pressure-val">Vorvakuumpumpen. Verpackung.</div>
+    </div>
+    <div class="pressure-row">
+      <div class="pressure-label">Feinvakuum</div>
+      <div class="pressure-bar" style="background:#d97706; width:180px">10⁻³–1 mbar</div>
+      <div class="pressure-val">LPCVD, Schleusensysteme.</div>
+    </div>
+    <div class="pressure-row">
+      <div class="pressure-label">Hochvakuum</div>
+      <div class="pressure-bar" style="background:#7c3aed; width:130px">10⁻⁷–10⁻³ mbar</div>
+      <div class="pressure-val">Sputtern, Ionenimplantation, RIE.</div>
+    </div>
+    <div class="pressure-row">
+      <div class="pressure-label">Ultrahochvakuum</div>
+      <div class="pressure-bar" style="background:#1a56db; width:60px">&lt;10⁻⁷ mbar</div>
+      <div class="pressure-val">MBE, EUV-Lithografie, Elektronenmikroskopie.</div>
+    </div>
+  </div>
+
+  <div style="background:#f5f3ff; border-radius:8px; padding:0.8rem; margin-top:0.8rem; font-size:0.82rem; border: 2px solid var(--lf10)">
+    <strong>Mittlere freie Weglänge (λ):</strong> Bei Hochvakuum (10⁻⁵ mbar) ist λ ≈ 50 m → Moleküle stoßen kaum zusammen → gerichtete Abscheidung möglich (Sputtern, Verdampfung).<br>
+    <strong>PhD-Brücke:</strong> Gaskinetiik aus der physikalischen Chemie — λ = kT/(√2 π d² p). In der FAB entscheidet der Druck über die Depositionsmechanismen.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 5: Vakuumpumpen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-pumpen">
+  <h2>🔩 <span class="lf-tag lf10">LF 10</span> Vakuumpumpen — Klick für Details</h2>
+  <div class="pump-grid">
+    <div class="pump-card" onclick="this.classList.toggle('open')">
+      <h4>Drehschieberpumpe</h4>
+      <div class="pump-range">Grob/Fein: bis 10⁻³ mbar</div>
+      <div class="pump-desc">Ölgedichtete Rotary Vane Pump</div>
+      <div class="pump-detail">
+        <strong>Prinzip:</strong> Rotierende Schieber komprimieren Gas gegen Öl-Abdichtung.<br>
+        <strong>Betrieb:</strong> Vorvakuum, Vorpumpe für Turbopumpen.<br>
+        <strong>Wartung:</strong> Öl regelmäßig wechseln, Ölnebel-Filter prüfen.<br>
+        <strong>Problem:</strong> Ölrückströmung → Kontamination bei falscher Nutzung.
+      </div>
+    </div>
+    <div class="pump-card" onclick="this.classList.toggle('open')">
+      <h4>Trockenpumpe (Scroll)</h4>
+      <div class="pump-range">Grob/Fein: bis 10⁻² mbar</div>
+      <div class="pump-desc">Ölfreie Spiralpumpe</div>
+      <div class="pump-detail">
+        <strong>Prinzip:</strong> Zwei ineinandergreifende Spiralen — eine fest, eine orbital → Gas wird komprimiert.<br>
+        <strong>Vorteil:</strong> Ölfrei → keine Kontamination, ideal für Prozessgase (SiH₄, HF-Bereich).<br>
+        <strong>FAB:</strong> Standard für Prozessabpumpen (CVD, Ätzen).
+      </div>
+    </div>
+    <div class="pump-card" onclick="this.classList.toggle('open')">
+      <h4>Turbomolekularpumpe</h4>
+      <div class="pump-range">HV: bis 10⁻¹⁰ mbar</div>
+      <div class="pump-desc">Turbo Molecular Pump (TMP)</div>
+      <div class="pump-detail">
+        <strong>Prinzip:</strong> Rotorblätter (50.000–90.000 rpm) impulsübertragen Gasmoleküle zur Abgasseite.<br>
+        <strong>Bedingung:</strong> Braucht Vorvakuum (Vorpumpe + TMP in Serie).<br>
+        <strong>FAB:</strong> Sputtern, RIE, Ionenimplantation, ALD-Reaktoren.<br>
+        <strong>Wartung:</strong> Lager, Vibrationssensoren, keine Luft-Einbrüche.
+      </div>
+    </div>
+    <div class="pump-card" onclick="this.classList.toggle('open')">
+      <h4>Kryopumpe</h4>
+      <div class="pump-range">HV/UHV: bis 10⁻¹⁰ mbar</div>
+      <div class="pump-desc">Kondensation + Adsorption bei 10–80 K</div>
+      <div class="pump-detail">
+        <strong>Prinzip:</strong> Kalte Flächen kondensieren Gase (H₂O, N₂) + Adsorptionsmaterial für H₂/He.<br>
+        <strong>Vorteil:</strong> Sehr sauber, hohe Saugleistung, keine beweglichen Teile.<br>
+        <strong>FAB:</strong> Ionenimplantation, EUV-Belichtung.<br>
+        <strong>Wartung:</strong> Regeneration (Aufwärmen + Abpumpen) alle paar Wochen.
+      </div>
+    </div>
+    <div class="pump-card" onclick="this.classList.toggle('open')">
+      <h4>Ionengetterpumpe</h4>
+      <div class="pump-range">UHV: &lt;10⁻⁶ mbar</div>
+      <div class="pump-desc">Ionisation + chemische Bindung</div>
+      <div class="pump-detail">
+        <strong>Prinzip:</strong> Hochspannung ionisiert Restgas → Titan-Gettermaterial bindet die Ionen chemisch.<br>
+        <strong>Vorteil:</strong> Keine beweglichen Teile, sehr reines Vakuum (UHV).<br>
+        <strong>FAB:</strong> MBE-Kammern, Elektronenstrahlgeräte.<br>
+        <strong>Nachteil:</strong> Funktioniert nur bei bereits gutem Vorvakuum.
+      </div>
+    </div>
+    <div class="pump-card" onclick="this.classList.toggle('open')">
+      <h4>Druckmesstechnik</h4>
+      <div class="pump-range">Alle Bereiche</div>
+      <div class="pump-desc">Verschiedene Sensoren je nach Bereich</div>
+      <div class="pump-detail">
+        <strong>Bourdon/Membran:</strong> Atmosphäre bis Grobvakuum (1–1000 mbar).<br>
+        <strong>Pirani-Sensor:</strong> Wärmeleitfähigkeit → Feinvakuum (10⁻³–10² mbar).<br>
+        <strong>Penning-Messzelle:</strong> Ionenstrom → Hochvakuum (10⁻⁷–10⁻² mbar).<br>
+        <strong>Quadrupol-Massenspektrometer (RGA):</strong> Restgasanalyse, Lecksuche.
+      </div>
+    </div>
+  </div>
+
+  <h3>Serienschaltung: Vorpumpe + Turbopumpe</h3>
+  <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.5rem; font-size:0.85rem;">
+    <div style="background:#f3f4f6; border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem">Prozesskammer (HV)</div>
+    <div>→</div>
+    <div style="background:#ede9fe; border:2px solid var(--lf10); border-radius:8px; padding:0.5rem 0.8rem">Turbopumpe (TMP)</div>
+    <div>→</div>
+    <div style="background:#f3f4f6; border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem">Vorvakuumpumpe (Drehschieber/Scroll)</div>
+    <div>→</div>
+    <div style="background:#dcfce7; border:2px solid var(--success); border-radius:8px; padding:0.5rem 0.8rem">Abgas-Abscheidung (Scrubber)</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 6: Vokabeln
+════════════════════════════════════════════════════════════ -->
+<section id="sec-vokabeln">
+  <h2>🗂 Vokabeln — LF 6 + LF 10 (Klick = übersetzen)</h2>
+  <div class="flip-grid">
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Diode</div><div class="hint">Bauelement</div></div><div class="flip-back"><div class="trans">Diodo / Diode</div><div class="context">pn-Übergang: leitet in Vorwärtsrichtung (~0,7V), sperrt rückwärts</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Transistor</div><div class="hint">BJT / MOSFET</div></div><div class="flip-back"><div class="trans">Transistor / Transistor</div><div class="context">Verstärker + Schalter. MOSFET: Spannung steuert. BJT: Strom steuert.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Schwellspannung (V_th)</div><div class="hint">MOSFET</div></div><div class="flip-back"><div class="trans">Tensión umbral / Threshold voltage</div><div class="context">V_GS muss V_th überschreiten → Inversionskanal bildet sich → Transistor leitet</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">CMOS</div><div class="hint">Logikfamilie</div></div><div class="flip-back"><div class="trans">CMOS / Complementary MOS</div><div class="context">nMOS + pMOS komplementär. Statisch kein Strom. Standard für alle Digitale ICs.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Spannungsteiler</div><div class="hint">Schaltung</div></div><div class="flip-back"><div class="trans">Divisor de tensión / Voltage divider</div><div class="context">U₂ = U_ein × R₂/(R₁+R₂). Grundlegende Messschaltung.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Hochvakuum</div><div class="hint">Druckbereich</div></div><div class="flip-back"><div class="trans">Alto vacío / High vacuum</div><div class="context">10⁻⁷ bis 10⁻³ mbar. Sputtern, RIE, Ionenimplantation.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Turbomolekularpumpe</div><div class="hint">Pumpentyp</div></div><div class="flip-back"><div class="trans">Bomba turbomolecular / Turbomolecular pump</div><div class="context">50-90k rpm, impulsüberträgt Moleküle. Braucht Vorvakuum. FAB-Standard für HV.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Saugleistung</div><div class="hint">Pumpenparameter</div></div><div class="flip-back"><div class="trans">Velocidad de bombeo / Pumping speed</div><div class="context">S [m³/h oder L/s] — volumetrischer Durchsatz. Je größer, desto schneller abpumpen.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Leitfähigkeit (Rohr)</div><div class="hint">Vakuumtechnik</div></div><div class="flip-back"><div class="trans">Conductancia / Conductance</div><div class="context">C [L/s] — Molekularfluss durch Rohr. Lange/enge Rohre → niedrige C → begrenzen effektive Saugleistung</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Kryopumpe</div><div class="hint">UHV-Bereich</div></div><div class="flip-back"><div class="trans">Bomba criogénica / Cryopump</div><div class="context">Kondensation bei 10–80 K. Sauber, keine beweglichen Teile. Regeneration nötig.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Pirani-Sensor</div><div class="hint">Druckmessung</div></div><div class="flip-back"><div class="trans">Sensor Pirani / Pirani gauge</div><div class="context">Misst Wärmeleitfähigkeit des Gases → Druck 10⁻³–10² mbar. Heizdraht-Prinzip.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">mittlere freie Weglänge</div><div class="hint">Gaskenetik</div></div><div class="flip-back"><div class="trans">Camino libre medio / Mean free path</div><div class="context">λ = kT/(√2 π d² p). Bei HV (10⁻⁵ mbar) λ ≈ 50 m → gerichtete Depositionsmöglich.</div></div></div></div>
+  </div>
+  <div class="flip-progress" id="flipProgress">0 / 12 Karten geflippt</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 7: Quiz
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quiz">
+  <h2>📝 Quiz — LF 6 + LF 10</h2>
+  <div id="quiz">
+    <div class="quiz-question" id="q1">
+      <p>1. Ein MOSFET leitet Strom, wenn:</p>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">a) I_B &gt; 0 (Basis-Strom fließt)</button>
+      <button class="quiz-option" onclick="answer('q1','correct',this)">b) V_GS die Schwellspannung V_th überschreitet</button>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">c) Die Temperatur über 70°C steigt</button>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">d) Die Drain-Source-Spannung V_DS = 0 V ist</button>
+      <div class="quiz-feedback" id="fb-q1"></div>
+    </div>
+    <div class="quiz-question" id="q2">
+      <p>2. Welche Pumpenkombination ist typisch für das Erreichen von Hochvakuum (10⁻⁶ mbar) in einer FAB-Prozesskammer?</p>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">a) Drehschieberpumpe allein</button>
+      <button class="quiz-option" onclick="answer('q2','correct',this)">b) Scrollpumpe (Vorvakuum) + Turbomolekularpumpe (Hochvakuum)</button>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">c) Turbomolekularpumpe allein</button>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">d) Ionengetterpumpe direkt an Atmosphäre</button>
+      <div class="quiz-feedback" id="fb-q2"></div>
+    </div>
+    <div class="quiz-question" id="q3">
+      <p>3. Welches logische Gatter hat die Ausgangsfunktion Q = 1 nur wenn BEIDE Eingänge A=1 und B=1?</p>
+      <button class="quiz-option" onclick="answer('q3','correct',this)">a) AND-Gatter</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">b) OR-Gatter</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">c) NAND-Gatter</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">d) XOR-Gatter</button>
+      <div class="quiz-feedback" id="fb-q3"></div>
+    </div>
+    <div class="quiz-question" id="q4">
+      <p>4. Die mittlere freie Weglänge λ von Gasmolekülen ist beim Hochvakuum:</p>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">a) Kleiner als der Rohrdurchmesser (molekulare Strömung)</button>
+      <button class="quiz-option" onclick="answer('q4','correct',this)">b) Viel größer als der Behälterdurchmesser → kein intermolekularer Stoß</button>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">c) Gleich wie bei Atmosphärendruck</button>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">d) Null (alle Moleküle bereits abgepumpt)</button>
+      <div class="quiz-feedback" id="fb-q4"></div>
+    </div>
+    <div class="quiz-question" id="q5">
+      <p>5. Warum verwendet CMOS-Logik immer pMOS UND nMOS zusammen?</p>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">a) Weil pMOS schneller schaltet als nMOS</button>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">b) Weil nMOS allein nicht zwischen 0 und 1 unterscheiden kann</button>
+      <button class="quiz-option" onclick="answer('q5','correct',this)">c) Im statischen Zustand fließt kein direkter Strom — minimaler Leistungsverbrauch</button>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">d) Weil pMOS günstiger herzustellen ist</button>
+      <div class="quiz-feedback" id="fb-q5"></div>
+    </div>
+    <div id="quiz-result"><div id="quiz-score-text"></div><button class="btn btn-secondary" onclick="resetQuiz()" style="margin-top:0.8rem">Wiederholen</button></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 8: Schreibübung
+════════════════════════════════════════════════════════════ -->
+<section id="sec-schreiben">
+  <h2>✍ Schreibübung — IHK-Niveau</h2>
+  <div style="background:#fffbeb; border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:0.88rem; border-left:4px solid var(--lf6)">
+    <strong>Aufgabe:</strong> Erklären Sie in 4–6 Sätzen, warum in der Halbleiterfertigung Hochvakuum benötigt wird,
+    und welche Pumpen dafür eingesetzt werden.<br>
+    <em style="color:var(--muted)">Fachbegriffe: mittlere freie Weglänge, Turbomolekularpumpe, Vorvakuum, Prozesskammer, Kontamination.</em>
+  </div>
+  <textarea id="schreibTextarea" placeholder="Schreiben Sie hier Ihre Antwort auf Deutsch..."></textarea>
+  <div style="display:flex; gap:0.8rem; margin-top:0.8rem; flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="checkWortanzahl()">Wörter zählen</button>
+    <button class="btn btn-secondary" onclick="toggleMuster()">Musterlösung anzeigen</button>
+    <button class="btn" style="background:#1a56db;color:white" onclick="korrigieren()">✏ Korrigieren &amp; Feedback</button>
+  </div>
+  <div id="wort-count" style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted)"></div>
+  <div id="korrekturBox" style="display:none;margin-top:14px;font-size:.85rem"></div>
+  <div class="musterloesung" id="musterloesung">
+    <h4>Musterlösung:</h4>
+    <p>
+      In der Halbleiterfertigung wird Hochvakuum (10⁻⁷–10⁻³ mbar) benötigt, weil bei sehr niedrigen Drücken
+      die mittlere freie Weglänge der Gasmoleküle um Größenordnungen größer ist als der Durchmesser der Prozesskammer.
+      Dies ermöglicht gerichtete Abscheideverfahren wie Sputtern oder Ionenimplantation,
+      bei denen die Teilchen ohne Kollisionen vom Target zum Wafer gelangen müssen.
+    </p>
+    <p style="margin-top:0.5rem">
+      Außerdem verhindert Hochvakuum die Kontamination des Wafers durch Wasser, Sauerstoff oder andere
+      atmosphärische Gase, die sonst die dünnen Oxid- und Metallschichten verunreinigen würden.
+      Zur Erzeugung des Hochvakuums wird typischerweise eine Turbomolekularpumpe eingesetzt,
+      die jedoch ein Vorvakuum von mindestens 10⁻² mbar benötigt — erzeugt durch eine ölfreie Scrollpumpe oder Drehschieberpumpe.
+      Das Abgas der Prozesspumpen wird durch einen Scrubber geleitet, um toxische Prozessgase (z.B. SiH₄, AsH₃) zu neutralisieren.
+    </p>
+    <p style="margin-top:0.5rem; font-size:0.82rem; color:var(--muted)">
+      <strong>Fachbegriffe:</strong> Hochvakuum, mittlere freie Weglänge, Turbomolekularpumpe, Vorvakuum, Scrollpumpe, Prozesskammer, Kontamination, Scrubber.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN: Bibliografía / Quellen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quellen">
+  <h2>📚 Quellen &amp; Bibliografía — LF6 + LF10</h2>
+  <p style="font-size:.83rem;color:var(--muted);margin-bottom:1rem">Fuentes para esta FASE. Los capítulos indicados cubren exactamente el contenido aquí tratado.</p>
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- Boylestad — azul -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid var(--primary)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Boylestad &amp; Nashelsky — <em>Electronic Devices and Circuit Theory</em>, 11th ed.</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Referencia principal LF6: diodos, BJT, MOSFET</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/02_Electronica_y_Dispositivos/Electronic_Devices_Circuit_Theory_Boylestad_Nashelsky.pdf" style="background:var(--primary);color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Cap. 1, pp. 1–50</strong> — Semiconductor diode: characteristic, forward/reverse bias</li>
+        <li><strong>Cap. 4, pp. 141–200</strong> — BJT: common-emitter/base/collector configurations</li>
+        <li><strong>Cap. 9, pp. 395–440</strong> — FET/MOSFET: operation, transfer characteristics</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#e0f2fe;border-radius:6px;padding:.4rem .6rem;color:#0369a1;font-family:monospace">
+        Boylestad, R.; Nashelsky, L. <em>Electronic Devices and Circuit Theory</em>, 11th ed.; Pearson, 2013. ISBN 978-0-13-262226-4.
+      </div>
+    </div>
+
+    <!-- Leybold — violeta -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #7c3aed">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Leybold (Umrath) — <em>Fundamentals of Vacuum Technology</em></div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Referencia principal LF10: vacío, bombas, medición</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Fundamentals_of_Vacuum_Technology_Leybold_Umrath_OFICIAL.pdf" style="background:#7c3aed;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Cap. 1, pp. 1–30</strong> — Vakuum-Grundlagen: Druckbereiche, Molekularphysik, mittlere freie Weglänge</li>
+        <li><strong>Cap. 2, pp. 31–80</strong> — Vakuumpumpen: Drehschieber, Scroll, Turbomolekular</li>
+        <li><strong>Cap. 3, pp. 81–120</strong> — Vakuummessung: Pirani, Ionisations-Vakuummeter</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#ede9fe;border-radius:6px;padding:.4rem .6rem;color:#5b21b6;font-family:monospace">
+        Umrath, W. (Ed.) <em>Fundamentals of Vacuum Technology</em>; Leybold GmbH, 2007.
+      </div>
+    </div>
+
+    <!-- Online resources — verde -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid var(--success)">
+      <div style="font-weight:700;font-size:.92rem;margin-bottom:.5rem">Recursos Online</div>
+      <ul style="font-size:.83rem;padding-left:1.2rem">
+        <li><a href="https://www.elektronik-kompendium.de/sites/bau/index.htm" style="color:var(--primary);font-weight:600">elektronik-kompendium.de</a> (DE) — Elektronische Bauelemente — Portal alemán excelente para LF6, nivel IHK exacto</li>
+        <li><a href="https://www.leifiphysik.de/elektronik/einfuehrung-die-elektronik" style="color:var(--primary);font-weight:600">leifiphysik.de</a> (DE) — Elektronik Grundlagen — Diode, Transistor en alemán IHK-nivel</li>
+        <li><a href="https://www.pfeiffer-vacuum.com/de/know-how/" style="color:var(--primary);font-weight:600">Pfeiffer Vacuum</a> (DE) — Know-How Vakuumtechnik — Guía técnica del fabricante líder de bombas FAB</li>
+      </ul>
+    </div>
+
+    <!-- KMK — amarillo -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Rahmenlehrplan KMK — LF6 + LF10</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">LF6 (80h) · LF10 (40h)</div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/Rahmenlehrplan_Mikrotechnologe_KMK_OFICIAL.pdf" style="background:#d97706;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF KMK</a>
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="background:#92400e;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Carpeta IHK</a>
+        </div>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>LF 6</strong> — Schaltungen entwerfen und aufbauen <strong>(80h)</strong></li>
+        <li><strong>LF 10</strong> — Vakuumsysteme bedienen und warten <strong>(40h)</strong></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE4_LF6_Schaltungen_LF10_Vakuum.html</strong> ·
+  ← <a href="FASE3_LF7_Lithografie_LF8_Schichten.html" style="color:#94a3b8">Fase 3 — LF7+LF8</a> ·
+  Siguiente: <a href="FASE5_Repaso_General_IHK.html">Fase 5 — Repaso General</a> →
+</div>
+
+<script>
+let flippedCount = 0;
+function flipCard(card) {
+  if (!card.classList.contains('flipped')) {
+    flippedCount++;
+    const total = document.querySelectorAll('.flip-card').length;
+    document.getElementById('flipProgress').textContent = flippedCount + ' / ' + total + ' Karten geflippt';
+    updateProgress();
+  }
+  card.classList.toggle('flipped');
+}
+
+function calcVdiv() {
+  const uein = parseFloat(document.getElementById('u_ein').value) || 0;
+  const r1 = parseFloat(document.getElementById('r1').value) || 1;
+  const r2 = parseFloat(document.getElementById('r2').value) || 1;
+  const u2 = uein * r2 / (r1 + r2);
+  const i = uein / (r1 + r2) * 1000;
+  const el = document.getElementById('vdiv-result');
+  el.style.display = 'block';
+  el.innerHTML = 'U₂ = ' + u2.toFixed(3) + ' V | I = ' + i.toFixed(2) + ' mA | P_ges = ' + (uein * i / 1000 * 1000).toFixed(1) + ' mW';
+}
+
+let quizAnswered = {};
+const correct_msg = {
+  'q1': 'Richtig! MOSFET = spannungsgesteuertes Bauelement. V_GS ≥ V_th → Inversionskanal → Drain-Strom fließt.',
+  'q2': 'Richtig! TMP kann nicht aus Atmosphäre starten → Scrollpumpe erzeugt Vorvakuum bis ~10⁻² mbar → TMP erreicht HV.',
+  'q3': 'Richtig! AND: Q=1 nur wenn A=1 UND B=1. NAND wäre das Gegenteil: Q=0 nur wenn beide =1.',
+  'q4': 'Richtig! Bei HV ist λ >> Behältergröße → Moleküle stoßen fast nur mit Wänden (Knudsen-Regime) → gerichtete Bewegung.',
+  'q5': 'Richtig! CMOS: Im statischen Zustand ist immer einer der beiden FETs gesperrt → kein direkter Pfad VDD↔GND → P ≈ 0.'
+};
+const wrong_msg = {
+  'q1': 'Falsch. I_B ist für BJT-Transistoren. MOSFET wird durch Spannung V_GS gesteuert — das ist der entscheidende Unterschied.',
+  'q2': 'Falsch. Turbopumpen brauchen ein Vorvakuum (~10⁻² mbar) um zu funktionieren. Die Kombination Scrollpumpe + TMP ist der Standard in der FAB.',
+  'q3': 'Falsch. OR=1 wenn mindestens einer=1. NAND=0 nur wenn beide=1. XOR=1 wenn genau einer=1. AND=1 nur wenn beide=1.',
+  'q4': 'Falsch. Bei HV ist λ SEHR GROSS (Meter-Bereich). Bei Atmosphäre ist λ winzig (~70 nm). Das ist der Hauptgrund für HV in der FAB.',
+  'q5': 'Falsch. Der Hauptvorteil ist der statisch-nahezu-nullige Stromverbrauch. Im Gegensatz zu NMOS-Logik fließt bei CMOS kein Ruhestrom.'
+};
+
+function answer(qid, result, btn) {
+  if (quizAnswered[qid]) return;
+  quizAnswered[qid] = true;
+  btn.classList.add(result);
+  const fb = document.getElementById('fb-' + qid);
+  fb.textContent = (result === 'correct' ? '✓ ' : '✗ ') + (result === 'correct' ? correct_msg[qid] : wrong_msg[qid]);
+  fb.className = 'quiz-feedback show ' + result;
+  document.querySelectorAll('#' + qid + ' .quiz-option').forEach(o => o.disabled = true);
+  if (Object.keys(quizAnswered).length === 5) showResult();
+}
+
+function showResult() {
+  const score = document.querySelectorAll('.quiz-option.correct').length;
+  const el = document.getElementById('quiz-result');
+  document.getElementById('quiz-score-text').textContent = score + ' / 5 — ' + (score >= 4 ? '🎉 Ausgezeichnet!' : score >= 3 ? '👍 Gut!' : '📚 Weiterüben!');
+  el.style.display = 'block';
+  updateProgress();
+}
+
+function resetQuiz() {
+  quizAnswered = {};
+  document.querySelectorAll('.quiz-option').forEach(b => { b.classList.remove('correct','wrong'); b.disabled=false; });
+  document.querySelectorAll('.quiz-feedback').forEach(f => f.className='quiz-feedback');
+  document.getElementById('quiz-result').style.display = 'none';
+}
+
+function checkWortanzahl() {
+  const text = document.getElementById('schreibTextarea').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const el = document.getElementById('wort-count');
+  if (!words) { el.textContent = 'Noch keine Eingabe.'; return; }
+  if (words < 60) { el.textContent = words + ' Wörter — noch ' + (60-words) + ' bis Ziel (60+)'; el.style.color='var(--warning)'; }
+  else { el.textContent = '✓ ' + words + ' Wörter — sehr gut!'; el.style.color='var(--success)'; }
+}
+
+function toggleMuster() { document.getElementById('musterloesung').classList.toggle('show'); }
+
+function korrigieren() {
+  const text = document.getElementById('schreibTextarea').value.trim();
+  const box  = document.getElementById('korrekturBox');
+  const fach = [
+    {r:/hochvakuum/i,                           label:'Hochvakuum'},
+    {r:/turbomolekular(?:pumpe)?/i,             label:'Turbomolekularpumpe'},
+    {r:/vorvakuum/i,                            label:'Vorvakuum'},
+    {r:/prozesskammer/i,                        label:'Prozesskammer'},
+    {r:/kontaminat/i,                           label:'Kontamination'},
+    {r:/mittlere\s*freie\s*wegl[äa]nge/i,       label:'mittlere freie Weglänge'},
+    {r:/scrollpumpe/i,                          label:'Scrollpumpe'},
+  ];
+  _korrekturEngine(text, fach, box);
+  writingDone = true; updateProgress();
+}
+
+let writingDone = false;
+function updateProgress() {
+  const totalFlips = document.querySelectorAll('.flip-card').length || 6;
+  let score = 0;
+  score += Math.min(40, Math.round(flippedCount / totalFlips * 40));
+  score += Object.keys(quizAnswered).length * 10;
+  score += writingDone ? 10 : 0;
+  document.getElementById('progressBar').style.width = Math.min(100, score) + '%';
+}
+</script>
+<script src="korrektur_engine.js"></script>
+</body>
+</html>

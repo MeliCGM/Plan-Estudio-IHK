@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FASE 3 — LF7 Lithografie + LF8 Schichtabscheidung | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1e429f;
+    --success: #0e9f6e;
+    --warning: #e3a008;
+    --danger: #e02424;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --lf7: #dc2626;
+    --lf8: #059669;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  header { background: linear-gradient(135deg, var(--lf7), var(--lf8)); color: white; padding: 2rem 1.5rem; text-align: center; }
+  header h1 { font-size: 1.6rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.95rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem; }
+  .progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 8px; margin-top: 1rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .progress-bar { background: white; height: 8px; border-radius: 999px; width: 0%; transition: width 0.5s; }
+  main { max-width: 860px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--primary-dark); }
+  .lf-tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: white; }
+  .lf7 { background: var(--lf7); }
+  .lf8 { background: var(--lf8); }
+
+  /* ── Litho Process Flow ── */
+  .litho-flow { display: flex; flex-wrap: wrap; gap: 0; margin-top: 1rem; }
+  .litho-step { flex: 1; min-width: 110px; position: relative; }
+  .step-box { background: #f3f4f6; border: 2px solid var(--border); padding: 0.7rem 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; border-radius: 8px; margin: 0 2px; }
+  .step-box:hover, .step-box.active { border-color: var(--lf7); background: #fff1f2; }
+  .step-num { font-size: 1.2rem; font-weight: 700; color: var(--lf7); }
+  .step-name { font-size: 0.75rem; font-weight: 600; margin-top: 0.2rem; }
+  .step-detail { display: none; background: #fff1f2; border: 2px solid var(--lf7); border-radius: 8px; padding: 0.8rem; margin-top: 0.4rem; font-size: 0.8rem; }
+  .step-detail.show { display: block; }
+  .step-arrow { display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--muted); padding: 0 2px; flex: 0; }
+
+  /* ── SVG Lithografie cross-section ── */
+  .litho-svg-container { overflow-x: auto; margin-top: 1rem; }
+
+  /* ── Depositionsverfahren ── */
+  .dep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-top: 0.8rem; }
+  .dep-card { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; transition: border-color 0.2s; cursor: pointer; }
+  .dep-card:hover { border-color: var(--lf8); }
+  .dep-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--lf8); }
+  .dep-card .dep-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .dep-card p { font-size: 0.78rem; color: var(--muted); }
+  .dep-card .dep-detail { display: none; font-size: 0.75rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+  .dep-card.open .dep-detail { display: block; }
+
+  /* ── Tabellen ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 0.8rem; }
+  .data-table th { background: #f3f4f6; padding: 0.5rem 0.7rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  .data-table td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .data-table tr:hover td { background: #f9fafb; }
+  .chem { font-family: monospace; background: #fef3c7; color: #92400e; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.8rem; }
+  .tag-cvd { background: #d1fae5; color: #065f46; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+  .tag-pvd { background: #dbeafe; color: #1e3a8a; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+  .tag-ald { background: #fde8d8; color: #7c2d12; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+
+  /* ── Flip cards ── */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .flip-card { height: 110px; perspective: 600px; cursor: pointer; }
+  .flip-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.6rem; text-align: center; }
+  .flip-front { background: linear-gradient(135deg, var(--lf7), var(--lf8)); color: white; }
+  .flip-back { background: var(--card); border: 2px solid var(--border); transform: rotateY(180deg); }
+  .flip-front .term { font-size: 0.82rem; font-weight: 700; }
+  .flip-front .hint { font-size: 0.62rem; opacity: 0.8; margin-top: 0.3rem; }
+  .flip-back .trans { font-size: 0.75rem; font-weight: 600; color: var(--lf7); }
+  .flip-back .context { font-size: 0.62rem; color: var(--muted); margin-top: 0.3rem; }
+  .flip-progress { text-align: center; margin-top: 0.8rem; font-size: 0.85rem; color: var(--muted); }
+
+  /* ── Quiz ── */
+  .quiz-question { margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 10px; border-left: 4px solid var(--lf7); }
+  .quiz-question p { font-weight: 600; margin-bottom: 0.7rem; }
+  .quiz-option { display: block; width: 100%; text-align: left; padding: 0.5rem 0.8rem; margin: 0.3rem 0; border: 2px solid var(--border); border-radius: 8px; background: white; cursor: pointer; font-size: 0.88rem; transition: all 0.2s; }
+  .quiz-option:hover { border-color: var(--lf7); background: #fff1f2; }
+  .quiz-option.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--danger); background: #fff1f2; color: #9f1239; }
+  .quiz-feedback { font-size: 0.82rem; margin-top: 0.5rem; padding: 0.4rem 0.7rem; border-radius: 6px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #d1fae5; color: #065f46; }
+  .quiz-feedback.wrong { background: #fee2e2; color: #991b1b; }
+  #quiz-result { text-align: center; padding: 1rem; background: #f0f9ff; border-radius: 10px; display: none; font-size: 1rem; font-weight: 600; }
+
+  /* ── Schreibübung ── */
+  textarea { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 0.7rem; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 100px; transition: border-color 0.2s; }
+  textarea:focus { outline: none; border-color: var(--lf7); }
+  .btn { padding: 0.5rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: var(--lf7); color: white; }
+  .btn-primary:hover { background: #b91c1c; }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .musterloesung { display: none; margin-top: 1rem; padding: 1rem; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; font-size: 0.88rem; }
+  .musterloesung.show { display: block; }
+  .musterloesung h4 { color: var(--success); font-weight: 700; margin-bottom: 0.5rem; }
+
+  /* Citas en línea */
+  a.ref { display:inline-block; font-size:.68rem; font-weight:700; text-decoration:none; background:#dbeafe; color:var(--primary); border-radius:3px; padding:0 4px; vertical-align:super; line-height:1.5; white-space:nowrap; margin-left:2px; }
+  a.ref:hover { background:var(--primary); color:white; }
+  a.ref.wolf { background:#ede9fe; color:#7c3aed; }
+  a.ref.wolf:hover { background:#7c3aed; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FASE 3 — Lithografie &amp; Schichtabscheidung</h1>
+  <p>LF 7: Fotolithografische Strukturerzeugung | LF 8: CVD, PVD, ALD Schichtabscheidung</p>
+  <div class="badges">
+    <span class="badge">⏱ ~60 min</span>
+    <span class="badge">LF 7 (120h KMK)</span>
+    <span class="badge">LF 8 (100h KMK)</span>
+    <span class="badge">Kernprozesse FAB</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 1: Litho Prozessablauf
+════════════════════════════════════════════════════════════ -->
+<section id="sec-litho-flow">
+  <h2>📸 <span class="lf-tag lf7">LF 7</span> Fotolithografie — Prozessschritte (klick für Details)</h2>
+  <div class="litho-flow">
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s1',this)">
+        <div class="step-num">①</div>
+        <div class="step-name">Wafer-Reinigung</div>
+      </div>
+      <div class="step-detail" id="s1">
+        <strong>Ziel:</strong> Partikel + organische Reste entfernen.<br>
+        <strong>Verfahren:</strong> RCA SC-1 + SC-2, Piranha, DI-Wasser-Spülung.<br>
+        <strong>Warum:</strong> Reste unter dem Resist → Haftungsprobleme + Defekte.
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s2',this)">
+        <div class="step-num">②</div>
+        <div class="step-name">HMDS (Primer)</div>
+      </div>
+      <div class="step-detail" id="s2">
+        <strong>Ziel:</strong> Haftungsverbesserung Resist auf SiO₂/Si.<br>
+        <strong>Stoff:</strong> Hexamethyldisilazane (HMDS) — macht Oberfläche hydrophob.<br>
+        <strong>Methode:</strong> Vapor prime (90–150°C) oder Spin-coat.<br>
+        <strong>PhD-Brücke:</strong> Silanisierung = Oberflächenchemie aus der Analytik.
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s3',this)">
+        <div class="step-num">③</div>
+        <div class="step-name">Resist-Auftrag</div>
+      </div>
+      <div class="step-detail" id="s3">
+        <strong>Verfahren:</strong> Spin-coating (1000–6000 rpm, 20–60 s).<br>
+        <strong>Dicke:</strong> 0,5–2 µm (abhängig von RPM + Resist-Viskosität).<br>
+        <strong>Typen:</strong> Positiv-Resist (belichteter Teil wird löslich) | Negativ-Resist (belichteter Teil bleibt).<br>
+        <strong>Häufig:</strong> Positiv-DNQ-Resist (Diazonaphthoquinone).
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s4',this)">
+        <div class="step-num">④</div>
+        <div class="step-name">Soft Bake</div>
+      </div>
+      <div class="step-detail" id="s4">
+        <strong>Ziel:</strong> Lösungsmittel verdampfen → Resist festigen.<br>
+        <strong>Temperatur:</strong> 80–120°C für 60–120 s (Hotplate).<br>
+        <strong>Zu heiß:</strong> Photoaktive Komponente zerstört → Belichtungsempfindlichkeit sinkt.<br>
+        <strong>Zu kalt:</strong> Lösungsmittel bleibt → Outgassing in Belichtungskammer.
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s5',this)">
+        <div class="step-num">⑤</div>
+        <div class="step-name">Belichtung</div>
+      </div>
+      <div class="step-detail" id="s5">
+        <strong>Lichtquelle:</strong> i-Linie (365 nm) | KrF (248 nm) | ArF (193 nm) | EUV (13,5 nm).<br>
+        <strong>Maske/Retikel:</strong> Chrommaske auf Quarzglas — überträgt Muster.<br>
+        <strong>Auflösung:</strong> R = k₁ × λ/NA (Rayleigh-Gleichung).<br>
+        <strong>GlobalFoundries Dresden:</strong> 22FDX → ArF Immersion (193 nm).
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s6',this)">
+        <div class="step-num">⑥</div>
+        <div class="step-name">PEB + Entwicklung</div>
+      </div>
+      <div class="step-detail" id="s6">
+        <strong>PEB (Post Exposure Bake):</strong> 90–130°C — löst stehende Wellen im Resist auf.<br>
+        <strong>Entwickler:</strong> TMAH (Tetramethylammoniumhydroxid, 2,38%) — wässrig, für Positiv-Resist.<br>
+        <strong>Ergebnis:</strong> Reliefmuster im Resist → bereit zum Ätzen oder Implantieren.
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s7',this)">
+        <div class="step-num">⑦</div>
+        <div class="step-name">Inspektion (CD)</div>
+      </div>
+      <div class="step-detail" id="s7">
+        <strong>CD (Critical Dimension):</strong> Messung der Linienbreite per SEM oder optischer Metrologie.<br>
+        <strong>Overlay:</strong> Ausrichtungsfehler zur vorherigen Ebene messen.<br>
+        <strong>Defekte:</strong> Partikel, Brücken, offene Strukturen → in-line Inspektion (KLA-Tencor).<br>
+        <strong>Go/No-Go:</strong> Spec-Überschreitung → Rework (Strip + Restart) oder Scrapping.
+      </div>
+    </div>
+    <div class="litho-step">
+      <div class="step-box" onclick="toggleStep('s8',this)">
+        <div class="step-num">⑧</div>
+        <div class="step-name">Strip</div>
+      </div>
+      <div class="step-detail" id="s8">
+        <strong>Nach Ätzen/Implantation:</strong> Resist muss vollständig entfernt werden.<br>
+        <strong>Trocken:</strong> O₂-Plasma (Asher/Verasher) — oxidiert Resist zu CO₂ + H₂O.<br>
+        <strong>Nass:</strong> Piranha (H₂SO₄:H₂O₂) bei 120°C — vollständige Entfernung.<br>
+        <strong>Danach:</strong> RCA-Reinigung, dann nächste Prozessstufe.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 2: Resist-Typen und Belichtungsquellen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-resist">
+  <h2>🔬 <span class="lf-tag lf7">LF 7</span> Resist-Chemie &amp; Belichtungsquellen</h2>
+  <table class="data-table">
+    <thead>
+      <tr><th>Typ</th><th>Reaktionsprinzip</th><th>Entwickler</th><th>Anwendung</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Positiv-DNQ</strong></td>
+        <td>DNQ + Licht → Indensäure → löslich in Alkali</td>
+        <td>TMAH 2,38%</td>
+        <td>i-Linie (365 nm), ältere Nodes ≥ 0,35 µm</td>
+      </tr>
+      <tr>
+        <td><strong>Positiv-CAR (KrF)</strong></td>
+        <td>Chemisch-amplifiziert: PAG erzeugt Säure → Schutzgruppen-Spaltung → löslich</td>
+        <td>TMAH 2,38%</td>
+        <td>KrF (248 nm), Nodes 0,25–0,13 µm</td>
+      </tr>
+      <tr>
+        <td><strong>Positiv-CAR (ArF)</strong></td>
+        <td>Wie KrF-CAR, aber transparenter Polymerrahmen für 193 nm</td>
+        <td>TMAH 2,38%</td>
+        <td>ArF (193 nm), Immersion, Nodes ≤ 90 nm</td>
+      </tr>
+      <tr>
+        <td><strong>Negativ-Resist</strong></td>
+        <td>Vernetzung durch Licht → unlöslich in Entwickler</td>
+        <td>organische Lösemittel</td>
+        <td>MEMS, Leistungselektronik, Metall-Lift-off</td>
+      </tr>
+      <tr>
+        <td><strong>EUV-Resist</strong></td>
+        <td>Photonen-Absorption bei 13,5 nm → Molekülspaltung</td>
+        <td>TMAH + spezifische Formulierung</td>
+        <td>EUV (13,5 nm), Nodes ≤ 7 nm</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Rayleigh-Gleichung — Auflösung</h3>
+  <div style="background: #f0f9ff; border-radius: 10px; padding: 1rem; margin-top: 0.5rem; font-size: 0.9rem; border: 2px solid var(--primary);">
+    <div style="text-align:center; font-size:1.1rem; font-weight:700; margin-bottom:0.5rem">
+      R = k₁ × λ / NA
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; font-size:0.82rem;">
+      <div style="background:white; border-radius:6px; padding:0.5rem; text-align:center;">
+        <div style="font-weight:700; color:var(--lf7)">R</div>
+        <div>Minimale Strukturbreite (nm)</div>
+      </div>
+      <div style="background:white; border-radius:6px; padding:0.5rem; text-align:center;">
+        <div style="font-weight:700; color:var(--primary)">k₁</div>
+        <div>Prozessfaktor (0,25–0,8)</div>
+      </div>
+      <div style="background:white; border-radius:6px; padding:0.5rem; text-align:center;">
+        <div style="font-weight:700; color:var(--success)">λ / NA</div>
+        <div>Wellenlänge / Numerische Apertur</div>
+      </div>
+    </div>
+    <div style="margin-top:0.7rem; font-size:0.8rem; color:var(--muted)">
+      <strong>Beispiel:</strong> ArF-Immersion: λ=193 nm, NA=1,35, k₁=0,28 → R = 0,28 × 193/1,35 ≈ <strong>40 nm</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 3: CVD / PVD / ALD
+════════════════════════════════════════════════════════════ -->
+<section id="sec-deposition">
+  <h2>⬛ <span class="lf-tag lf8">LF 8</span> Schichtabscheidung — CVD, PVD, ALD</h2>
+  <div class="dep-grid">
+    <div class="dep-card" onclick="this.classList.toggle('open')">
+      <div class="dep-icon">🌡</div>
+      <h4>LPCVD</h4>
+      <p>Low Pressure CVD | 0,1–10 Torr | 550–900°C</p>
+      <div class="dep-detail">
+        <span class="tag-cvd">CVD</span><br>
+        <strong>Schichten:</strong> Poly-Si, Si₃N₄, SiO₂ (TEOS)<br>
+        <strong>Reaktion:</strong> <span class="chem">SiH₄ → Si + 2H₂</span><br>
+        <strong>Vorteil:</strong> Gleichmäßig auf vielen Wafern gleichzeitig (Batch-Prozess)<br>
+        <strong>Nachteil:</strong> Hohe Temperatur → Diffusions-Budget
+      </div>
+    </div>
+    <div class="dep-card" onclick="this.classList.toggle('open')">
+      <div class="dep-icon">⚡</div>
+      <h4>PECVD</h4>
+      <p>Plasma-Enhanced CVD | ≤400°C | RF-Plasma</p>
+      <div class="dep-detail">
+        <span class="tag-cvd">CVD</span><br>
+        <strong>Schichten:</strong> SiO₂, Si₃N₄, a-Si (amorph)<br>
+        <strong>Vorteil:</strong> Niedrige T° → nach Metallisierung einsetzbar<br>
+        <strong>Nachteil:</strong> Schlechtere Filmqualität als LPCVD<br>
+        <strong>Plasma:</strong> Aktiviert Reaktion ohne Wärme (Radikale)
+      </div>
+    </div>
+    <div class="dep-card" onclick="this.classList.toggle('open')">
+      <div class="dep-icon">🔬</div>
+      <h4>ALD</h4>
+      <p>Atomic Layer Deposition | 1 Monolage/Zyklus</p>
+      <div class="dep-detail">
+        <span class="tag-ald">ALD</span><br>
+        <strong>Prinzip:</strong> Selbstlimitierende Reaktion in 2 Halbzyklen<br>
+        <strong>Schichten:</strong> Al₂O₃, HfO₂ (High-k), TiN, Ta₂O₅<br>
+        <strong>Vorteil:</strong> Perfekte Konformität, atomare Präzision<br>
+        <strong>Nachteil:</strong> Sehr langsam (~1 Å/Zyklus)<br>
+        <strong>PhD-Brücke:</strong> ≈ kontrollierte Oberflächenchemie in 2 Schritten
+      </div>
+    </div>
+    <div class="dep-card" onclick="this.classList.toggle('open')">
+      <div class="dep-icon">💨</div>
+      <h4>Sputtern (PVD)</h4>
+      <p>Physical Vapor Deposition | Magnetron</p>
+      <div class="dep-detail">
+        <span class="tag-pvd">PVD</span><br>
+        <strong>Prinzip:</strong> Ar⁺-Ionen bombardieren Target → Atome lösen sich ab → deponieren<br>
+        <strong>Schichten:</strong> Al, Cu, TiN, W (Metalle + Barrieren)<br>
+        <strong>Vorteil:</strong> Metalle gut, niedrige T°, einfach<br>
+        <strong>Nachteil:</strong> Schlechte Konformität in tiefen Gräben
+      </div>
+    </div>
+    <div class="dep-card" onclick="this.classList.toggle('open')">
+      <div class="dep-icon">🔆</div>
+      <h4>Thermische Verdampfung</h4>
+      <p>PVD | Widerstandsheizung oder E-Strahl</p>
+      <div class="dep-detail">
+        <span class="tag-pvd">PVD</span><br>
+        <strong>Prinzip:</strong> Material im Hochvakuum erhitzen → verdampfen → kondensieren<br>
+        <strong>Schichten:</strong> Al, Au, Cr (Forschung/MEMS)<br>
+        <strong>Nachteil:</strong> Schlechte Stufenbedeckung; nur für einfache Geometrien<br>
+        <strong>Druck:</strong> &lt;10⁻⁶ Torr nötig
+      </div>
+    </div>
+    <div class="dep-card" onclick="this.classList.toggle('open')">
+      <div class="dep-icon">🌀</div>
+      <h4>Epitaxie (CVD)</h4>
+      <p>Einkristallines Wachstum auf Si-Substrat</p>
+      <div class="dep-detail">
+        <span class="tag-cvd">CVD</span><br>
+        <strong>Prinzip:</strong> Si- oder SiGe-Schicht wächst kristallin auf Si-Substrat (Gitteranpassung)<br>
+        <strong>Reaktion:</strong> <span class="chem">SiH₂Cl₂ → Si + 2HCl</span> (DCS, 750–1100°C)<br>
+        <strong>Anwendung:</strong> BiCMOS, SiGe-HBT (Infineon), CMOS-Substrat<br>
+        <strong>PhD-Brücke:</strong> Schichtwachstum ≈ kontrollierte Kristallisation
+      </div>
+    </div>
+  </div>
+
+  <h3>Schichteigenschaften und Anwendung — Übersicht</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>Schicht</th><th>Verfahren</th><th>Funktion im IC</th><th>Typische Dicke</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>SiO₂ (thermisch)</td><td>Thermische Oxidation</td><td>Gateoxid, LOCOS, STI-Liner</td><td>1–200 nm</td></tr>
+      <tr><td>Si₃N₄</td><td>LPCVD / PECVD</td><td>Ätzstoppschicht, Passivierung</td><td>50–200 nm</td></tr>
+      <tr><td>Poly-Si</td><td>LPCVD</td><td>Gate-Elektrode (ältere CMOS)</td><td>100–400 nm</td></tr>
+      <tr><td>HfO₂ (High-k)</td><td>ALD</td><td>Gateoxid &lt;10 nm Nodes</td><td>1–5 nm</td></tr>
+      <tr><td>TiN</td><td>ALD / Sputtern</td><td>Metal Gate, Barriereschicht</td><td>5–50 nm</td></tr>
+      <tr><td>Cu</td><td>ECD + Sputtern (Seed)</td><td>Metallisierung (Damascene)</td><td>50–500 nm</td></tr>
+      <tr><td>W</td><td>CVD (WF₆)</td><td>Via-Fill, Kontakte</td><td>100–400 nm</td></tr>
+      <tr><td>Al</td><td>Sputtern</td><td>Bond-Pads, ältere Metallisierung</td><td>500 nm–2 µm</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 4: ALD Zyklus animado
+════════════════════════════════════════════════════════════ -->
+<section id="sec-ald">
+  <h2>🔄 <span class="lf-tag lf8">LF 8</span> ALD-Zyklus — Al₂O₃ Beispiel</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.8rem;">
+    <div style="background:#f0fdf4; border:2px solid var(--success); border-radius:10px; padding:1rem; font-size:0.85rem;">
+      <h4 style="color:var(--success); margin-bottom:0.5rem">Halbzyklus A — TMA-Puls</h4>
+      <p><span class="chem">Al(CH₃)₃ + OH* → Al-O-Al(CH₃)₂ + CH₄</span></p>
+      <p style="margin-top:0.5rem; color:var(--muted)">
+        TMA (Trimethylaluminium) reagiert mit OH-Gruppen der Oberfläche.
+        Überschuss-TMA wird mit N₂ ausgespült.
+        <strong>Selbstlimitierend:</strong> nur 1 Monolage TMA bindet.
+      </p>
+    </div>
+    <div style="background:#eff6ff; border:2px solid var(--primary); border-radius:10px; padding:1rem; font-size:0.85rem;">
+      <h4 style="color:var(--primary); margin-bottom:0.5rem">Halbzyklus B — H₂O-Puls</h4>
+      <p><span class="chem">Al-CH₃ + H₂O → Al-OH + CH₄</span></p>
+      <p style="margin-top:0.5rem; color:var(--muted)">
+        Wasserdampf reagiert mit verbleibenden CH₃-Gruppen → Al₂O₃ entsteht + CH₄ als Nebenprodukt.
+        Überschuss H₂O ausgespült.
+        <strong>Ergebnis:</strong> 1 atomare Lage Al₂O₃ (≈0,1 nm/Zyklus).
+      </p>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:0.8rem; padding:0.7rem; background:#fefce8; border-radius:8px; font-size:0.85rem; border:1px solid var(--warning)">
+    <strong>Gesamtreaktion:</strong> <span class="chem">2Al(CH₃)₃ + 3H₂O → Al₂O₃ + 6CH₄</span><br>
+    <span style="color:var(--muted)">PhD-Brücke: ≈ sequentielle Organometall-Hydrolyse + Kondensation (Sol-Gel-Chemie!)</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 5: Vokabeln Flip Cards
+════════════════════════════════════════════════════════════ -->
+<section id="sec-vokabeln">
+  <h2>🗂 Vokabeln — LF 7 + LF 8 (Klick = übersetzen)</h2>
+  <div class="flip-grid" id="flipGrid">
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Fotolithografie</div><div class="hint">DE → ES + EN</div></div><div class="flip-back"><div class="trans">Fotolitografía / Photolithography</div><div class="context">Musterübertragung per Licht von Maske auf Resist → Wafer</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Photoresist</div><div class="hint">Positiv vs. Negativ</div></div><div class="flip-back"><div class="trans">Fotorresist / Photoresist</div><div class="context">Lichtempfindliche Schicht. Positiv: belichtet = löslich. Negativ: belichtet = bleibt.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Belichtung</div><div class="hint">Litho-Schritt</div></div><div class="flip-back"><div class="trans">Exposición / Exposure</div><div class="context">UV/DUV/EUV überträgt Maskenmuster in Resist. Stepper oder Scanner.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Entwicklung</div><div class="hint">Nach Belichtung</div></div><div class="flip-back"><div class="trans">Revelado / Development</div><div class="context">TMAH-Lösung löst belichteten Positiv-Resist auf → Reliefmuster entsteht</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">kritische Dimension (CD)</div><div class="hint">Metrologie</div></div><div class="flip-back"><div class="trans">Dimensión crítica / Critical Dimension</div><div class="context">Minimale Strukturbreite. Gemessen per SEM oder optischer Metrologie.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Overlay</div><div class="hint">Ausrichtungsfehler</div></div><div class="flip-back"><div class="trans">Superposición / Overlay</div><div class="context">Versatz zwischen zwei Maskenebenen. Spec: &lt;CD/3. Kritisch für Transistor-Ausbeute.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">CVD</div><div class="hint">Schichtabscheidung</div></div><div class="flip-back"><div class="trans">Deposición Química en Fase Vapor / Chemical Vapor Deposition</div><div class="context">Gasförmige Precursoren reagieren → feste Schicht auf Wafer</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">PVD</div><div class="hint">Sputtern, Verdampfen</div></div><div class="flip-back"><div class="trans">Deposición Física en Fase Vapor / Physical Vapor Deposition</div><div class="context">Physikalisches Ablösen von Targetmaterial (Sputtern) oder Verdampfen</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">ALD</div><div class="hint">Atomare Präzision</div></div><div class="flip-back"><div class="trans">Deposición por Capas Atómicas / Atomic Layer Deposition</div><div class="context">Selbstlimitierende Reaktion → 1 Monolage/Zyklus. Al₂O₃, HfO₂, TiN.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Konformität</div><div class="hint">Schichteigenschaft</div></div><div class="flip-back"><div class="trans">Conformidad / Conformality</div><div class="context">Gleichmäßige Schichtdicke auf Stufen + tiefen Gräben. ALD=100%, PVD schlechter.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Precursor</div><div class="hint">CVD/ALD Einsatzstoff</div></div><div class="flip-back"><div class="trans">Precursor / Precursor</div><div class="context">Gasförmige Ausgangsverbindung für CVD/ALD. z.B. TEOS, TMA, WF₆, TiCl₄.</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Sputtern</div><div class="hint">PVD-Verfahren</div></div><div class="flip-back"><div class="trans">Pulverización catódica / Sputtering</div><div class="context">Ar⁺-Ionen bombardieren Target → Metallatome lösen sich ab → Film auf Wafer</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">HMDS</div><div class="hint">Vor Resist-Auftrag</div></div><div class="flip-back"><div class="trans">HMDS / Hexamethyldisilazane</div><div class="context">Haftpromoter: macht Si-Oberfläche hydrophob → bessere Resist-Haftung</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">Soft Bake</div><div class="hint">Nach Spin-coat</div></div><div class="flip-back"><div class="trans">Horneado suave / Soft Bake</div><div class="context">80–120°C nach Resist-Auftrag → Lösungsmittel verdampfen, Resist festigen</div></div></div></div>
+    <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front"><div class="term">High-k Dielektrikum</div><div class="hint">Gateoxid &lt;10 nm</div></div><div class="flip-back"><div class="trans">Dieléctrico de alta constante / High-k dielectric</div><div class="context">HfO₂, Al₂O₃ — höhere ε → dickere physische Schicht, gleicher elektrischer Effekt</div></div></div></div>
+  </div>
+  <div class="flip-progress" id="flipProgress">0 / 15 Karten geflippt</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 6: Quiz
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quiz">
+  <h2>📝 Quiz — LF 7 + LF 8</h2>
+  <div id="quiz">
+    <div class="quiz-question" id="q1">
+      <p>1. In welcher Reihenfolge werden die Litho-Schritte ausgeführt?</p>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">a) Belichtung → Soft Bake → HMDS → Entwicklung</button>
+      <button class="quiz-option" onclick="answer('q1','correct',this)">b) HMDS → Resist → Soft Bake → Belichtung → Entwicklung</button>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">c) Resist → HMDS → Belichtung → Soft Bake → Entwicklung</button>
+      <button class="quiz-option" onclick="answer('q1','wrong',this)">d) Soft Bake → HMDS → Resist → Entwicklung → Belichtung</button>
+      <div class="quiz-feedback" id="fb-q1"></div>
+    </div>
+    <div class="quiz-question" id="q2">
+      <p>2. Welches Verfahren bietet die beste Konformität (gleichmäßige Schichtdicke) in tiefen Gräben?</p>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">a) Sputtern (PVD)</button>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">b) Thermische Verdampfung</button>
+      <button class="quiz-option" onclick="answer('q2','correct',this)">c) ALD (Atomic Layer Deposition)</button>
+      <button class="quiz-option" onclick="answer('q2','wrong',this)">d) PECVD bei niedrigem Druck</button>
+      <div class="quiz-feedback" id="fb-q2"></div>
+    </div>
+    <div class="quiz-question" id="q3">
+      <p>3. Die Auflösung in der Fotolithografie wird durch die Rayleigh-Gleichung beschrieben. Was verbessert die Auflösung (kleineres R)?</p>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">a) Längere Wellenlänge λ</button>
+      <button class="quiz-option" onclick="answer('q3','correct',this)">b) Kürzere Wellenlänge λ oder höhere numerische Apertur NA</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">c) Höherer k₁-Faktor</button>
+      <button class="quiz-option" onclick="answer('q3','wrong',this)">d) Dickerer Photoresist</button>
+      <div class="quiz-feedback" id="fb-q3"></div>
+    </div>
+    <div class="quiz-question" id="q4">
+      <p>4. Welche CVD-Variante wird für Schichten verwendet, die NACH der Metallisierung aufgebracht werden müssen?</p>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">a) LPCVD (550–900°C)</button>
+      <button class="quiz-option" onclick="answer('q4','correct',this)">b) PECVD (≤400°C, Plasma-Aktivierung)</button>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">c) Thermische Oxidation (900–1200°C)</button>
+      <button class="quiz-option" onclick="answer('q4','wrong',this)">d) ALD mit TMA-Precursor</button>
+      <div class="quiz-feedback" id="fb-q4"></div>
+    </div>
+    <div class="quiz-question" id="q5">
+      <p>5. Was bedeutet „Positiv-Resist" in der Fotolithografie?</p>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">a) Der belichtete Teil bleibt nach dem Entwickeln stehen</button>
+      <button class="quiz-option" onclick="answer('q5','correct',this)">b) Der belichtete Teil wird beim Entwickeln entfernt (löslich in TMAH)</button>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">c) Der Resist wird positiv geladen, um Partikel abzustoßen</button>
+      <button class="quiz-option" onclick="answer('q5','wrong',this)">d) Positiv-Resist wird für Negativ-Masken verwendet</button>
+      <div class="quiz-feedback" id="fb-q5"></div>
+    </div>
+    <div id="quiz-result"><div id="quiz-score-text"></div><button class="btn btn-secondary" onclick="resetQuiz()" style="margin-top:0.8rem">Wiederholen</button></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN 7: Schreibübung
+════════════════════════════════════════════════════════════ -->
+<section id="sec-schreiben">
+  <h2>✍ Schreibübung — IHK-Fachaufsatz</h2>
+  <div style="background:#fff1f2; border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:0.88rem; border-left:4px solid var(--lf7)">
+    <strong>Aufgabe:</strong> Erklären Sie in 4–6 Sätzen auf Deutsch den Unterschied zwischen CVD und PVD,
+    und nennen Sie jeweils ein konkretes Beispiel einer Schicht, die mit diesem Verfahren hergestellt wird.<br>
+    <em style="color:var(--muted)">Fachbegriffe: chemische Reaktion, physikalischer Prozess, Precursor, Sputtern, Konformität.</em>
+  </div>
+  <textarea id="schreibTextarea" placeholder="Schreiben Sie hier Ihre Antwort auf Deutsch..."></textarea>
+  <div style="display:flex; gap:0.8rem; margin-top:0.8rem; flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="checkWortanzahl()">Wörter zählen</button>
+    <button class="btn btn-secondary" onclick="toggleMuster()">Musterlösung anzeigen</button>
+    <button class="btn" style="background:#1a56db;color:white" onclick="korrigieren()">✏ Korrigieren &amp; Feedback</button>
+  </div>
+  <div id="wort-count" style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted)"></div>
+  <div id="korrekturBox" style="display:none;margin-top:14px;font-size:.85rem"></div>
+  <div class="musterloesung" id="musterloesung">
+    <h4>Musterlösung:</h4>
+    <p>
+      Bei der chemischen Gasphasenabscheidung (CVD) reagieren gasförmige Precursoren auf der erhitzten Wafer-Oberfläche
+      miteinander, wodurch eine feste Schicht entsteht. Ein Beispiel ist die LPCVD-Abscheidung von Siliziumnitrid (Si₃N₄),
+      bei der Dichlorsilane und Ammoniak bei etwa 750°C als Ätzstoppschicht aufgebracht werden.
+    </p>
+    <p style="margin-top:0.5rem">
+      Im Gegensatz dazu basiert die physikalische Gasphasenabscheidung (PVD) auf physikalischen Prozessen:
+      Beim Sputtern werden Argon-Ionen auf ein Metalltarget beschleunigt, wodurch Metallatome herausgeschlagen werden
+      und sich auf dem Wafer ablagern. Ein typisches Beispiel ist die Abscheidung einer Titannitrid (TiN)-Barriereschicht
+      vor der Kupfer-Metallisierung.
+    </p>
+    <p style="margin-top:0.5rem">
+      Ein wichtiger Unterschied liegt in der Konformität: ALD und CVD liefern gleichmäßige Schichtdicken
+      auch in tiefen Strukturen, während PVD (Sputtern) schlechte Konformität zeigt und vor allem für
+      planare Flächen geeignet ist.
+    </p>
+    <p style="margin-top:0.5rem; font-size:0.82rem; color:var(--muted)">
+      <strong>Fachbegriffe verwendet:</strong> Precursor, LPCVD, Si₃N₄, Sputtern, Argon-Ionen, TiN, Konformität, Barriereschicht.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN: Bibliografía / Quellen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quellen">
+  <h2>📚 Quellen &amp; Bibliografía — LF7 + LF8</h2>
+  <p style="font-size:.83rem;color:var(--muted);margin-bottom:1rem">Fuentes para esta FASE. Los capítulos indicados cubren exactamente el contenido aquí tratado.</p>
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- Wolf & Tauber — violeta -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #7c3aed">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Wolf &amp; Tauber — <em>Silicon Processing for the VLSI Era</em>, Vol. 1–2</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Referencia principal LF7 + LF8</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Silicon_Processing_for_VLSI_Era_Vol1-2_Wolf_Tauber.pdf" style="background:#7c3aed;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Vol. 1, Cap. 7, pp. 261–280</strong> — CVD: LPCVD, PECVD, TEOS, poly-Si</li>
+        <li><strong>Vol. 1, Cap. 10, pp. 421–550</strong> — Photolithografie: Resist, Belichtung, Entwicklung, Alignment</li>
+        <li><strong>Vol. 2, Cap. 1, pp. 1–60</strong> — PVD: Sputtern, Aufdampfen, Metallisierung</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#ede9fe;border-radius:6px;padding:.4rem .6rem;color:#5b21b6;font-family:monospace">
+        Wolf, S.; Tauber, R. N. <em>Silicon Processing for the VLSI Era, Vol. 1–2</em>; Lattice Press, 2000.
+      </div>
+    </div>
+
+    <!-- May & Spanos — azul -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid var(--primary)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">May &amp; Spanos — <em>Fundamentals of Semiconductor Manufacturing and Process Control</em></div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Thin film processes y lithography</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Fundamentals_Semiconductor_Manufacturing_ProcessControl_May_Spanos.pdf" style="background:var(--primary);color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Cap. 4, pp. 95–142</strong> — Thin Film Processes: CVD, PVD, Oxidation</li>
+        <li><strong>Cap. 5, pp. 143–190</strong> — Lithography: exposure, resist, alignment, overlay</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#e0f2fe;border-radius:6px;padding:.4rem .6rem;color:#0369a1;font-family:monospace">
+        May, G. S.; Spanos, C. J. <em>Fundamentals of Semiconductor Manufacturing and Process Control</em>; Wiley-IEEE Press, 2006. ISBN 978-0-471-78509-1.
+      </div>
+    </div>
+
+    <!-- Online resources — verde -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid var(--success)">
+      <div style="font-weight:700;font-size:.92rem;margin-bottom:.5rem">Recursos Online</div>
+      <ul style="font-size:.83rem;padding-left:1.2rem">
+        <li><a href="https://www.asml.com/en/technology/all-systems/lithography-systems" style="color:var(--primary);font-weight:600">ASML</a> (EN) — Lithography Systems — Explicación técnica DUV/EUV desde el fabricante líder</li>
+        <li><a href="https://www.halbleiter.org/lithografie/" style="color:var(--primary);font-weight:600">halbleiter.org/lithografie/</a> (DE) — Lithografie — Proceso completo en alemán técnico</li>
+        <li><a href="https://www.halbleiter.org/cvd/" style="color:var(--primary);font-weight:600">halbleiter.org/cvd/</a> (DE) — CVD / Schichtabscheidung — LPCVD, PECVD, ALD en alemán</li>
+      </ul>
+    </div>
+
+    <!-- KMK — amarillo -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Rahmenlehrplan KMK — LF7 + LF8</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">LF7 (80h) · LF8 (80h)</div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/Rahmenlehrplan_Mikrotechnologe_KMK_OFICIAL.pdf" style="background:#d97706;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF KMK</a>
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="background:#92400e;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Carpeta IHK</a>
+        </div>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>LF 7</strong> — Lithografische Verfahren anwenden <strong>(80h)</strong></li>
+        <li><strong>LF 8</strong> — Schichten abscheiden <strong>(80h)</strong></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE3_LF7_Lithografie_LF8_Schichten.html</strong> ·
+  ← <a href="FASE2_LF2_Chemie_LF4_Reinraum.html" style="color:#94a3b8">Fase 2 — LF2+LF4</a> ·
+  Siguiente: <a href="FASE4_LF6_Schaltungen_LF10_Vakuum.html">Fase 4 — LF6+LF10</a> →
+</div>
+
+<script>
+let flippedCount = 0;
+function flipCard(card) {
+  if (!card.classList.contains('flipped')) {
+    flippedCount++;
+    const total = document.querySelectorAll('.flip-card').length;
+    document.getElementById('flipProgress').textContent = flippedCount + ' / ' + total + ' Karten geflippt';
+    updateProgress();
+  }
+  card.classList.toggle('flipped');
+}
+
+function toggleStep(id, box) {
+  document.getElementById(id).classList.toggle('show');
+  box.classList.toggle('active');
+}
+
+let quizAnswered = {};
+const correct_msg = {
+  'q1':'Richtig! HMDS → Resist → Soft Bake → Belichtung → Entwicklung ist die korrekte Reihenfolge.',
+  'q2':'Richtig! ALD ist selbstlimitierend → perfekte Konformität (~100%), ideal für FinFETs und HAR-Strukturen.',
+  'q3':'Richtig! R = k₁ × λ/NA → kleineres λ (z.B. EUV 13,5 nm) oder größere NA → bessere Auflösung.',
+  'q4':'Richtig! PECVD arbeitet bei ≤400°C durch Plasma-Aktivierung → kein Schmelzen der Metallschichten.',
+  'q5':'Richtig! Positiv-Resist: belichteter Bereich wird durch Licht-induzierte Reaktion in TMAH löslich (DNQ oder CAR).'
+};
+const wrong_msg = {
+  'q1':'Falsch. HMDS (Haftpromoter) kommt VOR dem Resist-Auftrag. Soft Bake erfolgt nach Spin-coat, Entwicklung nach der Belichtung.',
+  'q2':'Falsch. Sputtern und Verdampfung liefern schlechte Konformität. ALD mit selbstlimitierenden Reaktionen ist das beste Verfahren.',
+  'q3':'Falsch. Kürzere λ → kleineres R (bessere Auflösung). Höherer k₁ verschlechtert die Auflösung. Resistdicke hat keinen direkten Einfluss.',
+  'q4':'Falsch. LPCVD (550–900°C) und thermische Oxidation würden Metallleitungen beschädigen. Nur PECVD ist bei ≤400°C möglich.',
+  'q5':'Falsch. Bei Positiv-Resist wird der belichtete Bereich ENTFERNT (löslich). Das ist das häufigste System in der FAB (DNQ, CAR).'
+};
+
+function answer(qid, result, btn) {
+  if (quizAnswered[qid]) return;
+  quizAnswered[qid] = true;
+  btn.classList.add(result);
+  const fb = document.getElementById('fb-' + qid);
+  fb.textContent = (result === 'correct' ? '✓ ' : '✗ ') + (result === 'correct' ? correct_msg[qid] : wrong_msg[qid]);
+  fb.className = 'quiz-feedback show ' + result;
+  document.querySelectorAll('#' + qid + ' .quiz-option').forEach(o => o.disabled = true);
+  if (Object.keys(quizAnswered).length === 5) showResult();
+}
+
+function showResult() {
+  const score = document.querySelectorAll('.quiz-option.correct').length;
+  const el = document.getElementById('quiz-result');
+  document.getElementById('quiz-score-text').textContent = score + ' / 5 — ' + (score >= 4 ? '🎉 Ausgezeichnet!' : score >= 3 ? '👍 Gut!' : '📚 Weiterüben!');
+  el.style.display = 'block';
+  updateProgress();
+}
+
+function resetQuiz() {
+  quizAnswered = {};
+  document.querySelectorAll('.quiz-option').forEach(b => { b.classList.remove('correct','wrong'); b.disabled=false; });
+  document.querySelectorAll('.quiz-feedback').forEach(f => f.className='quiz-feedback');
+  document.getElementById('quiz-result').style.display = 'none';
+}
+
+function checkWortanzahl() {
+  const text = document.getElementById('schreibTextarea').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const el = document.getElementById('wort-count');
+  if (!words) { el.textContent = 'Noch keine Eingabe.'; return; }
+  if (words < 60) { el.textContent = words + ' Wörter — noch ' + (60-words) + ' bis Ziel (60+)'; el.style.color='var(--warning)'; }
+  else { el.textContent = '✓ ' + words + ' Wörter — sehr gut!'; el.style.color='var(--success)'; }
+}
+
+function toggleMuster() { document.getElementById('musterloesung').classList.toggle('show'); }
+
+function korrigieren() {
+  const text = document.getElementById('schreibTextarea').value.trim();
+  const box  = document.getElementById('korrekturBox');
+  const fach = [
+    {r:/\bcvd\b/i,                          label:'CVD'},
+    {r:/\bpvd\b/i,                          label:'PVD'},
+    {r:/precursor/i,                        label:'Precursor'},
+    {r:/chemische\s*reaktion/i,             label:'chemische Reaktion'},
+    {r:/physikalische[rs]?\s*prozess/i,     label:'physikalischer Prozess'},
+    {r:/konformit[äa]/i,                    label:'Konformität'},
+    {r:/sputtern|sputtering/i,              label:'Sputtern'},
+    {r:/\b(?:lpcvd|pecvd)\b/i,             label:'LPCVD / PECVD'},
+  ];
+  _korrekturEngine(text, fach, box);
+  writingDone = true; updateProgress();
+}
+
+let writingDone = false;
+function updateProgress() {
+  const totalFlips = document.querySelectorAll('.flip-card').length || 8;
+  let score = 0;
+  score += Math.min(40, Math.round(flippedCount / totalFlips * 40));
+  score += Object.keys(quizAnswered).length * 10;
+  score += writingDone ? 10 : 0;
+  document.getElementById('progressBar').style.width = Math.min(100, score) + '%';
+}
+</script>
+<script src="korrektur_engine.js"></script>
+</body>
+</html>

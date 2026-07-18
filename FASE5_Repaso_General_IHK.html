@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FASE 5 — Repaso General IHK | Mikrotechnologe Prüfungsvorbereitung</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1e429f;
+    --success: #0e9f6e;
+    --warning: #e3a008;
+    --danger: #e02424;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  header { background: linear-gradient(135deg, #1e429f, #0e9f6e); color: white; padding: 2rem 1.5rem; text-align: center; }
+  header h1 { font-size: 1.6rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.95rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem; }
+  .progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 10px; margin-top: 1rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .progress-bar { background: white; height: 10px; border-radius: 999px; width: 0%; transition: width 0.5s; }
+  .progress-label { font-size: 0.8rem; opacity: 0.9; margin-top: 0.3rem; }
+  main { max-width: 860px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--primary-dark); }
+  .lf-tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: white; margin-right: 0.3rem; }
+
+  /* ── Fases Navigation ── */
+  .nav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .nav-card { border: 2px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; text-decoration: none; color: var(--text); transition: all 0.2s; cursor: pointer; }
+  .nav-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .nav-card .fase-num { font-size: 1.5rem; font-weight: 700; }
+  .nav-card .fase-title { font-size: 0.78rem; margin-top: 0.3rem; color: var(--muted); }
+  .nav-card .fase-lf { font-size: 0.7rem; margin-top: 0.2rem; font-weight: 600; }
+
+  /* ── Resumen Tabelle ── */
+  .summary-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 0.8rem; }
+  .summary-table th { padding: 0.5rem 0.7rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--border); }
+  .summary-table td { padding: 0.4rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .summary-table tr:nth-child(even) td { background: #f9fafb; }
+  .ok { color: var(--success); font-weight: 700; }
+  .caution { color: var(--warning); font-weight: 700; }
+  .tag { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; color: white; margin: 0.1rem; }
+
+  /* ── Großes Quiz (20 Fragen) ── */
+  .quiz-question { margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 10px; border-left: 4px solid var(--primary); }
+  .quiz-question p { font-weight: 600; margin-bottom: 0.7rem; font-size: 0.9rem; }
+  .quiz-option { display: block; width: 100%; text-align: left; padding: 0.45rem 0.8rem; margin: 0.25rem 0; border: 2px solid var(--border); border-radius: 8px; background: white; cursor: pointer; font-size: 0.87rem; transition: all 0.2s; }
+  .quiz-option:hover { border-color: var(--primary); background: #eff6ff; }
+  .quiz-option.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--danger); background: #fff1f2; color: #9f1239; }
+  .quiz-feedback { font-size: 0.82rem; margin-top: 0.5rem; padding: 0.4rem 0.7rem; border-radius: 6px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #d1fae5; color: #065f46; }
+  .quiz-feedback.wrong { background: #fee2e2; color: #991b1b; }
+  .quiz-section-header { background: linear-gradient(135deg, var(--primary), #0891b2); color: white; padding: 0.5rem 1rem; border-radius: 8px; margin: 1rem 0 0.5rem; font-weight: 700; font-size: 0.88rem; }
+  #quiz-final-result { display: none; background: white; border: 3px solid var(--success); border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
+  .score-big { font-size: 3rem; font-weight: 700; }
+  .score-label { font-size: 1rem; color: var(--muted); margin-top: 0.3rem; }
+  .score-breakdown { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-top: 1rem; }
+  .breakdown-item { background: #f9fafb; border-radius: 8px; padding: 0.5rem; text-align: center; font-size: 0.78rem; }
+  .breakdown-item .b-num { font-size: 1.1rem; font-weight: 700; }
+
+  /* ── Schreibübung ── */
+  textarea { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 0.7rem; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 100px; }
+  textarea:focus { outline: none; border-color: var(--primary); }
+  .btn { padding: 0.5rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .musterloesung { display: none; margin-top: 1rem; padding: 1rem; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; font-size: 0.88rem; }
+  .musterloesung.show { display: block; }
+  .musterloesung h4 { color: var(--success); font-weight: 700; margin-bottom: 0.5rem; }
+
+  /* ── Checkliste ── */
+  .checklist { list-style: none; }
+  .checklist li { padding: 0.4rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; display: flex; align-items: flex-start; gap: 0.5rem; }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; cursor: pointer; flex-shrink: 0; margin-top: 2px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+  .check-box.checked { background: var(--success); border-color: var(--success); color: white; }
+  .checklist li.checked-item .check-text { text-decoration: line-through; color: var(--muted); }
+
+  /* ── Formelblatt ── */
+  .formula-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .formula-card { background: #fef3c7; border: 2px solid var(--warning); border-radius: 10px; padding: 0.8rem; text-align: center; }
+  .formula-card .f-name { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .formula-card .f-eq { font-size: 1rem; font-weight: 700; }
+  .formula-card .f-vars { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* Citas en línea */
+  a.ref { display:inline-block; font-size:.68rem; font-weight:700; text-decoration:none; background:#dbeafe; color:var(--primary); border-radius:3px; padding:0 4px; vertical-align:super; line-height:1.5; white-space:nowrap; margin-left:2px; }
+  a.ref:hover { background:var(--primary); color:white; }
+  a.ref.wolf { background:#ede9fe; color:#7c3aed; }
+  a.ref.wolf:hover { background:#7c3aed; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FASE 5 — Repaso General IHK</h1>
+  <p>Consolidación de LF 1–4, LF 6–8, LF 10 · Prüfungsvorbereitung März–Juli 2026</p>
+  <div class="badges">
+    <span class="badge">⏱ ~60 min</span>
+    <span class="badge">20 Prüfungsfragen</span>
+    <span class="badge">Alle Lernfelder</span>
+    <span class="badge">IHK-Niveau</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 20 Fragen beantwortet</div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Navegación entre Fases
+════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>📂 Alle Lernmodule — Übersicht</h2>
+  <div class="nav-grid">
+    <div class="nav-card" style="border-color:#6b7280" onclick="window.open('FASE0_Orientacion_FAB_Lernfelder.html')">
+      <div class="fase-num" style="color:#6b7280">0</div>
+      <div class="fase-title">Orientierung</div>
+      <div class="fase-lf">FAB-Überblick + 13 LF</div>
+    </div>
+    <div class="nav-card" style="border-color:#1a56db" onclick="window.open('FASE1_LF1_Elektrotechnik_Grundlagen.html')">
+      <div class="fase-num" style="color:#1a56db">1</div>
+      <div class="fase-title">Elektrotechnik</div>
+      <div class="fase-lf">LF 1 · Ohm/Kirchhoff</div>
+    </div>
+    <div class="nav-card" style="border-color:#7c3aed" onclick="window.open('FASE2_LF2_Chemie_LF4_Reinraum.html')">
+      <div class="fase-num" style="color:#7c3aed">2</div>
+      <div class="fase-title">Chemie + Reinraum</div>
+      <div class="fase-lf">LF 2 + LF 4</div>
+    </div>
+    <div class="nav-card" style="border-color:#dc2626" onclick="window.open('FASE3_LF7_Lithografie_LF8_Schichten.html')">
+      <div class="fase-num" style="color:#dc2626">3</div>
+      <div class="fase-title">Litho + Schichten</div>
+      <div class="fase-lf">LF 7 + LF 8</div>
+    </div>
+    <div class="nav-card" style="border-color:#d97706" onclick="window.open('FASE4_LF6_Schaltungen_LF10_Vakuum.html')">
+      <div class="fase-num" style="color:#d97706">4</div>
+      <div class="fase-title">Schaltungen + Vakuum</div>
+      <div class="fase-lf">LF 6 + LF 10</div>
+    </div>
+    <div class="nav-card" style="border-color:#0e9f6e; background:#f0fdf4">
+      <div class="fase-num" style="color:#0e9f6e">5</div>
+      <div class="fase-title">← Du bist hier</div>
+      <div class="fase-lf">Repaso General</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Resumen Kompakt
+════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>📋 Zusammenfassung — Alle Lernfelder (Kurzreferenz)</h2>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>LF</th><th>Thema</th><th>Kernformeln / -konzepte</th><th>Stunden</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="tag" style="background:#1a56db">LF 1</span></td>
+        <td>Elektrotechnik Grundlagen</td>
+        <td>U=R×I | P=U×I | KVL: ΣU=0 | KCL: ΣI=0</td>
+        <td>80h</td>
+        <td class="ok">✓ FASE 1</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#7c3aed">LF 2</span></td>
+        <td>Halbleitermaterialien + Dotierung</td>
+        <td>Si (Eg=1,12 eV) | n-Typ: P/As | p-Typ: B | Ionenimplantation</td>
+        <td>80h</td>
+        <td class="ok">✓ FASE 2</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#0891b2">LF 3</span></td>
+        <td>Werkstoffe + Kristallstruktur</td>
+        <td>Diamantgitter Si | Gitterkonstante | Einkristall vs. polykristallin</td>
+        <td>60h</td>
+        <td class="caution">⚠ Eigenständig</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#0891b2">LF 4</span></td>
+        <td>Reinraumbedingungen</td>
+        <td>ISO 14644 | HEPA/ULPA | laminare Strömung | ESD | Bunny Suit</td>
+        <td>80h</td>
+        <td class="ok">✓ FASE 2</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#059669">LF 5</span></td>
+        <td>Arbeitssicherheit + Gefahrstoffe</td>
+        <td>GHS-Symbole | HF-Handhabung | SiH₄ Pyrophor | PSA-Regeln</td>
+        <td>60h</td>
+        <td class="caution">⚠ Eigenständig</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#d97706">LF 6</span></td>
+        <td>Elektronische Schaltungen</td>
+        <td>Diode (U_f=0,7V) | MOSFET (V_th) | CMOS | Logikgatter | Spannungsteiler</td>
+        <td>140h</td>
+        <td class="ok">✓ FASE 4</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#dc2626">LF 7</span></td>
+        <td>Fotolithografie</td>
+        <td>Prozess: HMDS→Resist→SoftBake→Belichtung→Entwicklung | R=k₁λ/NA</td>
+        <td>120h</td>
+        <td class="ok">✓ FASE 3</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#059669">LF 8</span></td>
+        <td>Schichtabscheidung</td>
+        <td>CVD/PVD/ALD | LPCVD/PECVD | Sputtern | Konformität</td>
+        <td>100h</td>
+        <td class="ok">✓ FASE 3</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#0891b2">LF 9</span></td>
+        <td>Nasschemische Prozesse + Ätzung</td>
+        <td>HF-Ätzen SiO₂ | KOH-Si | RCA SC-1/SC-2 | Piranha | Ätzrate</td>
+        <td>100h</td>
+        <td class="caution">⚠ Eigenständig</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#7c3aed">LF 10</span></td>
+        <td>Vakuumtechnik</td>
+        <td>HV: 10⁻⁷–10⁻³ mbar | TMP+Scrollpumpe | Pirani | Kryopumpe</td>
+        <td>80h</td>
+        <td class="ok">✓ FASE 4</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#1a56db">LF 11</span></td>
+        <td>Metrologie + SPC</td>
+        <td>SEM, OCD, Overlay | Cpk, X̄-R-Karte | Defektanalyse | Yield</td>
+        <td>80h</td>
+        <td class="caution">⚠ Eigenständig</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#059669">LF 12</span></td>
+        <td>Backend + Packaging</td>
+        <td>Metallisierung | Damascene | CMP | Bonding | Packaging-Typen</td>
+        <td>80h</td>
+        <td class="caution">⚠ Eigenständig</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#6b7280">LF 13</span></td>
+        <td>FAB-Organisation + Wartung</td>
+        <td>Schichtmodell | TPM | Prozessfreigabe | Dokumentation | SOP</td>
+        <td>60h</td>
+        <td class="caution">⚠ Eigenständig</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Formelblatt
+════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>📐 Formelblatt — IHK Prüfung</h2>
+  <div class="formula-grid">
+    <div class="formula-card">
+      <div class="f-name">Ohm'sches Gesetz</div>
+      <div class="f-eq">U = R × I</div>
+      <div class="f-vars">U [V] | R [Ω] | I [A]</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">Elektrische Leistung</div>
+      <div class="f-eq">P = U × I = U²/R</div>
+      <div class="f-vars">P [W] | U [V] | I [A] | R [Ω]</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">Spannungsteiler</div>
+      <div class="f-eq">U₂ = U_ein × R₂/(R₁+R₂)</div>
+      <div class="f-vars">Resistiver Teiler</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">Rayleigh-Auflösung</div>
+      <div class="f-eq">R = k₁ × λ / NA</div>
+      <div class="f-vars">k₁=Prozessfaktor | λ=Wellenlänge | NA=num. Apertur</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">BJT-Transistor</div>
+      <div class="f-eq">I_C = β × I_B</div>
+      <div class="f-vars">β=Stromverstärkung (50–300)</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">Fick'sches Diffusionsgesetz</div>
+      <div class="f-eq">J = −D × dC/dx</div>
+      <div class="f-vars">J=Flux | D=Diffusionskoeff. | dC/dx=Konzentrationsgradient</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">Shockley-Gleichung (Diode)</div>
+      <div class="f-eq">I = I₀(e^(qV/kT)−1)</div>
+      <div class="f-vars">I₀=Sättigungsstrom | q=Elementarladung | kT≈26 mV bei 25°C</div>
+    </div>
+    <div class="formula-card">
+      <div class="f-name">Effektive Saugleistung</div>
+      <div class="f-eq">1/S_eff = 1/S_pump + 1/C</div>
+      <div class="f-vars">S=Saugleistung [L/s] | C=Leitfähigkeit</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Großes Quiz — 20 Fragen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quiz">
+  <h2>📝 Abschlussquiz — 20 Prüfungsfragen (IHK-Niveau)</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem">Alle Lernfelder werden abgeprüft. Jede Frage ist nur einmal zu beantworten.</p>
+
+  <div class="quiz-section-header">🔵 Elektrotechnik — LF 1</div>
+
+  <div class="quiz-question" id="q1">
+    <p>1. Ein Stromkreis hat U=24V, R₁=100Ω in Serie mit R₂=200Ω. Wie groß ist der Gesamtstrom I?</p>
+    <button class="quiz-option" onclick="answer('q1','wrong',this)">a) 240 mA</button>
+    <button class="quiz-option" onclick="answer('q1','correct',this)">b) 80 mA</button>
+    <button class="quiz-option" onclick="answer('q1','wrong',this)">c) 120 mA</button>
+    <button class="quiz-option" onclick="answer('q1','wrong',this)">d) 24 mA</button>
+    <div class="quiz-feedback" id="fb-q1"></div>
+  </div>
+  <div class="quiz-question" id="q2">
+    <p>2. Kirchhoffs Knotenregel (KCL) besagt:</p>
+    <button class="quiz-option" onclick="answer('q2','wrong',this)">a) Die Summe aller Spannungen in einem geschlossenen Kreis ist null</button>
+    <button class="quiz-option" onclick="answer('q2','correct',this)">b) Die Summe aller zufließenden Ströme in einem Knoten gleicht der Summe der abfließenden</button>
+    <button class="quiz-option" onclick="answer('q2','wrong',this)">c) Der Strom ist in allen Reihenschaltungszweigen unterschiedlich</button>
+    <button class="quiz-option" onclick="answer('q2','wrong',this)">d) Der Widerstand ändert sich nicht mit der Temperatur</button>
+    <div class="quiz-feedback" id="fb-q2"></div>
+  </div>
+
+  <div class="quiz-section-header">🟣 Halbleitermaterialien + Reinraum — LF 2, LF 4</div>
+
+  <div class="quiz-question" id="q3">
+    <p>3. Welche Eigenschaft unterscheidet GaAs von Si als Halbleiter?</p>
+    <button class="quiz-option" onclick="answer('q3','wrong',this)">a) GaAs hat eine kleinere Bandlücke als Si</button>
+    <button class="quiz-option" onclick="answer('q3','correct',this)">b) GaAs hat eine direkte Bandlücke → Photonen-Emission (LED, Laser)</button>
+    <button class="quiz-option" onclick="answer('q3','wrong',this)">c) GaAs wird für CMOS-Logik in der Massenproduktion verwendet</button>
+    <button class="quiz-option" onclick="answer('q3','wrong',this)">d) GaAs hat eine höhere Schmelztemperatur als Si</button>
+    <div class="quiz-feedback" id="fb-q3"></div>
+  </div>
+  <div class="quiz-question" id="q4">
+    <p>4. Die RCA SC-2 Reinigungslösung (HCl:H₂O₂:H₂O) dient hauptsächlich zur:</p>
+    <button class="quiz-option" onclick="answer('q4','wrong',this)">a) Entfernung von Partikeln und organischen Resten</button>
+    <button class="quiz-option" onclick="answer('q4','correct',this)">b) Entfernung von Metallionen-Kontaminationen</button>
+    <button class="quiz-option" onclick="answer('q4','wrong',this)">c) Ätzung von SiO₂ Schichten</button>
+    <button class="quiz-option" onclick="answer('q4','wrong',this)">d) Entfernung von Photoresist nach Belichtung</button>
+    <div class="quiz-feedback" id="fb-q4"></div>
+  </div>
+  <div class="quiz-question" id="q5">
+    <p>5. In welcher Reinraumklasse (ISO) findet die Lithografie-Belichtung (ArF-Scanner) typischerweise statt?</p>
+    <button class="quiz-option" onclick="answer('q5','correct',this)">a) ISO 3 (max. 1.000 Partikel/m³)</button>
+    <button class="quiz-option" onclick="answer('q5','wrong',this)">b) ISO 5 (max. 100.000 Partikel/m³)</button>
+    <button class="quiz-option" onclick="answer('q5','wrong',this)">c) ISO 7 (max. 10.000.000 Partikel/m³)</button>
+    <button class="quiz-option" onclick="answer('q5','wrong',this)">d) ISO 8 (Normale Büroumgebung)</button>
+    <div class="quiz-feedback" id="fb-q5"></div>
+  </div>
+
+  <div class="quiz-section-header">🔴 Fotolithografie — LF 7</div>
+
+  <div class="quiz-question" id="q6">
+    <p>6. Was ist die Funktion von HMDS beim Fotolithografie-Prozess?</p>
+    <button class="quiz-option" onclick="answer('q6','wrong',this)">a) HMDS ist der Fotoentwickler für DNQ-Resist</button>
+    <button class="quiz-option" onclick="answer('q6','correct',this)">b) HMDS verbessert die Haftung des Photoresists auf der Si-Oberfläche</button>
+    <button class="quiz-option" onclick="answer('q6','wrong',this)">c) HMDS ist ein Ätzstoppschicht-Material für Nassätzung</button>
+    <button class="quiz-option" onclick="answer('q6','wrong',this)">d) HMDS dient zum Entfernen von Oxidschichten vor dem Resist-Auftrag</button>
+    <div class="quiz-feedback" id="fb-q6"></div>
+  </div>
+  <div class="quiz-question" id="q7">
+    <p>7. Welche Lichtquelle bietet die höchste Auflösung in der modernen Halbliterfertigung (&lt;7 nm Strukturen)?</p>
+    <button class="quiz-option" onclick="answer('q7','wrong',this)">a) i-Linie (365 nm)</button>
+    <button class="quiz-option" onclick="answer('q7','wrong',this)">b) KrF Excimer (248 nm)</button>
+    <button class="quiz-option" onclick="answer('q7','wrong',this)">c) ArF Immersion (193 nm)</button>
+    <button class="quiz-option" onclick="answer('q7','correct',this)">d) EUV (13,5 nm)</button>
+    <div class="quiz-feedback" id="fb-q7"></div>
+  </div>
+  <div class="quiz-question" id="q8">
+    <p>8. Nach der Belichtung mit Positiv-Resist wird die bestrahlte Zone:</p>
+    <button class="quiz-option" onclick="answer('q8','correct',this)">a) In TMAH-Lösung löslich und beim Entwickeln entfernt</button>
+    <button class="quiz-option" onclick="answer('q8','wrong',this)">b) Vernetzt und unlöslich (bleibt als Maske stehen)</button>
+    <button class="quiz-option" onclick="answer('q8','wrong',this)">c) Durch UV zerstört und direkt als Ätzmaske verwendet</button>
+    <button class="quiz-option" onclick="answer('q8','wrong',this)">d) Durch Wärme gehärtet (Hard Bake ersetzt Entwicklung)</button>
+    <div class="quiz-feedback" id="fb-q8"></div>
+  </div>
+
+  <div class="quiz-section-header">🟢 Schichtabscheidung — LF 8</div>
+
+  <div class="quiz-question" id="q9">
+    <p>9. Ein FinFET benötigt eine 2 nm dünne HfO₂-Schicht (High-k Gate-Dielektrikum) mit perfekter Konformität. Welches Verfahren ist am besten geeignet?</p>
+    <button class="quiz-option" onclick="answer('q9','wrong',this)">a) Thermische Verdampfung (PVD)</button>
+    <button class="quiz-option" onclick="answer('q9','wrong',this)">b) Sputtern mit Magnetron</button>
+    <button class="quiz-option" onclick="answer('q9','correct',this)">c) ALD (Atomic Layer Deposition)</button>
+    <button class="quiz-option" onclick="answer('q9','wrong',this)">d) LPCVD bei 800°C</button>
+    <div class="quiz-feedback" id="fb-q9"></div>
+  </div>
+  <div class="quiz-question" id="q10">
+    <p>10. Was ist der chemische Unterschied zwischen CVD und PVD?</p>
+    <button class="quiz-option" onclick="answer('q10','correct',this)">a) CVD: chemische Reaktion der Precursoren auf dem Wafer; PVD: physikalisches Ablösen und Kondensieren von Targetmaterial</button>
+    <button class="quiz-option" onclick="answer('q10','wrong',this)">b) CVD arbeitet immer im Hochvakuum; PVD braucht Atmosphärendruck</button>
+    <button class="quiz-option" onclick="answer('q10','wrong',this)">c) CVD ist schneller als PVD für alle Schichttypen</button>
+    <button class="quiz-option" onclick="answer('q10','wrong',this)">d) PVD verwendet immer chemische Precursoren, CVD nicht</button>
+    <div class="quiz-feedback" id="fb-q10"></div>
+  </div>
+
+  <div class="quiz-section-header">🟠 Elektronische Schaltungen + Digitaltechnik — LF 6</div>
+
+  <div class="quiz-question" id="q11">
+    <p>11. Welche Diode nutzt den Durchbrucheffekt für eine definierte Referenzspannung?</p>
+    <button class="quiz-option" onclick="answer('q11','wrong',this)">a) Schottky-Diode</button>
+    <button class="quiz-option" onclick="answer('q11','wrong',this)">b) LED (Light Emitting Diode)</button>
+    <button class="quiz-option" onclick="answer('q11','correct',this)">c) Zener-Diode</button>
+    <button class="quiz-option" onclick="answer('q11','wrong',this)">d) Photodiode</button>
+    <div class="quiz-feedback" id="fb-q11"></div>
+  </div>
+  <div class="quiz-question" id="q12">
+    <p>12. Ein NAND-Gatter mit A=1 und B=0 liefert:</p>
+    <button class="quiz-option" onclick="answer('q12','wrong',this)">a) Q = 0</button>
+    <button class="quiz-option" onclick="answer('q12','correct',this)">b) Q = 1</button>
+    <button class="quiz-option" onclick="answer('q12','wrong',this)">c) Q = undefiniert</button>
+    <button class="quiz-option" onclick="answer('q12','wrong',this)">d) Q = AND(A,B) = 0 (ohne Inversion)</button>
+    <div class="quiz-feedback" id="fb-q12"></div>
+  </div>
+  <div class="quiz-question" id="q13">
+    <p>13. Welcher Transistortyp wird in moderner CMOS-Logik (FinFET-Technologie) eingesetzt?</p>
+    <button class="quiz-option" onclick="answer('q13','wrong',this)">a) Nur npn-BJT-Transistoren</button>
+    <button class="quiz-option" onclick="answer('q13','wrong',this)">b) Nur nMOS-Transistoren (Single-Channel)</button>
+    <button class="quiz-option" onclick="answer('q13','correct',this)">c) Komplementäre nMOS + pMOS FinFETs (CMOS)</button>
+    <button class="quiz-option" onclick="answer('q13','wrong',this)">d) IGBT-Transistoren für Hochfrequenzanwendungen</button>
+    <div class="quiz-feedback" id="fb-q13"></div>
+  </div>
+
+  <div class="quiz-section-header">🟣 Vakuumtechnik — LF 10</div>
+
+  <div class="quiz-question" id="q14">
+    <p>14. Eine ölgedichtete Drehschieberpumpe in einer CVD-Kammer wurde durch eine Trockenpumpe (Scroll) ersetzt. Was ist der Hauptgrund?</p>
+    <button class="quiz-option" onclick="answer('q14','wrong',this)">a) Scrollpumpen erreichen besseres Endvakuum (&lt;10⁻⁷ mbar)</button>
+    <button class="quiz-option" onclick="answer('q14','correct',this)">b) Ölfreier Betrieb verhindert Ölrückströmung und Wafer-Kontamination</button>
+    <button class="quiz-option" onclick="answer('q14','wrong',this)">c) Scrollpumpen sind leiser und günstiger</button>
+    <button class="quiz-option" onclick="answer('q14','wrong',this)">d) Drehschieberpumpen funktionieren nicht mit SiH₄</button>
+    <div class="quiz-feedback" id="fb-q14"></div>
+  </div>
+  <div class="quiz-question" id="q15">
+    <p>15. Bei welchem Druckbereich arbeitet der Pirani-Sensor korrekt?</p>
+    <button class="quiz-option" onclick="answer('q15','correct',this)">a) 10⁻³ bis 10² mbar (Feinvakuum)</button>
+    <button class="quiz-option" onclick="answer('q15','wrong',this)">b) Nur bei Atmosphärendruck (1013 mbar)</button>
+    <button class="quiz-option" onclick="answer('q15','wrong',this)">c) Im Ultrahochvakuum (&lt;10⁻⁷ mbar)</button>
+    <button class="quiz-option" onclick="answer('q15','wrong',this)">d) Nur im Hochvakuum zwischen 10⁻⁷ und 10⁻⁵ mbar</button>
+    <div class="quiz-feedback" id="fb-q15"></div>
+  </div>
+
+  <div class="quiz-section-header">🔀 Prozessintegration — Übergreifend</div>
+
+  <div class="quiz-question" id="q16">
+    <p>16. In welcher Reihenfolge werden die Hauptprozessschritte bei der Herstellung eines CMOS-Transistors typischerweise durchgeführt?</p>
+    <button class="quiz-option" onclick="answer('q16','wrong',this)">a) Metallisierung → Lithografie → Dotierung → Oxid-Wachstum</button>
+    <button class="quiz-option" onclick="answer('q16','correct',this)">b) STI/Isolation → Gate-Oxid (ALD) → Poly-Gate → Litho + Implantation → Metallisierung</button>
+    <button class="quiz-option" onclick="answer('q16','wrong',this)">c) Ätzung → Dotierung → Reinigung → Lithografie → Schichtabscheidung</button>
+    <button class="quiz-option" onclick="answer('q16','wrong',this)">d) Reinigung → Metallisierung → Lithografie → Gate-Oxid → Implantation</button>
+    <div class="quiz-feedback" id="fb-q16"></div>
+  </div>
+  <div class="quiz-question" id="q17">
+    <p>17. Welches Reinigungsverfahren muss ZWINGEND vor der Gate-Oxidation durchgeführt werden?</p>
+    <button class="quiz-option" onclick="answer('q17','wrong',this)">a) Piranha-Lösung bei 120°C (H₂SO₄:H₂O₂)</button>
+    <button class="quiz-option" onclick="answer('q17','correct',this)">b) RCA SC-1 + HF-dip + SC-2 Sequenz (vollständige Wafer-Reinigung)</button>
+    <button class="quiz-option" onclick="answer('q17','wrong',this)">c) KOH-Ätzung (1 Minute in 30%iger KOH)</button>
+    <button class="quiz-option" onclick="answer('q17','wrong',this)">d) Sputterätzung mit Ar⁺-Ionen in der Vakuumkammer</button>
+    <div class="quiz-feedback" id="fb-q17"></div>
+  </div>
+  <div class="quiz-question" id="q18">
+    <p>18. Was versteht man unter „Prozesstemperaturbudget" in der Halbleiterfertigung?</p>
+    <button class="quiz-option" onclick="answer('q18','wrong',this)">a) Die maximale Leistungsaufnahme aller Öfen in der FAB</button>
+    <button class="quiz-option" onclick="answer('q18','wrong',this)">b) Die Betriebstemperatur der Reinraumklimaanlage</button>
+    <button class="quiz-option" onclick="answer('q18','correct',this)">c) Die Gesamtsumme aller thermischen Belastungen (T×t), die eine Dotierungsverteilung noch nicht signifikant verschiebt</button>
+    <button class="quiz-option" onclick="answer('q18','wrong',this)">d) Die maximale Temperatur des Kühlwassers für CVD-Reaktoren</button>
+    <div class="quiz-feedback" id="fb-q18"></div>
+  </div>
+  <div class="quiz-question" id="q19">
+    <p>19. Warum wird bei der Kupfer-Metallisierung das Damascene-Verfahren statt des direkten Cu-Ätzens verwendet?</p>
+    <button class="quiz-option" onclick="answer('q19','wrong',this)">a) Kupfer ist günstiger als Aluminium und muss daher anders deponiert werden</button>
+    <button class="quiz-option" onclick="answer('q19','correct',this)">b) Kupfer lässt sich nicht einfach mit Plasma ätzen — stattdessen werden Gräben geätzt und Cu elektrochemisch abgeschieden, dann poliert (CMP)</button>
+    <button class="quiz-option" onclick="answer('q19','wrong',this)">c) Damascene verhindert ESD-Schäden bei der Metallisierung</button>
+    <button class="quiz-option" onclick="answer('q19','wrong',this)">d) Direktes Cu-Ätzen würde den Reinraum kontaminieren</button>
+    <div class="quiz-feedback" id="fb-q19"></div>
+  </div>
+  <div class="quiz-question" id="q20">
+    <p>20. Ein Wafer zeigt nach der Lithografie eine CD-Abweichung von +15% (zu breite Linien). Was ist die wahrscheinlichste Ursache?</p>
+    <button class="quiz-option" onclick="answer('q20','wrong',this)">a) Zu kurze Entwicklungszeit (TMAH nicht vollständig gelöst)</button>
+    <button class="quiz-option" onclick="answer('q20','correct',this)">b) Zu kurze Belichtungszeit (Unterdosis → weniger Löslichkeit → Linien bleiben breiter)</button>
+    <button class="quiz-option" onclick="answer('q20','wrong',this)">c) HEPA-Filter im Reinraum defekt</button>
+    <button class="quiz-option" onclick="answer('q20','wrong',this)">d) Zu hohe Soft-Bake-Temperatur (Resist degradiert)</button>
+    <div class="quiz-feedback" id="fb-q20"></div>
+  </div>
+
+  <div id="quiz-final-result">
+    <div class="score-big" id="final-score-num">—</div>
+    <div class="score-label">von 20 Fragen korrekt</div>
+    <div id="final-comment" style="margin-top:0.5rem; font-size:1rem; font-weight:600"></div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+    <button class="btn btn-secondary" onclick="resetQuiz()" style="margin-top:1rem">Quiz wiederholen</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Persönliche Checkliste
+════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>✅ Lernfortschritt — Persönliche Checkliste</h2>
+  <ul class="checklist" id="checklist">
+    <li id="cl1"><div class="check-box" onclick="toggleCheck('cl1')"></div><span class="check-text"><strong>LF 1:</strong> Ohm + Kirchhoff — Aufgaben rechnen können (Seriell + Parallel)</span></li>
+    <li id="cl2"><div class="check-box" onclick="toggleCheck('cl2')"></div><span class="check-text"><strong>LF 2:</strong> Bandlücken auswendig (Si=1,12; GaAs=1,42; SiC=3,26 eV)</span></li>
+    <li id="cl3"><div class="check-box" onclick="toggleCheck('cl3')"></div><span class="check-text"><strong>LF 2:</strong> Dotierung erklären: n-Typ vs. p-Typ, Donator/Akzeptor auf DE</span></li>
+    <li id="cl4"><div class="check-box" onclick="toggleCheck('cl4')"></div><span class="check-text"><strong>LF 4:</strong> ISO-Klassen 1–8 mit Partikelzahlen und FAB-Zuordnung</span></li>
+    <li id="cl5"><div class="check-box" onclick="toggleCheck('cl5')"></div><span class="check-text"><strong>LF 4:</strong> Bunny-Suit-Reihenfolge aus dem Kopf nennen</span></li>
+    <li id="cl6"><div class="check-box" onclick="toggleCheck('cl6')"></div><span class="check-text"><strong>LF 7:</strong> 8 Litho-Schritte in Reihenfolge aufzählen können</span></li>
+    <li id="cl7"><div class="check-box" onclick="toggleCheck('cl7')"></div><span class="check-text"><strong>LF 7:</strong> Rayleigh-Gleichung anwenden (Beispielrechnung ArF)</span></li>
+    <li id="cl8"><div class="check-box" onclick="toggleCheck('cl8')"></div><span class="check-text"><strong>LF 8:</strong> CVD vs. PVD vs. ALD unterscheiden (Prinzip + Konformität)</span></li>
+    <li id="cl9"><div class="check-box" onclick="toggleCheck('cl9')"></div><span class="check-text"><strong>LF 8:</strong> LPCVD vs. PECVD: Temperatur und Anwendungsfall</span></li>
+    <li id="cl10"><div class="check-box" onclick="toggleCheck('cl10')"></div><span class="check-text"><strong>LF 6:</strong> pn-Diode, Schottky-Diode, Zener-Diode unterscheiden</span></li>
+    <li id="cl11"><div class="check-box" onclick="toggleCheck('cl11')"></div><span class="check-text"><strong>LF 6:</strong> MOSFET-Funktionsprinzip (V_GS, V_th, Kanal) erklären</span></li>
+    <li id="cl12"><div class="check-box" onclick="toggleCheck('cl12')"></div><span class="check-text"><strong>LF 6:</strong> Alle 6 Grundgatter (AND/OR/NOT/NAND/NOR/XOR) mit Wahrheitstabellen</span></li>
+    <li id="cl13"><div class="check-box" onclick="toggleCheck('cl13')"></div><span class="check-text"><strong>LF 10:</strong> Vakuumbereiche (Grob/Fein/Hoch/Ultra) mit Druckwerten</span></li>
+    <li id="cl14"><div class="check-box" onclick="toggleCheck('cl14')"></div><span class="check-text"><strong>LF 10:</strong> TMP + Vorvakuumpumpe Reihenschaltung erklären</span></li>
+    <li id="cl15"><div class="check-box" onclick="toggleCheck('cl15')"></div><span class="check-text"><strong>Chemie:</strong> RCA SC-1 + SC-2 + Piranha auswendig (Zusammensetzung + Zweck)</span></li>
+    <li id="cl16"><div class="check-box" onclick="toggleCheck('cl16')"></div><span class="check-text"><strong>Alle LF:</strong> Einen 5-minütigen FAB-Prozessablauf auf Deutsch erklären können</span></li>
+  </ul>
+  <div id="checklist-progress" style="margin-top:0.8rem; font-size:0.85rem; color:var(--muted); text-align:center">0 / 16 erledigt</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Schreibübung Final
+════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>✍ Abschluss-Schreibübung — IHK-Prüfungsformat</h2>
+  <div style="background:#f0f9ff; border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:0.88rem; border-left:4px solid var(--primary)">
+    <strong>IHK-Aufgabe (Niveau: Abschlussprüfung Teil 1):</strong><br>
+    Beschreiben Sie in 6–8 Sätzen den Herstellungsprozess eines einfachen CMOS-Inverters auf Silizium,
+    von der Wafer-Reinigung bis zur Metallisierung. Benennen Sie die wesentlichen Prozessschritte in der richtigen Reihenfolge
+    und nennen Sie für jeden Schritt das eingesetzte Verfahren.<br>
+    <em style="color:var(--muted)">Pflicht-Fachbegriffe: STI, Gate-Oxid, Ionenimplantation, PECVD, Lithografie, CMP, Metallisierung.</em>
+  </div>
+  <textarea id="finalSchreib" placeholder="Schreiben Sie hier Ihre Antwort auf Deutsch..."></textarea>
+  <div style="display:flex; gap:0.8rem; margin-top:0.8rem; flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="checkFinalWort()">Wörter zählen</button>
+    <button class="btn btn-secondary" onclick="toggleFinalMuster()">Musterlösung anzeigen</button>
+    <button class="btn" style="background:#1a56db;color:white" onclick="korrigieren()">✏ Korrigieren &amp; Feedback</button>
+  </div>
+  <div id="final-wort-count" style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted)"></div>
+  <div id="korrekturBox" style="display:none;margin-top:14px;font-size:.85rem"></div>
+  <div class="musterloesung" id="final-musterloesung">
+    <h4>Musterlösung (IHK-Abschlussniveau):</h4>
+    <p>
+      Die Herstellung eines CMOS-Inverters beginnt mit der vollständigen Wafer-Reinigung durch RCA SC-1 und SC-2,
+      um Partikel, organische Reste und Metallionen zu entfernen. Anschließend werden durch STI (Shallow Trench Isolation)
+      die aktiven Transistorbereiche voneinander isoliert: Gräben werden geätzt und mit PECVD-Oxid aufgefüllt,
+      das Gate-Oxid (typisch 1–5 nm HfO₂ mittels ALD) wird auf dem freiliegenden Silizium aufgewachsen.
+    </p>
+    <p style="margin-top:0.5rem">
+      Nach der Gate-Elektroden-Abscheidung (TiN mittels ALD + Poly-Si mittels LPCVD) wird durch Fotolithografie
+      das Gate-Muster definiert und geätzt. Die Source- und Drain-Bereiche werden anschließend durch Ionenimplantation
+      dotiert: für den nMOS mit Phosphor (n⁺) und für den pMOS mit Bor (p⁺).
+      Ein thermischer Anneal-Schritt (800–1000°C, RTA) aktiviert die Dotierstoffe und repariert Kristallschäden.
+    </p>
+    <p style="margin-top:0.5rem">
+      Nach der Planarisierung der ILD-Schicht (PECVD SiO₂ + CMP) werden durch erneute Lithografie und Ätzung
+      Kontaktlöcher geöffnet, die mit CVD-Wolfram (WF₆-Precursor) gefüllt werden.
+      Die abschließende Kupfer-Metallisierung erfolgt im Damascene-Verfahren: Cu wird elektrochemisch in vorgeätzte
+      Gräben abgeschieden und durch CMP planiert. Damit ist der CMOS-Inverter auf unterster Metallisierungsebene fertiggestellt.
+    </p>
+    <p style="margin-top:0.5rem; font-size:0.82rem; color:var(--muted)">
+      <strong>Fachbegriffe:</strong> RCA, STI, PECVD, ALD, HfO₂, LPCVD, Fotolithografie, Ionenimplantation, RTA, CMP, Damascene, Kupfer-Metallisierung.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECCIÓN: Bibliografía / Quellen
+════════════════════════════════════════════════════════════ -->
+<section id="sec-quellen">
+  <h2>📚 Quellen &amp; Bibliografía — Repaso General</h2>
+  <p style="font-size:.83rem;color:var(--muted);margin-bottom:1rem">Fuentes para esta FASE. Los capítulos indicados cubren exactamente el contenido aquí tratado.</p>
+  <div style="display:flex;flex-direction:column;gap:.8rem">
+
+    <!-- Wolf & Tauber — violeta -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid #7c3aed">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Wolf &amp; Tauber — <em>Silicon Processing for the VLSI Era</em>, Vol. 1–2</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Repaso completo del proceso FAB</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/Libros_Referencia/Silicon_Processing_for_VLSI_Era_Vol1-2_Wolf_Tauber.pdf" style="background:#7c3aed;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Vol.1 Cap.2, pp. 25–80</strong> — Si material: cristalografía, propiedades eléctricas</li>
+        <li><strong>Vol.1 Cap.4, pp. 95–143</strong> — Cleanrooms: clasificación ISO, contaminación</li>
+        <li><strong>Vol.1 Cap.5, pp. 145–198</strong> — Oxidation: Deal-Grove model, SiO₂ térmico</li>
+        <li><strong>Vol.1 Cap.7, pp. 261–280</strong> — CVD: LPCVD, PECVD, TEOS</li>
+        <li><strong>Vol.1 Cap.8, pp. 280–356</strong> — Ionenimplantation: distribuciones, annealing</li>
+        <li><strong>Vol.1 Cap.10, pp. 421–550</strong> — Lithografie: resist, Belichtung, Entwicklung</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#ede9fe;border-radius:6px;padding:.4rem .6rem;color:#5b21b6;font-family:monospace">
+        Wolf, S.; Tauber, R. N. <em>Silicon Processing for the VLSI Era, Vol. 1–2</em>; Lattice Press, 2000.
+      </div>
+    </div>
+
+    <!-- Sze & Ng — azul -->
+    <div style="background:#f0f9ff;border-radius:10px;padding:1rem;border-left:4px solid var(--primary)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Sze &amp; Ng — <em>Physics of Semiconductor Devices</em>, 3rd ed.</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Fundamentos físicos de dispositivos</div>
+        </div>
+        <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/02_Electronica_y_Dispositivos/Physics_of_Semiconductor_Devices_Sze_Ng_3rd_Ed.pdf" style="background:var(--primary);color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF</a>
+      </div>
+      <ul style="margin-top:.6rem;font-size:.83rem;padding-left:1.2rem">
+        <li><strong>Cap.1, pp. 5–74</strong> — Bändermodell, Eigenleitung, ni</li>
+        <li><strong>Cap.2, pp. 79–133</strong> — PN-Übergang: zonas de deplexión, curva I-V</li>
+        <li><strong>Cap.12, pp. 527–561</strong> — Ionenimplantation: distribuciones de dopaje</li>
+      </ul>
+      <div style="margin-top:.5rem;font-size:.79rem;background:#e0f2fe;border-radius:6px;padding:.4rem .6rem;color:#0369a1;font-family:monospace">
+        Sze, S. M.; Ng, K. K. <em>Physics of Semiconductor Devices</em>, 3rd ed.; Wiley-Interscience, 2007. ISBN 978-0-471-14323-9.
+      </div>
+    </div>
+
+    <!-- Online resources — verde -->
+    <div style="background:#f0fdf4;border-radius:10px;padding:1rem;border-left:4px solid var(--success)">
+      <div style="font-weight:700;font-size:.92rem;margin-bottom:.5rem">Recursos Online</div>
+      <ul style="font-size:.83rem;padding-left:1.2rem">
+        <li><a href="https://www.halbleiter.org" style="color:var(--primary);font-weight:600">halbleiter.org</a> (DE) — Portal completo de tecnología FAB en alemán</li>
+        <li><a href="https://hyperphysics.phy-astr.gsu.edu/hbase/Solids/band.html" style="color:var(--primary);font-weight:600">HyperPhysics</a> (EN) — Solid State Physics</li>
+        <li><a href="https://www.elektronik-kompendium.de/sites/bau/index.htm" style="color:var(--primary);font-weight:600">elektronik-kompendium.de</a> (DE) — Bauelemente und Schaltungen</li>
+      </ul>
+    </div>
+
+    <!-- KMK — amarillo -->
+    <div style="background:#fffbeb;border-radius:10px;padding:1rem;border-left:4px solid #d97706">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">Rahmenlehrplan KMK — Repaso todos los LFs</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Plan oficial completo Mikrotechnologe/in</div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/Rahmenlehrplan_Mikrotechnologe_KMK_OFICIAL.pdf" style="background:#d97706;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Abrir PDF KMK</a>
+          <a href="file:///C:/Users/mc31_/Desktop/Semiconductores/fuentes/01_Fabricacion_Semiconductores/IHK_Prüfungsvorbereitung/" style="background:#92400e;color:white;padding:.3rem .8rem;border-radius:6px;font-size:.78rem;text-decoration:none;white-space:nowrap">Carpeta IHK</a>
+        </div>
+      </div>
+      <p style="font-size:.83rem;margin-top:.6rem">Repaso de todos los LFs 1–13 con sus Zeitrichtwerte y contenidos según el plan KMK oficial.</p>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<div style="text-align:center;padding:20px;color:#94a3b8;font-size:.85rem">
+  📁 <strong>FASE5_Repaso_General_IHK.html</strong> ·
+  ← <a href="FASE4_LF6_Schaltungen_LF10_Vakuum.html" style="color:#94a3b8">Fase 4 — LF6+LF10</a> ·
+  Siguiente: <a href="FASE_LF5_LF11_LF12_LF13.html">Fase LF5 — LF5/11/12/13</a> →
+</div>
+
+<script>
+// ── Quiz ──────────────────────────────────────────────────────
+let quizAnswered = {};
+const totalQuestions = 20;
+
+const correct_msg = {
+  'q1': 'Richtig! R_ges = 100+200 = 300Ω. I = U/R = 24/300 = 0,08 A = 80 mA.',
+  'q2': 'Richtig! KCL (Knotenregel): ΣI_zu = ΣI_ab. KVL (Maschenregel) wäre die Spannungsregel.',
+  'q3': 'Richtig! GaAs hat direkte Bandlücke (Eg=1,42 eV) → Elektron-Loch-Rekombination emittiert direkt Photonen → LED/Laser.',
+  'q4': 'Richtig! SC-2 (HCl:H₂O₂:H₂O) entfernt Metallionen durch saure Komplexierung. SC-1 entfernt Partikel + Organik.',
+  'q5': 'Richtig! ArF-Belichtung (193 nm) arbeitet in ISO 3. Für EUV wäre sogar ISO 1–2 erforderlich.',
+  'q6': 'Richtig! HMDS (Hexamethyldisilazane) silanisiert die SiO₂-Oberfläche → hydrophob → bessere Resist-Haftung. Analog zur Silanisierung in der Analytik.',
+  'q7': 'Richtig! EUV (13,5 nm) bietet die höchste Auflösung. R = 0,25 × 13,5/0,33 ≈ 10 nm → &lt;7 nm Strukturen möglich.',
+  'q8': 'Richtig! Positiv-Resist: UV-induzierte Reaktion (DNQ→Indensäure oder CAR-Säure) macht bestrahlten Bereich TMAH-löslich.',
+  'q9': 'Richtig! ALD ist das einzige Verfahren, das atomare Präzision + perfekte Konformität bietet. LPCVD bei 800°C würde Metallschichten beschädigen.',
+  'q10': 'Richtig! CVD = chemische Reaktion von Precursoren auf dem Wafer. PVD = Sputtern oder Verdampfen (physikalisch) ohne chemische Reaktion.',
+  'q11': 'Richtig! Zener-Diode: betrieben in Sperrrichtung, nutzt definierten Durchbruch (Zener oder Lawine) als Spannungsreferenz.',
+  'q12': 'Richtig! NAND: Q = NOT(A AND B). A=1,B=0 → AND(1,0)=0 → NOT(0) = 1.',
+  'q13': 'Richtig! CMOS = Complementary MOS = nMOS + pMOS. FinFETs sind die 3D-Variante für Sub-22nm. Kein BJT in CMOS-Logik.',
+  'q14': 'Richtig! Ölfreie Trockenpumpen (Scroll, Roots) verhindern Rückströmung von Öl in die Prozesskammer → keine Kohlenwasserstoff-Kontamination.',
+  'q15': 'Richtig! Pirani-Sensor misst Wärmeleitfähigkeit → funktioniert nur wenn noch genug Gasmoleküle da sind (Feinvakuum). Darüber: Penning/Ionisationsmanometer.',
+  'q16': 'Richtig! Vereinfachte CMOS-Sequenz: STI → Gate-Dielektrikum (ALD) → Gate-Elektrode → Litho+Implantation → ILD → Via → Metallisierung.',
+  'q17': 'Richtig! Vor Gate-Oxidation: vollständige RCA-Reinigung (SC-1 → HF-dip → SC-2). HF-dip entfernt natives Oxid, SC-2 Metallionen — beide kontaminieren das Gate-Oxid.',
+  'q18': 'Richtig! Thermisches Budget = Integral(T×t). Jeder Hochtemperaturschritt diffundiert Dotierstoffe weiter. Zu viel Budget → Dotierprofil verschwimmt.',
+  'q19': 'Richtig! Cu hat keine volatilen Halogenverbindungen bei Raumtemperatur → kein direktes Plasma-Ätzen möglich. Damascene ist die Lösung: Graben ätzen → Cu abscheiden → CMP.',
+  'q20': 'Richtig! Unterdosis (zu kurze Belichtung) → weniger DNQ umgewandelt → weniger löslich in TMAH → Linien bleiben breiter als Sollwert (+CD).'
+};
+const wrong_msg = {
+  'q1': 'Falsch. R_ges = R₁+R₂ = 300Ω (Serienschaltung). I = U/R_ges = 24V/300Ω = 0,08 A = 80 mA.',
+  'q2': 'Falsch. KCL = Knotenregel (Ströme). KVL = Maschenregel (Spannungen). Die Frage beschreibt KCL.',
+  'q3': 'Falsch. Si hat eine INDIREKTE Bandlücke → kein effizienter Photonenemitter. GaAs hat DIREKTE Bandlücke und ist für Optoelektronik ideal. Schmelzpunkt GaAs (~1238°C) < Si (1414°C).',
+  'q4': 'Falsch. SC-2 (HCl:H₂O₂:H₂O) entfernt METALLIONEN. SC-1 entfernt Partikel und Organik. Piranha entfernt Photoresist.',
+  'q5': 'Falsch. ArF-Lithografie (kritischer Prozess) braucht ISO 3. ISO 5 wäre für weniger kritische Bereiche. ISO 7/8 ist viel zu verschmutzt.',
+  'q6': 'Falsch. HMDS = Hexamethyldisilazane = Haftpromoter, kein Entwickler. Entwickler für DNQ-Resist ist TMAH (Tetramethylammoniumhydroxid).',
+  'q7': 'Falsch. i-Linie=365nm, KrF=248nm, ArF=193nm bieten aufsteigend bessere Auflösung. EUV (13,5nm) ist die Technologie für &lt;7nm Strukturen.',
+  'q8': 'Falsch. Positiv = belichtet wird entfernt. Negativ = belichtet bleibt. Hard Bake kommt nach der Entwicklung, nicht davor.',
+  'q9': 'Falsch. Verdampfung und Sputtern haben schlechte Konformität. LPCVD würde bei 800°C Metallschichten beschädigen. ALD ist einzigartig für atomare Präzision + Konformität.',
+  'q10': 'Falsch. CVD basiert auf chemischen Reaktionen. PVD ist physikalisch (kein Precursor, kein Atmosphärendruck). CVD ist nicht grundsätzlich schneller.',
+  'q11': 'Falsch. Schottky-Diode = Metall-Halbleiter-Kontakt. LED = Photonenemitter. Photodiode = Lichtdetektor. Zener-Diode = Spannungsreferenz durch Durchbruch.',
+  'q12': 'Falsch. NAND(A=1,B=0): AND(1,0)=0, dann NOT→Q=1. NAND gibt 0 NUR wenn BEIDE Eingänge = 1 sind.',
+  'q13': 'Falsch. CMOS-Logik verwendet immer nMOS + pMOS zusammen. FinFET ist die dreidimensionale Variante dieser CMOS-Struktur. BJT/IGBT sind für andere Anwendungen.',
+  'q14': 'Falsch. Scrollpumpen erreichen nicht besser als ~10⁻² mbar — kein Ultrahochvakuum. Der Hauptvorteil ist ölfreier Betrieb = keine Kontamination.',
+  'q15': 'Falsch. Pirani misst Wärmeleitfähigkeit: zu hoher Druck → KL konstant, zu niedriger → KL fällt auf null. Funktionsbereich: 10⁻³–100 mbar.',
+  'q16': 'Falsch. Metallisierung ist immer am Ende (Back-End-of-Line). Gate-Oxid und Implantation kommen früher (Front-End). Die korrekte Reihenfolge beginnt mit STI.',
+  'q17': 'Falsch. Piranha ist zu aggressiv für Gate-Vorbereitung. KOH würde Si angreifen. Sputterätzung wäre kontraproduktiv. Nur vollständige RCA-Reinigung ist korrekt.',
+  'q18': 'Falsch. Thermisches Budget bezieht sich auf Diffusionseffekte der Dotierung (Integral T×t). Nicht Energieverbrauch oder Raumtemperatur.',
+  'q19': 'Falsch. Der Grund ist spezifisch chemisch: CuCl₂ und andere Cu-Halogenide sind bei RT nicht flüchtig → Plasma-Ätzprodukte bleiben auf dem Wafer → kein sauberes Ätzen möglich.',
+  'q20': 'Falsch. Unterdosis → WENIGER Löslichkeit → Linien bleiben BREITER als gewünscht (+CD). Zu kurze Entwicklungszeit würde auch CD+ ergeben, aber die häufigste Ursache bei einheitlichem Muster ist die Belichtungsenergie.'
+};
+
+function answer(qid, result, btn) {
+  if (quizAnswered[qid]) return;
+  quizAnswered[qid] = result === 'correct';
+  btn.classList.add(result);
+  const fb = document.getElementById('fb-' + qid);
+  fb.textContent = (result === 'correct' ? '✓ ' : '✗ ') + (result === 'correct' ? correct_msg[qid] : wrong_msg[qid]);
+  fb.className = 'quiz-feedback show ' + result;
+  document.querySelectorAll('#' + qid + ' .quiz-option').forEach(o => o.disabled = true);
+
+  const answered = Object.keys(quizAnswered).length;
+  document.getElementById('progressLabel').textContent = answered + ' / ' + totalQuestions + ' Fragen beantwortet';
+  document.getElementById('progressBar').style.width = (answered / totalQuestions * 100) + '%';
+
+  if (answered === totalQuestions) showFinalResult();
+}
+
+function showFinalResult() {
+  const score = Object.values(quizAnswered).filter(v => v).length;
+  const el = document.getElementById('quiz-final-result');
+  el.style.display = 'block';
+  document.getElementById('final-score-num').textContent = score + '/20';
+
+  let comment, color;
+  if (score >= 18) { comment = '🎉 Hervorragend! IHK-Prüfungsreif!'; color = '#0e9f6e'; }
+  else if (score >= 15) { comment = '🟢 Sehr gut! Noch wenige Lücken schließen.'; color = '#0e9f6e'; }
+  else if (score >= 12) { comment = '🟡 Gut — fokussiere auf die falsch beantworteten Lernfelder.'; color = '#e3a008'; }
+  else if (score >= 8) { comment = '🟠 Solide Basis — FASE-Seiten wiederholen, besonders die Fehler-LF.'; color = '#d97706'; }
+  else { comment = '🔴 Bitte alle FASE-Module nochmals durcharbeiten.'; color = '#e02424'; }
+
+  const commentEl = document.getElementById('final-comment');
+  commentEl.textContent = comment;
+  commentEl.style.color = color;
+
+  // Breakdown by section
+  const sections = [
+    { label: 'LF 1\nElektro', qs: ['q1','q2'] },
+    { label: 'LF 2+4\nMat+RR', qs: ['q3','q4','q5'] },
+    { label: 'LF 7\nLitho', qs: ['q6','q7','q8'] },
+    { label: 'LF 8\nSchichten', qs: ['q9','q10'] },
+    { label: 'LF 6+10\nSchalt+Vak', qs: ['q11','q12','q13','q14','q15'] },
+    { label: 'Integration', qs: ['q16','q17','q18','q19','q20'] }
+  ];
+  const bEl = document.getElementById('score-breakdown');
+  bEl.innerHTML = '';
+  sections.forEach(s => {
+    const sc = s.qs.filter(q => quizAnswered[q]).length;
+    const total = s.qs.length;
+    const color = sc === total ? '#0e9f6e' : sc >= total/2 ? '#e3a008' : '#e02424';
+    bEl.innerHTML += `<div class="breakdown-item"><div class="b-num" style="color:${color}">${sc}/${total}</div><div style="font-size:0.7rem;margin-top:0.2rem;white-space:pre-line">${s.label}</div></div>`;
+  });
+
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetQuiz() {
+  quizAnswered = {};
+  document.querySelectorAll('.quiz-option').forEach(b => { b.classList.remove('correct','wrong'); b.disabled=false; });
+  document.querySelectorAll('.quiz-feedback').forEach(f => f.className='quiz-feedback');
+  document.getElementById('quiz-final-result').style.display = 'none';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressLabel').textContent = '0 / 20 Fragen beantwortet';
+}
+
+// ── Checkliste ────────────────────────────────────────────────
+let checkedCount = 0;
+function toggleCheck(id) {
+  const li = document.getElementById(id);
+  const box = li.querySelector('.check-box');
+  const wasChecked = li.classList.contains('checked-item');
+  if (wasChecked) {
+    li.classList.remove('checked-item');
+    box.classList.remove('checked');
+    box.textContent = '';
+    checkedCount--;
+  } else {
+    li.classList.add('checked-item');
+    box.classList.add('checked');
+    box.textContent = '✓';
+    checkedCount++;
+  }
+  document.getElementById('checklist-progress').textContent = checkedCount + ' / 16 erledigt';
+}
+
+// ── Schreiben ─────────────────────────────────────────────────
+function checkFinalWort() {
+  const text = document.getElementById('finalSchreib').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const el = document.getElementById('final-wort-count');
+  if (!words) { el.textContent = 'Noch keine Eingabe.'; return; }
+  if (words < 80) { el.textContent = words + ' Wörter — Ziel: 80+ (IHK-Prüfung)'; el.style.color='var(--warning)'; }
+  else { el.textContent = '✓ ' + words + ' Wörter — Prüfungs-tauglich!'; el.style.color='var(--success)'; }
+}
+
+function toggleFinalMuster() { document.getElementById('final-musterloesung').classList.toggle('show'); }
+
+function korrigieren() {
+  const text = document.getElementById('finalSchreib').value.trim();
+  const box  = document.getElementById('korrekturBox');
+  const fach = [
+    {r:/\bsti\b/i,                      label:'STI (Shallow Trench Isolation)'},
+    {r:/gate.?oxid/i,                   label:'Gate-Oxid'},
+    {r:/ionenimplantation/i,            label:'Ionenimplantation'},
+    {r:/\bpecvd\b/i,                    label:'PECVD'},
+    {r:/lithografie/i,                  label:'Lithografie'},
+    {r:/\bcmp\b/i,                      label:'CMP'},
+    {r:/metallisierung/i,               label:'Metallisierung'},
+    {r:/dotier/i,                       label:'Dotierung'},
+  ];
+  _korrekturEngine(text, fach, box);
+}
+</script>
+<script src="korrektur_engine.js"></script>
+</body>
+</html>
