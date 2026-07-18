@@ -82,7 +82,8 @@
         canvas.className = 'pg';
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-        canvas.style.maxWidth = Math.round(viewport.width / dpr) + 'px';
+        var natViewport = page.getViewport({scale: 1});
+        canvas.style.width = Math.round(natViewport.width) + 'px';
         var ctx = canvas.getContext('2d');
         page.render({canvasContext: ctx, viewport: viewport}).promise.then(function(){
           var wrap = pageDivs[num - 1];
