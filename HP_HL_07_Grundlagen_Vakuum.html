@@ -180,11 +180,33 @@
   <div class="vac-zone" data-zone="hoch" style="left:40%; width:25%; background:rgba(29,78,216,0.5);">Hoch (HV)<span class="exp">10⁻³–10⁻⁷ mbar</span></div>
   <div class="vac-zone" data-zone="uhv" style="left:65%; width:35%; background:rgba(29,78,216,0.75); color:white;">Ultrahoch (UHV)<span class="exp">&lt; 10⁻⁷ mbar</span></div>
 </div>
-<div class="vac-detail" id="vacGrob"><b>Grobvakuum:</b> flujo continuo (Kontinuumströmung). Bombas: de desplazamiento — Hubkolben, <b>Drehschieber</b> (rotativa de paletas, con Gasballastventil para evitar condensación de humedad en el aceite), Wälzkolben (Roots). Medidores: manómetro de membrana mecánico (hasta ~1 mbar).</div>
-<div class="vac-detail" id="vacFein"><b>Feinvakuum:</b> transición, flujo de Knudsen. Suele ser el punto de trabajo de la bomba de prevacío (Vorvakuumpumpe) antes de encender la de alto vacío. Medidor típico: <b>Pirani</b> (Wärmeleitvakuummeter) — depende del gas, usa puente de Wheatstone.</div>
-<div class="vac-detail" id="vacHoch"><b>Hochvakuum:</b> flujo molecular. Bombas cinéticas: <b>Turbomolekularpumpe</b> (60.000–100.000 rpm, cojinete magnético sin contacto — nunca arrancar desde presión atmosférica, necesita bomba de prevacío). Medidores: manómetro capacitivo de membrana (hasta 10⁻⁵ mbar, independiente del gas), ionización de cátodo caliente/frío (dependientes del gas).</div>
-<div class="vac-detail" id="vacUhv"><b>Ultrahochvakuum:</b> bombas gasbindende: <b>Ionen-Getter-Pumpe</b> (titanio como sacrificio, casi sin desgaste) y <b>Kryopumpe</b> (&lt; −270 °C, circuito de helio). Este rango es el que usan SEM, implantador de iones de alta energía y algunos PVD.</div>
-<p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem;">👉 Clave de examen: <b>gasartabhängig</b> (depende del tipo de gas: Pirani, Glühkathoden) vs. <b>gasartunabhängig</b> (independiente: manómetro capacitivo de membrana) — pregunta recurrente.</p>
+<div class="vac-detail" id="vacGrob"><b>Grobvakuum:</b> flujo continuo (Kontinuumströmung), n≈10¹⁹–10¹⁶ partículas/cm³, camino libre medio &lt;10⁻² cm. Bombas: de desplazamiento — Hubkolben, Membranvakuumpumpe, <b>Drehschieber</b> (rotativa de paletas, con Gasballastventil para evitar condensación de humedad en el aceite), Wälzkolben (Roots), Flüssigkeitsring-, Kreiskolben-, Sperrschieberpumpe. Medidores: manómetro de membrana mecánico simple (hasta ~1 mbar), Bourdon, U-Rohr, McLeod (de compresión, instrumento histórico/clásico).</div>
+<div class="vac-detail" id="vacFein"><b>Feinvakuum:</b> transición, flujo de Knudsen (Kn=l/d), n≈10¹⁶–10¹³/cm³. Suele ser el punto de trabajo de la bomba de prevacío (Vorvakuumpumpe) antes de encender la de alto vacío — las bombas de alto vacío solo son efectivas desde ≈10⁻¹–10⁻² mbar de prevacío ("umbral de traspaso"). Medidor típico: <b>Pirani</b> (Wärmeleitvakuummeter, hilo de ~7-10µm a ~120°C) — depende del gas, dos modos: temperatura constante o potencia de calentamiento constante (Pirani = este último). Rango del grupo térmico: 100 mbar–10⁻³/10⁻⁴ mbar. También: Reibungsvakuummeter (bola giratoria en campo magnético, patrón de calibración, 10⁻²–10⁻⁷ mbar).</div>
+<div class="vac-detail" id="vacHoch"><b>Hochvakuum:</b> flujo molecular, n≈10¹³–10⁹/cm³. Bombas cinéticas: <b>Turbomolekularpumpe</b> (60.000–100.000 rpm, cojinete magnético sin contacto — nunca arrancar desde presión atmosférica; su rango real según DIN 28400 llega hasta bien entrado en UHV, no se queda solo aquí), Diffusionspumpe. Medidores: manómetro capacitivo de membrana (hasta 10⁻⁵ mbar, independiente del gas — el simple mecánico solo llega a ~1 mbar), ionización de cátodo caliente (Glühkathoden: Trioden, Bayard-Alpert — hasta ~10⁻⁹ mbar el genérico, más profundo en variantes UHV) y frío (Kaltkathoden: Penning, Magnetron) — ambos dependientes del gas.</div>
+<div class="vac-detail" id="vacUhv"><b>Ultrahochvakuum:</b> bombas gasbindende: <b>Ionen-Getter-Pumpe/Ionenzerstäuberpumpe</b> (titanio como sacrificio; solo arranca desde ≈0,01 mbar; puede tardar 10-20 años en saturarse en un SEM) y <b>Kryopumpe</b> (&lt; −270 °C, hasta 10⁻¹¹/10⁻¹² mbar, el rango más amplio de todas las bombas). Medidor de mayor alcance: Partialdruck-Vakuummeter (espectrómetro de masas). Este rango es el que usan SEM, implantador de iones de alta energía y algunos PVD.</div>
+<p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem;">👉 Clave de examen: <b>gasartabhängig</b> (depende del tipo de gas: Pirani, Glühkathoden/Kaltkathoden) vs. <b>gasartunabhängig</b> (independiente: manómetro de membrana mecánico y capacitivo) — pregunta recurrente. El profesor lo resume así: <i>"Kein Messgerät deckt den gesamten Druckbereich ab"</i> (ningún instrumento cubre todo el rango) — por eso toda instalación real combina varios.</p>
+
+<h3>Unidades de presión — tabla de conversión</h3>
+<table class="data">
+<tr><th>Unidad</th><th>Equivalencia</th></tr>
+<tr><td>1 bar</td><td>1000 mbar = 10⁵ Pa = 10⁵ N/m²</td></tr>
+<tr><td>1 Pa</td><td>1 N·m⁻² (unidad SI de presión)</td></tr>
+<tr><td>1 Torr</td><td>≈ 1 mbar (1 mmHg) — fuera de uso oficial en Europa desde los 70, pero sigue en la industria por el origen EE.UU./Japón de la mayoría de equipos</td></tr>
+<tr><td>Leckrate (SI)</td><td>1 Pa·m³·s⁻¹ = 10 mbar·l·s⁻¹</td></tr>
+<tr><td>Gaslast (pV-Durchfluss)</td><td>1 mbar·l/s = 55,18 sccm a 20°C</td></tr>
+</table>
+</section>
+
+<section>
+<h2><span class="tag tag-vac">Fugas</span> Detección con helio — lo que enfatizó el profesor</h2>
+<p class="lead">Más allá de la fórmula, esto es lo que suele preguntarse en el examen sobre el procedimiento real:</p>
+<div class="warning-grid">
+  <div class="warning-card"><b>🎯 Por qué Helio (3 razones)</b>Molécula pequeña y rápida → penetra cualquier rendija. No tóxico y muy escaso en el aire ambiente (~5 ppm) → bajo ruido de fondo. Al ionizarse da una única relación masa/carga (a diferencia de N₂/O₂ que se fragmentan) → filtrado limpio con un simple imán permanente.</div>
+  <div class="warning-card"><b>⬆️➡️⬇️ Rociar de arriba hacia abajo</b>Nunca al revés: el helio es más ligero que el aire y sube — empezar por abajo puede dar falsos positivos en zonas superiores por helio que sube desde una fuga inferior.</div>
+  <div class="warning-card"><b>🧹 La causa más común no es la junta</b>El profesor insistió: la mayoría de fugas reales no son juntas defectuosas, sino <b>suciedad — una pelusa o un cabello</b> en la conexión, típicamente tras mantenimiento.</div>
+  <div class="warning-card"><b>✅ Chequeo de coherencia</b>La tasa de fuga calculada globalmente (por subida de presión) debe ser SIEMPRE mayor que la medida en un punto individual con el detector de helio — el cálculo global suma todas las fugas del sistema, el detector solo capta una a la vez.</div>
+</div>
+<p style="font-size:0.8rem; margin-top:0.7rem;">Técnica estándar industrial: espectrómetro de masas de sector 180° que filtra selectivamente los iones de masa 4 (He) mediante un campo magnético perpendicular, separándolos de los iones M&gt;4 antes de llegar al Ionenfänger (colector). Alternativa poco usada: <b>Schnüffelsonde</b> (sonda olfativa) — inundar todo el recipiente de helio y rastrear con sonda, en vez de rociar puntos localizados.</p>
 </section>
 
 <section>
@@ -211,6 +233,10 @@
   <li>En la tabla de comparación de medidores (Tabelle 2/3), hay que <b>marcar cuáles son gasartabhängig vs. gasartunabhängig</b> — en el modelo: Wärmeleitungs-, Glühkathoden- y Kaltkathoden-Vakuummeter son dependientes del gas; el Membran-Vakuummeter (mecánico y capacitivo) es independiente.</li>
   <li>Cada medidor tiene un <b>Messbereich</b> (rango de medición) que hay que anotar explícitamente en la tabla — es una de las instrucciones que más se olvida.</li>
 </ul>
+<div class="warning-grid" style="margin-top:0.8rem;">
+  <div class="warning-card"><b>⚠️ Inconsistencia en el material oficial</b>El apunte de la escuela dice literalmente "se usan <b>tres</b> efectos físicos para medir presión" pero luego enumera <b>cuatro</b>: fuerza/superficie (Kraft pro Fläche), fricción (Reibung), conducción térmica (Wärmeleitung) e ionización. Es un error de redacción del propio material — usa "cuatro efectos" en el examen.</div>
+  <div class="warning-card"><b>📎 Dato de contexto</b>La Vakuumtechnik no aparecía como módulo separado en el temario original — se añadió como complemento necesario para entender Sputtern/PVD/CVD y la metrología de Reinraum.</div>
+</div>
 </section>
 
 <section>
@@ -268,7 +294,17 @@ const vocab = [
   {de:'das Wärmeleitvakuummeter (Pirani)', es:'manómetro Pirani', en:'Pirani gauge', note:'Depende del gas, puente de Wheatstone.'},
   {de:'gasartabhängig / -unabhängig', es:'dependiente / independiente del gas', en:'gas-species dependent/independent', note:'Membran-Vakuummeter = independiente.'},
   {de:'ausheizen', es:'desgasificar por calentamiento', en:'bakeout', note:'Libera moléculas adheridas a superficies.'},
-  {de:'der Bilanzraum', es:'tramo de balance del sistema', en:'test volume/segment', note:'[A CONFIRMAR] término inglés exacto.'}
+  {de:'der Bilanzraum', es:'tramo de balance del sistema', en:'test volume/segment', note:'[A CONFIRMAR] término inglés exacto.'},
+  {de:'Absorption / Adsorption / Sorption', es:'absorción / adsorción / sorción', en:'absorption / adsorption / sorption', note:'Absorción=penetra al interior; adsorción=se une a la superficie; sorción=término genérico.'},
+  {de:'das Gasballastventil', es:'válvula de lastre de gas', en:'gas ballast valve', note:'Entrada controlada de gas para evitar condensación en bombas de desplazamiento.'},
+  {de:'der Enddruck', es:'presión última', en:'ultimate pressure', note:'Valor asintótico de una bomba con brida ciega, sin entrada de gas.'},
+  {de:'die Reynoldszahl (Re)', es:'número de Reynolds', en:'Reynolds number', note:'Re=ρvl/η; Re<2300=laminar, Re>4000=turbulento.'},
+  {de:'das Kompressionsverhältnis', es:'relación de compresión', en:'compression ratio', note:'Presión de salida / presión de entrada de una bomba.'},
+  {de:'das McLeod-Vakuummeter', es:'manómetro de compresión de McLeod', en:'McLeod gauge', note:'Instrumento clásico/histórico de Grobvakuum.'},
+  {de:'das Reibungsvakuummeter', es:'manómetro de fricción (spinning rotor)', en:'spinning rotor gauge', note:'Bola giratoria en campo magnético; patrón de calibración, 10⁻²-10⁻⁷ mbar.'},
+  {de:'das Bayard-Alpert-Vakuummeter', es:'manómetro Bayard-Alpert', en:'Bayard-Alpert gauge', note:'Variante de cátodo caliente que llega más profundo en UHV.'},
+  {de:'die Partialdruckmessung', es:'medición de presión parcial (espectrometría de masas)', en:'partial pressure measurement (RGA)', note:'El instrumento de rango más amplio; usado también en detección de fugas.'},
+  {de:'das Rohrverschraubung (Swagelok)', es:'racor/conexión de tubería', en:'tube fitting', note:'Cuerpo + 2 anillos de sujeción + tuerca; 1¼ vuelta en primer montaje.'}
 ];
 const vg = document.getElementById('vocabGrid');
 vocab.forEach(v => {
