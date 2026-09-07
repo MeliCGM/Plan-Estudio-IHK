@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QM — Repaso Interactivo | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --qm: #0f766e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--qm), #1e40af); color: white; padding: 1.5rem 1.5rem 2rem; text-align: center; }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.9rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; }
+  main { max-width: 920px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  .acc-section { background: var(--card); border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .acc-header { padding: 1.1rem 1.3rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1rem; }
+  .acc-header .chev { transition: transform 0.2s; color: var(--muted); }
+  .acc-section.open .chev { transform: rotate(180deg); }
+  .acc-body { display: none; padding: 0 1.3rem 1.3rem; }
+  .acc-section.open .acc-body { display: block; }
+  h3 { font-size: 0.95rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--primary-dark); }
+  p.lead { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.6rem; }
+
+  table.data { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.78rem; }
+  table.data th { background: #f3f4f6; padding: 0.4rem 0.55rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  table.data td { padding: 0.38rem 0.55rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+
+  /* PDCA wheel */
+  .pdca-wheel { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 0.8rem; }
+  .pdca-step { border-radius: 10px; padding: 0.8rem; text-align: center; font-weight: 700; font-size: 0.85rem; color: white; cursor: pointer; }
+  .pdca-p { background: #0f766e; } .pdca-d { background: #0369a1; } .pdca-c { background: #b45309; } .pdca-a { background: #7c3aed; }
+  .pdca-detail { display: none; margin-top: 0.7rem; font-size: 0.82rem; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 0.7rem; }
+  .pdca-detail.show { display: block; }
+
+  /* formula cards */
+  .formula-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .formula-card { background: #f0fdfa; border: 2px solid #99f6e4; border-radius: 10px; padding: 0.7rem; text-align: center; }
+  .formula-card .f { font-family: 'Consolas', monospace; font-size: 0.88rem; font-weight: 700; color: var(--qm); }
+  .formula-card .l { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* Cp/Cpk simulator */
+  .calc-box { background: #f0fdfa; border: 2px solid #99f6e4; border-radius: 10px; padding: 1rem; margin-top: 0.8rem; }
+  .calc-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .calc-row label { font-size: 0.8rem; font-weight: 600; min-width: 120px; }
+  .calc-row input { width: 80px; padding: 0.3rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; }
+  .calc-result { margin-top: 0.6rem; font-size: 0.88rem; font-weight: 700; }
+  .cap-yes { color: var(--success); } .cap-no { color: var(--danger); }
+  .bell-visual { height: 60px; background: linear-gradient(180deg, transparent, #99f6e4); border-radius: 0 0 50% 50% / 0 0 100% 100%; margin-top: 0.5rem; position: relative; }
+  .tol-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--danger); }
+
+  /* RPZ calculator */
+  .rpz-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .rpz-row label { font-size: 0.8rem; font-weight: 600; min-width: 130px; }
+  .rpz-row input[type=range] { flex: 1; min-width: 120px; }
+  .rpz-row .val { font-weight: 700; color: var(--qm); min-width: 25px; }
+  .rpz-result { font-size: 1.3rem; font-weight: 700; text-align: center; margin-top: 0.6rem; padding: 0.6rem; border-radius: 8px; }
+  .rpz-low { background: #f0fdf4; color: var(--success); }
+  .rpz-mid { background: #fffbeb; color: var(--warning); }
+  .rpz-high { background: #fef2f2; color: var(--danger); }
+
+  /* pareto */
+  .pareto-bars { display: flex; align-items: flex-end; gap: 4px; height: 100px; margin-top: 0.8rem; }
+  .pareto-bar { flex: 1; background: var(--qm); border-radius: 4px 4px 0 0; position: relative; }
+  .pareto-bar span { position: absolute; top: -16px; left: 0; right: 0; text-align: center; font-size: 0.65rem; }
+
+  /* ishikawa */
+  .ishikawa { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.8rem; }
+  .ishikawa-bone { flex: 1; min-width: 100px; background: #f0fdfa; border: 2px solid #99f6e4; border-radius: 8px; padding: 0.6rem; text-align: center; font-size: 0.78rem; font-weight: 600; }
+
+  .fix-box { border-left: 4px solid var(--warning); background: #fffbeb; border-radius: 8px; padding: 0.7rem 1rem; margin-top: 0.6rem; font-size: 0.8rem; }
+
+  /* vocab flip */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .flip-card { height: 115px; perspective: 600px; cursor: pointer; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 0.72rem; }
+  .flip-front { background: var(--qm); color: white; font-weight: 700; }
+  .flip-back { background: #f0fdfa; border: 2px solid var(--qm); transform: rotateY(180deg); }
+  .flip-back .es { font-weight: 700; color: var(--primary-dark); }
+  .flip-back .note { font-size: 0.6rem; color: var(--text); margin-top: 0.25rem; }
+
+  /* quiz */
+  .quiz-item { border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.7rem; }
+  .quiz-q { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 0.4rem; }
+  .quiz-opt { text-align: left; border: 1px solid var(--border); background: white; border-radius: 8px; padding: 0.5rem 0.7rem; font-size: 0.8rem; cursor: pointer; }
+  .quiz-opt.correct { background: #d1fae5; border-color: var(--success); font-weight: 600; }
+  .quiz-opt.wrong { background: #fee2e2; border-color: var(--danger); }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>📊 Qualitätsmanagement — Repaso Interactivo</h1>
+<p>ISO 9000, estadística, herramientas de calidad, capacidad de proceso, SPC, FMEA, Six Sigma</p>
+<div class="badges">
+  <span class="badge">Repaso rápido, no examen a fondo</span>
+</div>
+</header>
+
+<main>
+
+<div class="acc-section open">
+<div class="acc-header" onclick="toggleAcc(this)"><span>1️⃣ Fundamentos QM — ISO 9000 y el ciclo PDCA</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<p class="lead">Toca cada cuadrante del ciclo de Deming:</p>
+<div class="pdca-wheel">
+  <div class="pdca-step pdca-p" onclick="showPdca('p')">PLAN</div>
+  <div class="pdca-step pdca-d" onclick="showPdca('d')">DO</div>
+  <div class="pdca-step pdca-c" onclick="showPdca('c')">CHECK</div>
+  <div class="pdca-step pdca-a" onclick="showPdca('a')">ACT</div>
+</div>
+<div class="pdca-detail" id="pdca-p"><b>Plan:</b> planificar objetivos y procesos necesarios para lograr resultados según los requisitos.</div>
+<div class="pdca-detail" id="pdca-d"><b>Do:</b> implementar lo planificado.</div>
+<div class="pdca-detail" id="pdca-c"><b>Check:</b> hacer seguimiento y medir procesos/productos respecto a políticas, objetivos y requisitos.</div>
+<div class="pdca-detail" id="pdca-a"><b>Act:</b> tomar acciones para mejorar el desempeño, según sea necesario.</div>
+<h3>Familia ISO 9000</h3>
+<table class="data">
+<tr><th>Norma</th><th>Qué es</th></tr>
+<tr><td>ISO 9000</td><td>Términos y definiciones (base terminológica, no certificable)</td></tr>
+<tr><td>ISO 9001</td><td><b>Requisitos</b> — la norma sobre la que se certifica</td></tr>
+<tr><td>ISO 9004</td><td>Éxito sostenido (guía de mejora, no certificable sola)</td></tr>
+<tr><td>ISO 19011</td><td>Guía para auditar sistemas de gestión</td></tr>
+</table>
+<h3>Tipos de auditoría</h3>
+<p style="font-size:0.83rem;"><b>First-Party</b> (interna) · <b>Second-Party</b> (al proveedor) · <b>Third-Party/Zertifizierungsaudit</b> (externa independiente, otorga el certificado).</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>2️⃣ Estadística descriptiva</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<div class="formula-grid">
+  <div class="formula-card"><div class="f">x̄ = Σx/n</div><div class="l">Media aritmética</div></div>
+  <div class="formula-card"><div class="f">R = x_max−x_min</div><div class="l">Spannweite (rango)</div></div>
+  <div class="formula-card"><div class="f">V = s/x̄</div><div class="l">Coeficiente de variación</div></div>
+  <div class="formula-card"><div class="f">Z = (x−μ)/σ</div><div class="l">Estandarización</div></div>
+  <div class="formula-card"><div class="f">k ≈ √n</div><div class="l">Nº de clases (histograma)</div></div>
+</div>
+<div class="fix-box">💡 <b>σ vs. S/s:</b> σ usa N (población, división exacta); S/s usa N−1 (muestra, corrección de Bessel) → valor ligeramente mayor. En Excel: <code>STABW.N</code> vs. <code>STABW.S</code>.</div>
+<h3>Median vs. Mittelwert vs. outliers</h3>
+<p style="font-size:0.83rem;">La <b>mediana</b> es robusta ante valores atípicos (Ausreißer); la <b>media</b> se desplaza fuertemente con ellos. Un Ausreißer genera una <b>distribución sesgada</b> (Schiefeverteilung).</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>3️⃣ Herramientas de calidad — Ishikawa &amp; Pareto</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<h3>Diagrama Ishikawa (causa-efecto / espina de pescado) — las 5M</h3>
+<div class="ishikawa">
+  <div class="ishikawa-bone">Mensch<br>(persona)</div>
+  <div class="ishikawa-bone">Maschine</div>
+  <div class="ishikawa-bone">Material</div>
+  <div class="ishikawa-bone">Methode</div>
+  <div class="ishikawa-bone">Mitwelt<br>(entorno)</div>
+</div>
+<h3>Análisis de Pareto — regla 80/20</h3>
+<p class="lead">80% del resultado (fallos/costos) viene del 20% de las causas. Ejemplo con 5 tipos de fallo ordenados de mayor a menor frecuencia:</p>
+<div class="pareto-bars">
+  <div class="pareto-bar" style="height:100%; background:#0f766e;"><span>45%</span></div>
+  <div class="pareto-bar" style="height:60%; background:#0f766e;"><span>25%</span></div>
+  <div class="pareto-bar" style="height:30%; background:#5eead4;"><span>15%</span></div>
+  <div class="pareto-bar" style="height:15%; background:#5eead4;"><span>10%</span></div>
+  <div class="pareto-bar" style="height:8%; background:#5eead4;"><span>5%</span></div>
+</div>
+<p style="font-size:0.75rem; color:var(--muted); margin-top:0.6rem;">Las 2 primeras causas (verde oscuro) ya suman 70% — categoría A. El resto (verde claro) son categoría B/C.</p>
+<h3>8D-Report (VDA) — 8 pasos</h3>
+<p style="font-size:0.82rem;">D1 Team → D2 Problema → D3 Sofortmaßnahme (contención) → D4 Ursachenanalyse (Ishikawa/5-Why) → D5 Auswahl de medidas → D6 Abstellmaßnahme + validación → D7 Vorbeugung → D8 Lessons Learned.</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>4️⃣ Capacidad de proceso — Cp/Cpk</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<div class="formula-grid">
+  <div class="formula-card"><div class="f">Cp = T/(6σ)</div><div class="l">Capacidad (dispersión)</div></div>
+  <div class="formula-card"><div class="f">Cpk = ΔKrit/(3σ)</div><div class="l">Capacidad (centrado)</div></div>
+</div>
+<p class="lead">Cpk ≤ Cp SIEMPRE — solo son iguales si el proceso está perfectamente centrado. Exigencia habitual: Cp/Cpk ≥ 1,33 (proceso capaz).</p>
+<div class="calc-box">
+  <div class="calc-row"><label>Tolerancia T:</label><input type="number" id="tolT" value="40" oninput="calcCp()"></div>
+  <div class="calc-row"><label>σ (o S):</label><input type="number" id="sigmaCp" value="5" step="0.1" oninput="calcCp()"></div>
+  <div class="calc-result" id="cpResult"></div>
+</div>
+<h3>fähig vs. beherrscht — ¡no es lo mismo!</h3>
+<p style="font-size:0.83rem;"><b>fähig</b> (capaz) = la curva es suficientemente estrecha frente a la tolerancia. <b>beherrscht</b> (controlado) = la posición/media es estable, sin influencias sistemáticas. Un proceso puede ser capaz pero no estar controlado (o viceversa).</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>5️⃣ Cartas de control (SPC)</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<p class="lead">Creadas por Walter Shewhart (~1930). Valores estadísticos de muestras a lo largo del tiempo.</p>
+<table class="data">
+<tr><th>Límite</th><th>% esperado dentro</th><th>Acción si se supera</th></tr>
+<tr><td>Warngrenze (OWG/UWG)</td><td>~95%</td><td>Intensificar control</td></tr>
+<tr><td>Eingriffsgrenze (OEG/UEG)</td><td>~99%</td><td><b>Detener el proceso</b></td></tr>
+</table>
+<h3>Señales de alarma en la carta</h3>
+<p style="font-size:0.83rem;"><b>Trend</b> = 7+ valores consecutivos subiendo/bajando. <b>Run/Lauf</b> = 7+ valores consecutivos al mismo lado de la línea central. <b>Wechsel-/Sägezahn-Regel</b> = cambio constante de lado, posible indicio de 2 instrumentos distintos mezclados.</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>6️⃣ FMEA — calculadora de RPZ</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<p class="lead">RPZ = A (Auftreten) × B (Bedeutung) × E (Entdeckung), cada uno 1-10. Mueve los sliders:</p>
+<div class="rpz-row"><label>A — Ocurrencia:</label><input type="range" id="rpzA" min="1" max="10" value="5" oninput="calcRPZ()"><span class="val" id="rpzAVal">5</span></div>
+<div class="rpz-row"><label>B — Gravedad:</label><input type="range" id="rpzB" min="1" max="10" value="5" oninput="calcRPZ()"><span class="val" id="rpzBVal">5</span></div>
+<div class="rpz-row"><label>E — Detección:</label><input type="range" id="rpzE" min="1" max="10" value="5" oninput="calcRPZ()"><span class="val" id="rpzEVal">5</span></div>
+<div class="rpz-result" id="rpzResult"></div>
+<p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem;">💡 E=10 significa casi indetectable (peor caso). Desde 2019, el método APM prioriza urgencia en vez de solo el número RPZ.</p>
+<h3>3 tipos de FMEA</h3>
+<p style="font-size:0.82rem;"><b>System/Produkt-FMEA</b> (antes de fabricar, responsable: desarrollo) · <b>Konstruktions/Design-FMEA</b> (sobre planos) · <b>Prozess-FMEA</b> (sobre el plan de fabricación).</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>7️⃣ Six Sigma, Lean &amp; informes técnicos</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<p class="lead"><b>Six Sigma</b> (Motorola, EEUU, años 80 — no Japón): meta ~99,99966% dentro de tolerancia. Ciclo <b>DMAIC</b> (Define-Measure-Analyse-Improve-Control), análogo al PDCA.</p>
+<table class="data">
+<tr><th>Herramienta Lean</th><th>Qué hace</th></tr>
+<tr><td>5S/5A</td><td>Orden y limpieza del puesto de trabajo (parte del Toyota-Produktionssystem)</td></tr>
+<tr><td>SMED</td><td>Reducir tiempos de cambio de herramienta a minutos</td></tr>
+<tr><td>JIT</td><td>Entrega justo en el momento de necesidad</td></tr>
+<tr><td>5-Why</td><td>Preguntar "¿por qué?" hasta la causa raíz</td></tr>
+</table>
+<p style="font-size:0.8rem; margin-top:0.6rem;"><b>DIN 1422:</b> estructura de informes técnicos. Cuidado con el <b>Deppenleerzeichen</b> (espacio incorrecto en compuestos alemanes) al escribir tu informe.</p>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>🗂️ Vocabulario clave</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<div class="flip-grid" id="vocabGrid"></div>
+</div>
+</div>
+
+<div class="acc-section">
+<div class="acc-header" onclick="toggleAcc(this)"><span>🧠 Autoevaluación rápida</span><span class="chev">▾</span></div>
+<div class="acc-body">
+<div id="quizContainer"></div>
+</div>
+</div>
+
+</main>
+
+<footer>QM · Repaso Interactivo · guarda esta página en tu pantalla de inicio</footer>
+
+<script>
+function toggleAcc(el){ el.parentElement.classList.toggle('open'); }
+
+function showPdca(which){
+  document.querySelectorAll('.pdca-detail').forEach(d => d.classList.remove('show'));
+  document.getElementById('pdca-' + which).classList.add('show');
+}
+
+function calcCp(){
+  const T = parseFloat(document.getElementById('tolT').value);
+  const s = parseFloat(document.getElementById('sigmaCp').value);
+  const cp = T / (6*s);
+  const cls = cp >= 1.33 ? 'cap-yes' : 'cap-no';
+  const label = cp >= 1.33 ? '✅ Proceso CAPAZ' : '❌ Proceso NO capaz';
+  document.getElementById('cpResult').innerHTML = 'Cp = ' + T + '/(6×' + s + ') = <b>' + cp.toFixed(2) + '</b> — <span class="' + cls + '">' + label + '</span> (umbral 1,33)';
+}
+calcCp();
+
+function calcRPZ(){
+  const a = parseInt(document.getElementById('rpzA').value);
+  const b = parseInt(document.getElementById('rpzB').value);
+  const e = parseInt(document.getElementById('rpzE').value);
+  document.getElementById('rpzAVal').textContent = a;
+  document.getElementById('rpzBVal').textContent = b;
+  document.getElementById('rpzEVal').textContent = e;
+  const rpz = a*b*e;
+  const el = document.getElementById('rpzResult');
+  el.textContent = 'RPZ = ' + a + '×' + b + '×' + e + ' = ' + rpz;
+  el.className = 'rpz-result ' + (rpz > 200 ? 'rpz-high' : rpz > 80 ? 'rpz-mid' : 'rpz-low');
+}
+calcRPZ();
+
+const vocab = [
+  {de:'das Audit', es:'auditoría', note:'First/Second/Third-Party.'},
+  {de:'der PDCA-Zyklus', es:'ciclo PDCA', note:'Plan-Do-Check-Act.'},
+  {de:'die Standardabweichung', es:'desviación estándar', note:'σ (población) vs. S/s (muestra, N-1).'},
+  {de:'der Variationskoeffizient', es:'coeficiente de variación', note:'V=s/x̄.'},
+  {de:'die Klassenbreite', es:'ancho de clase', note:'=Spannweite/Klassenzahl.'},
+  {de:'das Ishikawa-Diagramm', es:'diagrama de espina de pescado', note:'5M: Mensch,Maschine,Material,Methode,Mitwelt.'},
+  {de:'die Pareto-Analyse', es:'análisis de Pareto', note:'Regla 80/20.'},
+  {de:'der 8D-Report', es:'informe 8D', note:'8 pasos, estandarizado por VDA.'},
+  {de:'die Prozessfähigkeit (Cp/Cpk)', es:'capacidad de proceso', note:'Cp=T/6σ; Cpk≤Cp siempre.'},
+  {de:'fähig / beherrscht', es:'capaz / controlado', note:'Dispersión vs. estabilidad de posición.'},
+  {de:'die Regelkarte', es:'carta de control', note:'Creada por Shewhart ~1930.'},
+  {de:'die Eingriffsgrenze', es:'límite de intervención', note:'~99%; superarlo detiene el proceso.'},
+  {de:'die FMEA', es:'AMFE', note:'RPZ=A×B×E; origen aeroespacial EEUU.'},
+  {de:'die Risikoprioritätszahl (RPZ)', es:'número de prioridad de riesgo', note:'Rango 1-1000.'},
+  {de:'Six Sigma', es:'Six Sigma', note:'Motorola, EEUU años 80 — no Japón.'},
+  {de:'der DMAIC-Zyklus', es:'ciclo DMAIC', note:'Define-Measure-Analyse-Improve-Control.'},
+  {de:'die Zehnerregel', es:'regla de diez', note:'Costo ×10 por cada etapa de detección posterior.'},
+  {de:'die Verifizierung / Validierung', es:'verificación / validación', note:'"¿Correcto?" vs. "¿el producto correcto?"'}
+];
+const vg = document.getElementById('vocabGrid');
+vocab.forEach(v => {
+  const card = document.createElement('div');
+  card.className = 'flip-card';
+  card.innerHTML = `<div class="flip-inner">
+    <div class="flip-front">${v.de}</div>
+    <div class="flip-back"><span class="es">${v.es}</span><span class="note">${v.note}</span></div>
+  </div>`;
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+  vg.appendChild(card);
+});
+
+const quiz = [
+  {q:'¿Cuál es la diferencia entre "fähig" y "beherrscht"?', opts:['Son sinónimos','Fähig=dispersión suficientemente pequeña; beherrscht=posición estable en el tiempo','Fähig es para máquinas, beherrscht para procesos','Beherrscht siempre implica fähig'], correct:1},
+  {q:'¿De dónde viene Six Sigma?', opts:['Toyota, Japón','Motorola, EE.UU., años 80','ISO, Suiza','VDA, Alemania'], correct:1},
+  {q:'Cpk siempre es:', opts:['Mayor que Cp','Igual a Cp','Menor o igual que Cp','Independiente de Cp'], correct:2},
+  {q:'¿Qué mide el índice Kappa en MSA?', opts:['Precisión frente al valor real','Reproducibilidad entre inspectores (no exactitud)','Capacidad de la máquina','Tolerancia del proceso'], correct:1},
+  {q:'RPZ en FMEA se calcula como:', opts:['A+B+E', 'A×B×E', '(A+B)/E', 'A×B/E'], correct:1},
+  {q:'¿Qué regla dice que el costo de un fallo se multiplica por 10 en cada etapa posterior de detección?', opts:['Regla 80/20', 'T/8-Regel', 'Zehnerregel', 'Regla del tercio medio'], correct:2}
+];
+const qc = document.getElementById('quizContainer');
+quiz.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'quiz-item';
+  div.innerHTML = `<div class="quiz-q">${i+1}. ${item.q}</div><div class="quiz-opts"></div>`;
+  const optsDiv = div.querySelector('.quiz-opts');
+  item.opts.forEach((opt, j) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      optsDiv.querySelectorAll('.quiz-opt').forEach((b, k) => {
+        b.disabled = true;
+        if (k === item.correct) b.classList.add('correct');
+        else if (b === btn) b.classList.add('wrong');
+      });
+    });
+    optsDiv.appendChild(btn);
+  });
+  qc.appendChild(div);
+});
+</script>
+</body>
+</html>
