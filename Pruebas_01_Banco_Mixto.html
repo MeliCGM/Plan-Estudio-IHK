@@ -47,9 +47,9 @@
 <header>
 <a href="index.html" style="position:fixed;top:12px;left:12px;z-index:99999;background:#1a1d24;color:#5b8cff;text-decoration:none;font-size:13px;font-weight:600;padding:7px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.35);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">&larr; Volver</a>
 <h1>🎯 Banco Mixto de Preguntas</h1>
-<p>30 preguntas oficiales de examen + corrección de tu examen real resuelto</p>
+<p>2×30 preguntas oficiales de examen + corrección de tu examen real resuelto</p>
 <div class="badges">
-  <span class="badge">Dresden Chip Academy — clave oficial</span>
+  <span class="badge">Dresden Chip Academy — 2 claves oficiales</span>
   <span class="badge">Tu examen del 24 ago corregido</span>
 </div>
 </header>
@@ -57,9 +57,15 @@
 <main>
 
 <section>
-<h2>🧠 30 preguntas oficiales (selección única)</h2>
+<h2>🧠 Quiz A — Fundamentos de Halbleiter (30 preguntas)</h2>
 <p class="lead">Clave de respuestas confirmada de la escuela — toca una opción para ver si es correcta.</p>
 <div id="quizContainer"></div>
+</section>
+
+<section>
+<h2>🧠 Quiz B — Fotolithografie y proceso (30 preguntas)</h2>
+<p class="lead">Segunda clave oficial de la escuela, sobre Belacken/Belichten/Sputtern/Ätzen — toca una opción para ver si es correcta.</p>
+<div id="quizContainer2"></div>
 </section>
 
 <section>
@@ -129,27 +135,64 @@ const quiz = [
 {q:"Warum werden Siliziumwafer poliert?", opts:["Um den Oxidprozess zu verbessern","Aus optischen Gründen","Für atomar glatte Oberflächen für Lithografie","Zur Wärmeableitung"], correct:2},
 {q:"Welche Funktion hat der Source-Kontakt im Transistor?", opts:["Steuert das Signal","Führt Elektronen oder Löcher in den Kanal ein","Schaltet den Transistor","Leitet Wärme ab"], correct:1}
 ];
-const qc = document.getElementById('quizContainer');
-quiz.forEach((item, i) => {
-  const div = document.createElement('div');
-  div.className = 'q-block';
-  div.innerHTML = `<div class="q-num">Pregunta ${i+1}</div><div class="q-text">${item.q}</div><div class="opt-list"></div>`;
-  const optsDiv = div.querySelector('.opt-list');
-  item.opts.forEach((opt, j) => {
-    const btn = document.createElement('button');
-    btn.className = 'opt';
-    btn.textContent = opt;
-    btn.addEventListener('click', () => {
-      optsDiv.querySelectorAll('.opt').forEach((b, k) => {
-        b.disabled = true;
-        if (k === item.correct) b.classList.add('correct');
-        else if (b === btn) b.classList.add('wrong');
+const quiz2 = [
+{q:"1. Welcher Werkstoff ist der wichtigste Halbleiter in der Mikrotechnologie?", opts:["Aluminium","Silizium","Kupfer","Titan"], correct:1},
+{q:"2. Ein Mikrometer entspricht ...", opts:["einem Millionstel Meter","einem Tausendstel Meter","einem Zehntel Meter","einem Zentimeter"], correct:0},
+{q:"3. Welche Umgebung ist besonders für lithographische Prozesse erforderlich?", opts:["Labor","Reinraum","Werkstatt","Lagerraum"], correct:1},
+{q:"4. Wozu dient der Fotolack beim Belacken?", opts:["Als Haftmaterial für Wafer","Zur Strukturierung des Wafers","Als Schutz vor Ionen","Zur Reinigung"], correct:1},
+{q:"5. Wie wird der Lack beim Spincoating verteilt?", opts:["Durch Kippen des Wafers","Durch Rotation des Wafers","Durch Absaugen","Durch Beschießen mit Ionen"], correct:1},
+{q:"6. Was versteht man unter Dotierung?", opts:["Erhöhung der Schichtdicke","Veränderung der Leitfähigkeit von Halbleitern","Abtragen von Material","Aufbringen von Fotolack"], correct:1},
+{q:"7. Positiv- und Negativlack unterscheiden sich durch ...", opts:["die Farbe","die Löslichkeit nach Belichtung","die Dicke","die Haftung"], correct:1},
+{q:"8. Wie nennt man den Prozess zum Entfernen löslicher Lackbereiche?", opts:["Belacken","Belichten","Entwickeln","Ätzen"], correct:2},
+{q:"9. Welche Lichtart wird häufig für die Belichtung verwendet?", opts:["Infrarot","UV-Licht","Sichtbares Licht","Röntgenstrahlung"], correct:1},
+{q:"10. Was ist der Zweck einer Maske in der Lithographie?", opts:["Schutz vor Staub","Übertragung des Layouts auf den Wafer","Reinigung des Wafers","Aufbringen von Metall"], correct:1},
+{q:"11. Welches Metall wird häufig beim Sputtern abgeschieden?", opts:["Aluminium","Silizium","Polystyrol","Eisen"], correct:0},
+{q:"12. Was ist das Ziel des Softbake?", opts:["Entfernung von überschüssigem Lack","Trocknung und Lösungsmittelentfernung","Abkühlen des Wafers","Belichten"], correct:1},
+{q:"13. Wozu dient der Hardbake?", opts:["Reinigung des Wafers","Stabilisierung des Fotolacks","Ätzen von Metall","Belichtung"], correct:1},
+{q:"14. Welche Teilchen lösen beim Sputtern die Atome aus dem Target?", opts:["Elektronen","Ionen","Moleküle","Photonen"], correct:1},
+{q:"15. Was beschreibt der Begriff \"Target\" beim Sputtern?", opts:["Die Maschine","Das zu beschichtende Material","Das Ausgangsmaterial, aus dem Atome abgeschieden werden","Die Schutzmaske"], correct:2},
+{q:"16. Warum ist Prozesskontrolle in der Mikrotechnologie wichtig?", opts:["Um die Arbeit zu beschleunigen","Um die Qualität der Bauteile sicherzustellen","Um den Wafer zu kühlen","Um Lack zu sparen"], correct:1},
+{q:"17. Welche Gefahr besteht bei Abweichungen im Reinraum?", opts:["Beschädigung der Maschinen","Einbringen von Partikeln und Kontamination","Überhitzung des Wafers","Stromausfall"], correct:1},
+{q:"18. Welche Arbeitsschutzmaßnahmen sind im Reinraum notwendig?", opts:["Schutzbrille und Handschuhe","Reinraumbekleidung (Haube, Anzug, Handschuhe)","Keine besonderen Maßnahmen","Nur Mundschutz"], correct:1},
+{q:"19. Welcher Schritt folgt typischerweise nach dem Belacken?", opts:["Softbake","Sputtern","Plasmaätzen","Messen"], correct:0},
+{q:"20. Was ist Lithographie in der Mikrotechnologie?", opts:["Eine Messtechnik","Ein physikalisches Beschichtungsverfahren","Die Übertragung von Strukturen auf den Wafer mittels Fotolack und Licht","Reinigung des Wafers"], correct:2},
+{q:"21. Was versteht man unter Ätzen?", opts:["Abtragen von Material","Aufbringen von Metall","Belichten von Fotolack","Trocknen des Wafers"], correct:0},
+{q:"22. Welche Eigenschaft wird beim Hardbake verbessert?", opts:["Elektrische Leitfähigkeit","Mechanische und chemische Stabilität des Lacks","Farbe","Wafergröße"], correct:1},
+{q:"23. Welche Messgeräte kommen typischerweise zur Prozesskontrolle zum Einsatz?", opts:["Mikroskop, Profilometer, Messsoftware","Multimeter","Thermometer","Waage"], correct:0},
+{q:"24. Warum werden Reinräume verwendet?", opts:["Um die Temperatur zu kontrollieren","Um Partikel und Kontamination zu vermeiden","Um Lärm zu reduzieren","Um Lichtverhältnisse zu verbessern"], correct:1},
+{q:"25. Welche Schicht wird beim Sputtern abgeschieden?", opts:["Fotolack","Dünne Metallschicht","Kunststoff","Siliziumdioxid"], correct:1},
+{q:"26. Welche Prozesskette ist richtig?", opts:["Belacken → Entwickeln → Belichten → Hardbake","Reinigen → Belacken → Belichten → Entwickeln → Hardbake","Belichten → Belacken → Softbake → Entwickeln","Entwickeln → Belacken → Belichten → Hardbake"], correct:1},
+{q:"27. Was ist das typische Ziel der Lithographie?", opts:["Gleichmäßige Lackverteilung","Strukturierung des Wafers mit hoher Präzision","Reinigung des Wafers","Abscheidung von Metall"], correct:1},
+{q:"28. Welche Schichtdicke wird beim Spincoating hauptsächlich beeinflusst?", opts:["Länge des Wafers","Drehzahl, Viskosität des Lacks","Maske","Lichtart"], correct:1},
+{q:"29. Was ist ein typischer Prozessfehler beim Belichten?", opts:["Staubeinschluss unter der Maske","Falsche Lackfarbe","Falsche Wafergröße","Stromausfall"], correct:0},
+{q:"30. Warum ist die Kontrolle der Oberflächenqualität wichtig?", opts:["Um die Maschine zu schonen","Um die Funktionsfähigkeit der Bauteile sicherzustellen","Um Lack zu sparen","Zur Farbkontrolle"], correct:1}
+];
+
+function renderSingleQuiz(data, containerId){
+  const qc = document.getElementById(containerId);
+  data.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-block';
+    div.innerHTML = `<div class="q-num">Pregunta ${i+1}</div><div class="q-text">${item.q}</div><div class="opt-list"></div>`;
+    const optsDiv = div.querySelector('.opt-list');
+    item.opts.forEach((opt, j) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => {
+        optsDiv.querySelectorAll('.opt').forEach((b, k) => {
+          b.disabled = true;
+          if (k === item.correct) b.classList.add('correct');
+          else if (b === btn) b.classList.add('wrong');
+        });
       });
+      optsDiv.appendChild(btn);
     });
-    optsDiv.appendChild(btn);
+    qc.appendChild(div);
   });
-  qc.appendChild(div);
-});
+}
+renderSingleQuiz(quiz, 'quizContainer');
+renderSingleQuiz(quiz2, 'quizContainer2');
 </script>
 </body>
 </html>
