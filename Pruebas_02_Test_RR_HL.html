@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test RR + HL Grundlage | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --rr: #0e7490; --hl: #6b21a8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--rr), var(--hl)); color: white; padding: 1.5rem 1.5rem 2rem; text-align: center; }
+  header h1 { font-size: 1.4rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.88rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; }
+  main { max-width: 840px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.3rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; }
+  h3 { font-size: 0.95rem; font-weight: 600; margin: 1rem 0 0.4rem; color: var(--primary-dark); }
+  p.lead { color: var(--muted); font-size: 0.87rem; margin-bottom: 0.6rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; color: white; }
+  .tag-rr { background: var(--rr); } .tag-hl { background: var(--hl); }
+
+  table.data { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.77rem; }
+  table.data th { background: #f3f4f6; padding: 0.4rem 0.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  table.data td { padding: 0.36rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  td.ok { color: var(--success); font-weight: 700; } td.bad { color: var(--danger); font-weight: 700; } td.warn { color: var(--warning); font-weight: 700; }
+
+  .fix-box { border-left: 4px solid var(--warning); background: #fffbeb; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; font-size: 0.82rem; }
+  .fix-box.err { border-left-color: var(--danger); background: #fef2f2; }
+  .fix-box.good { border-left-color: var(--success); background: #f0fdf4; }
+  .fix-box.info { border-left-color: var(--rr); background: #ecfeff; }
+  .fix-box.ref { border-left-color: var(--muted); background: #f9fafb; }
+  .fix-box b.title { display: block; margin-bottom: 0.3rem; }
+
+  .qa-block { border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 0.8rem; font-size: 0.83rem; }
+  .qa-block:last-child { border-bottom: none; }
+  .qa-q { font-weight: 600; margin-bottom: 0.3rem; }
+  .qa-a { color: var(--muted); }
+  .qa-a b { color: var(--text); }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>🔬 Test RR (real) + Test HL Grundlage (clave)</h1>
+<p>Corrección de tu examen real de Reinraumtechnik + modelo de respuestas oficial de fundamentos HL</p>
+<div class="badges">
+  <span class="badge">Test RR — tu examen firmado "Holmquist"</span>
+  <span class="badge">Test HL — clave oficial limpia</span>
+</div>
+</header>
+
+<main>
+
+<section>
+<h2><span class="tag tag-rr">Test RR</span> Corrección — Teil 1 (opción múltiple)</h2>
+<p class="lead">⚠️ Regla del examen: <b>si marcas más de una opción cuando solo una es correcta, obtienes 0 puntos</b> — importante para leer las discrepancias abajo. En 13 de las 20 preguntas tu círculo en el examen coincide exactamente con tu hoja de respuestas final — esas no se listan aquí (todas correctas). Solo detallo las 7 con alguna discrepancia:</p>
+
+<table class="data">
+<tr><th>#</th><th>Marcaste en el examen</th><th>Hoja de respuestas final</th><th>Veredicto</th></tr>
+<tr><td>1</td><td>A + C (dos círculos)</td><td>C</td><td class="ok">Marcar solo C es lo correcto — en el examen marcaste de más, lo que habría dado 0 puntos con esa regla. Tu hoja final (solo C) es la buena.</td></tr>
+<tr style="background:#fef2f2;"><td>3</td><td class="ok">B</td><td class="bad">C</td><td class="bad">Tu círculo en el examen (B) es el <b>técnicamente correcto</b> — el aire sale del Reinraum hacia afuera porque el Reinraum está en <b>sobrepresión</b> (Überdruck), no en depresión. Tu hoja de respuestas dice C por error de transcripción — perdiste el punto por copiar mal, no por no saberlo.</td></tr>
+<tr><td>4</td><td>A + B</td><td>A</td><td>A solo es lo registrado como correcto. B (Hilfsstoffe/Versorgungsleitungen) también es defendible como fuente de partículas, pero no está en la clave — revisa con el instructor si aceptan ambas.</td></tr>
+<tr style="background:#fef2f2;"><td>10</td><td class="bad">A + C + D</td><td class="ok">D</td><td class="bad">D es correcto (los wafers solo se tocan por la cara posterior/inactiva). Marcaste A y C de más — C en particular ("solo se puede manipular el último wafer") no tiene sentido técnico. Esto sí habría dado 0 puntos por exceso de marcas — repasa el concepto de manejo de obleas.</td></tr>
+<tr style="background:#f0fdf4;"><td>15</td><td class="ok">A + D</td><td class="bad">C + D</td><td class="ok">Tu examen (A+D) es <b>más correcto</b> que tu hoja de respuestas (C+D): un traje de Reinraum debe ser <b>transpirable (atmungsaktiv, A)</b> y retener partículas (D) — pero <b>NO</b> debe ser "eléctricamente aislante" (C es incorrecto, un aislante es malo para ESD). Error de transcripción a tu favor: sabías la respuesta, pero anotaste mal en la hoja.</td></tr>
+<tr style="background:#f0fdf4;"><td>16</td><td class="ok">A + C</td><td class="warn">D</td><td>Materiales conductores (A) y zapatos conductores (C) son los métodos estándar reales para evitar carga electrostática en personas. D (paños antiestáticos) es más para limpiar superficies, no para el personal. Tu razonamiento original parece mejor que lo que quedó anotado — vale la pena confirmarlo con el instructor.</td></tr>
+<tr><td>19</td><td>C (con una marca dudosa en D)</td><td>D</td><td>Dato de memorización: una persona pierde <b>&gt;100.000 partículas de piel/min</b> (D) es la cifra estándar citada en formación de Reinraum — usa D como referencia para el examen.</td></tr>
+</table>
+
+<div class="fix-box info"><b class="title">📊 Resumen</b>De 20 preguntas: 13 sin ninguna duda (correctas), 2 casos donde tu examen tenía la respuesta técnicamente mejor que tu hoja final (3 y 15 — errores de transcripción, no de conocimiento), 1 caso de exceso de marcas que habría costado el punto (10), y el resto son matices menores. En general dominas bien el contenido — el patrón de error más importante es <b>anotar más de una opción cuando la regla exige una sola</b>, y <b>transcribir mal de un borrador a la hoja final</b>.</div>
+</section>
+
+<section>
+<h2><span class="tag tag-rr">Test RR</span> Corrección — Teil 2 (preguntas abiertas)</h2>
+
+<div class="fix-box err"><b class="title">⚠️ Pregunta 21 — error de cálculo importante (factor ~10 millones)</b>
+Pregunta: ¿cuánto tarda una partícula de 0,1µm en sedimentar desde 3,5m de altura, con velocidad de sedimentación 0,00081 mm/s?<br><br>
+<b>Tu respuesta: 0,43 s.</b><br>
+<b>Cálculo correcto:</b> t = d/V = 3500 mm / 0,00081 mm/s = <b>4.320.987 s ≈ 1200 horas ≈ 50 días</b>.<br><br>
+Esto no es un detalle menor — es justo el punto pedagógico de la pregunta: las partículas ultrafinas (0,1µm) prácticamente <b>no sedimentan por gravedad en absoluto</b> dentro de una duración práctica; por eso el aire del Reinraum debe renovarse constantemente por flujo laminar en vez de esperar a que las partículas caigan solas. Revisa tu conversión de unidades — parece que se perdió un factor de 10⁷ en algún paso (viste que ya habías tachado y corregido un exponente, pero el resultado final quedó mal).
+</div>
+
+<div class="fix-box"><b class="title">📝 Pregunta 22 — incompleta</b>Escribiste 3 medidas de protección pero no explicaste la <b>causa</b> de la sensibilidad ESD ni definiste claramente "EGB". Respuesta completa:
+<ul style="margin:0.4rem 0 0 1.2rem;">
+<li><b>Causa:</b> el óxido de compuerta (Gateoxid) de un MOS es extremadamente fino (pocos nm) — una descarga electrostática genera un pico de tensión que puede perforarlo permanentemente.</li>
+<li><b>ESD</b> = Elektrostatische Entladung (descarga electrostática) — flujo de corriente súbito entre dos objetos a distinto potencial.</li>
+<li><b>EGB</b> = Elektrostatisch Gefährdete Bauelemente/Baugruppen — los componentes/módulos sensibles a ESD que deben marcarse y manejarse con precaución especial.</li>
+<li>3 medidas: pulsera ESD a tierra, suelo/ropa/calzado disipativos, embalaje EGB adecuado.</li>
+</ul>
+</div>
+
+<div class="fix-box good"><b class="title">✅ Pregunta 23 — esencialmente correcta</b>Tu explicación del principio del contador de partículas (aire pasa por el detector, la luz se interrumpe/dispersa, el software calcula tamaño y cantidad) es correcta en esencia, aunque un poco imprecisa en la redacción. Versión más precisa: una bomba aspira el aire a través de un haz láser; cada partícula dispersa luz generando un pulso en el fotodiodo; la altura del pulso ∝ tamaño de partícula, el número de pulsos = cantidad de partículas.</div>
+
+<div class="fix-box ref"><b class="title">📊 Pregunta 24 — tabla de clases ISO</b>No pude verificar con total certeza tus correcciones fila por fila sin la tabla oficial de límites ISO 14644-1 a mano (requiere comparar cada columna de tamaño contra los límites exactos de cada clase). Tus autocorrecciones (3→4, 2→3) sugieren que ya detectaste y corregiste errores propios durante el examen, lo cual es buena señal — si quieres que verifique esta tabla con precisión, dime y reviso la norma completa.</div>
+
+<div class="fix-box"><b class="title">📝 Pregunta 25 — sin responder</b>Quedó en blanco (identificar partes del microscopio). Repasa los componentes típicos: Okular (ocular), Objektiv (objetivo), Kondensor (condensador), Objekttisch (platina), Lichtquelle (fuente de luz), Grobtrieb/Feintrieb (enfoque grueso/fino), Stativ (cuerpo/soporte), Blende (diafragma).</div>
+
+<div class="fix-box good"><b class="title">✅ Pregunta 26 — correcta</b>Tu esquema del flujo de aire recirculante (techo → Reinraum → suelo técnico → retorno) es conceptualmente correcto.</div>
+</section>
+
+<section>
+<h2><span class="tag tag-hl">Test HL Grundlage</span> Modelo de respuestas oficial (material de referencia)</h2>
+<p class="lead">Confirmado: es una clave limpia de la escuela (18 preguntas), no tu propio trabajo — úsala como referencia de estudio. Selección de las respuestas más examinables que no están ya cubiertas en detalle en las páginas HP+HL:</p>
+
+<div class="qa-block">
+<div class="qa-q">P2 — 12 pasos de fabricación de un wafer de silicio desde arena de cuarzo (en orden)</div>
+<div class="qa-a">1) Rohsilizium (combustión con carbono) → 2) Reinstsilizium (proceso triclorosilano) → 3) Tirar el monocristal → 4) Cualificación del cristal → 5) Recortar el cristal (Abdrehen) → 6) Fresar la muesca (notch) → 7) Cortar en obleas individuales → 8) Lapeado multi-etapa → 9) Desbaste de bordes → 10) Grabado húmedo-químico → 11) CMP → 12) Limpieza y secado.</div>
+</div>
+
+<div class="qa-block">
+<div class="qa-q">P7 — Fabricación de una máscara desde el Maskenblank</div>
+<div class="qa-a">Maskenblank (cuarzo + cromo + resina) → estructuración por haz de electrones (pixel a pixel) → revelado → grabado del cromo → eliminación de resina → control de máscara → montaje de Pellicle. <b>(coincide exactamente con lo ya visto en HP+HL 03 Lithografie)</b></div>
+</div>
+
+<div class="qa-block">
+<div class="qa-q">P14 — Ejercicio de cálculo RIE (Selektivität) — ejemplo resuelto completo</div>
+<div class="qa-a">Oblea con 830nm de SiO₂ a grabar por RIE, selectividad 20:1 frente a fotorresina, tasa de grabado 83 nm/min, se exige que queden 250nm de resina al final. Como la selectividad es 20:1, en el tiempo que se graban 830nm de óxido, la resina se desgasta 830/20 = 41,5nm. Por tanto la resina inicial necesaria era 250 + 41,5 = <b>291,5 nm</b>.
+<div class="fix-box" style="margin-top:0.5rem;"><b class="title">⚠️ Inconsistencia en el documento original (no es tuya)</b>La clave oficial usa "85 nm/min" en un primer bloque de solución pero el enunciado dice 83 nm/min — un segundo bloque de la misma clave sí usa 83 correctamente. El resultado final (291,5nm) es el mismo con ambos números porque en realidad la tasa de grabado no afecta el resultado (solo importan la selectividad y el espesor de óxido) — es un error tipográfico del material oficial, no tuyo.</div>
+</div>
+</div>
+
+<div class="qa-block">
+<div class="qa-q">P17 — Mecanismo físico del DC-Sputtern y Magnetron-DC-Sputtern</div>
+<div class="qa-a">DC: cámara en alto vacío → se introduce Ar → ionización (Ar⁺ + e⁻) → target como cátodo → Ar⁺ arranca átomos del target de Al. Magnetrón: imán tras el cátodo → campo E → electrones en espiral → más colisiones → mayor tasa de sputtering. <b>(coincide exactamente con HP+HL 05)</b></div>
+</div>
+
+<div class="qa-block">
+<div class="qa-q">P18 — Nombres alternativos de la limpieza Standard Clean + fórmulas químicas</div>
+<div class="qa-a">Huang A/B, RCA-Reinigung, Kernsche Reinigung. SC1 = NH₄OH+H₂O₂+H₂O agua; SC2 = HCl+H₂O₂+H₂O. Fórmulas: H₂O₂, NH₄OH, HCl, HF. Por qué DI-Wasser y no agua del grifo: el agua del grifo contiene iones que interfieren con el proceso. <b>(coincide con HP+HL 01)</b></div>
+</div>
+
+</section>
+
+</main>
+
+<footer>Test RR + HL Grundlage · IHK Mikrotechnologe · guarda esta página en tu pantalla de inicio</footer>
+
+</body>
+</html>
