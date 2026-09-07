@@ -87,9 +87,9 @@
 <tr><td>REM (SEM)</td><td>Estructura/defectos</td><td>Resolución hasta 1.000.000x vs. 1.500x del óptico</td></tr>
 </table>
 <h3>REM: Plane View vs. Cross Section</h3>
-<div class="warning-grid">
-  <div class="warning-card"><b>Plane View</b>Imagen de superficie — mide dimensiones laterales. La vista en ángulo da impresión intuitiva pero NO sirve para medir (distorsión perspectiva).</div>
-  <div class="warning-card"><b>Cross Section</b>Corte transversal — determina espesores exactos, pero requiere preparación destructiva (embutido, pulido, grabado).</div>
+<div class="grid2">
+  <div class="info-box"><h4>Plane View</h4><p>Imagen de superficie — mide dimensiones laterales. La vista en ángulo da impresión intuitiva pero NO sirve para medir (distorsión perspectiva).</p></div>
+  <div class="info-box"><h4>Cross Section</h4><p>Corte transversal — determina espesores exactos, pero requiere preparación destructiva (embutido, pulido, grabado).</p></div>
 </div>
 <h3>Wafertest</h3>
 <p style="font-size:0.84rem;">El <b>Chuck</b> empuja la oblea desde abajo contra la <b>Nadelkarte</b>. La aguja se clava en el Al del pad — el material desplazado genera contacto libre de óxido con mínima resistencia de transición (marca: <b>Scratchmark</b>). Equipos: Handprober Karl Süss (manual, laboratorio) vs. Automatik-Prober (industrial).</p>
@@ -152,10 +152,10 @@
 </section>
 
 <section>
-<h2>⚠️ Puntos no cerrados en clase</h2>
-<div class="warning-grid">
-  <div class="warning-card"><b>Yield/test más allá de Good Die/Bad Die</b>Confirmado: ni la VE7 ni el protocolo cubren mapas de wafer o cálculo de yield — laguna real, estudiar por separado (definición de yield, binning, motivos de descarte).</div>
-  <div class="warning-card"><b>Tensión umbral de diodo más baja</b>0,44-0,52V medidos vs. ~0,7V "de manual" — aclarar si es específico de la Ring-Diode o del criterio de medición usado.</div>
+<h2>📎 Aclaraciones adicionales</h2>
+<div class="grid2">
+  <div class="info-box"><h4>Yield, wafer map y binning — lo que no cubrió esta práctica</h4><p><b>Yield</b> = % de dies funcionales de un wafer. El <b>wafer map</b> registra pass/fail por posición tras el test eléctrico. El <b>binning</b> clasifica los dies buenos en distintas categorías de calidad/velocidad (p.ej. CPUs binned por frecuencia máxima alcanzada). Causas típicas de descarte: defectos por partículas, efecto de borde (los dies cerca del borde del wafer tienen peor yield por no-uniformidad de proceso), defectos de litografía, fallos paramétricos eléctricos.</p></div>
+  <div class="info-box"><h4>Por qué tu diodo dio menos de 0,7V</h4><p>0,7V es el valor típico a la corriente NOMINAL de un datasheet (p.ej. 1mA). Tu medición usó el criterio "inicio del ascenso de corriente" — un punto mucho más temprano en la curva I-V exponencial del diodo, donde la tensión es naturalmente menor (a menor corriente, menor caída directa). Además son Ring-Dioden (estructuras de prueba), no diodos discretos estándar — ambos factores explican perfectamente el valor más bajo, sin que sea un error tuyo.</p></div>
 </div>
 </section>
 

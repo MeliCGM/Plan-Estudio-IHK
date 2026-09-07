@@ -170,10 +170,10 @@
 </section>
 
 <section>
-<h2>⚠️ Puntos no cerrados en clase</h2>
-<div class="warning-grid">
-  <div class="warning-card"><b>¿Reflectometría o espectrometría?</b>La Versuchsanleitung real usa el nombre oficial <b>"Spektralphotometrische Schichtdickenmessung"</b> (equipo: Photospektrometer Filmetrics F20). "Reflectometría" describe el principio físico pero no es el término literal del curso — usa "espectrofotometría" en el examen si preguntan el nombre oficial.</div>
-  <div class="warning-card"><b>Crecimiento teórico vs. medido</b>La tabla teórica da 120 nm a 950°C/25min, pero el protocolo real midió 341-358 nm con la misma receta — casi 3x más. Posible causa no confirmada: el flujo de O₂ ya activo durante los ~35min de rampa añade crecimiento no contabilizado en la cifra de referencia. Preguntar al instructor.</div>
+<h2>📎 Aclaraciones adicionales</h2>
+<div class="grid2">
+  <div class="info-box"><h4>Nombre oficial del método de medición</h4><p>El equipo (Filmetrics F20) mide por reflectometría/interferometría, pero el nombre técnico usado en la Versuchsanleitung real es <b>"Spektralphotometrische Schichtdickenmessung"</b> (espectrofotometría) — usa este término si te preguntan el nombre oficial en el examen.</p></div>
+  <div class="info-box"><h4>Por qué mediste 3× más grueso de lo que predice la tabla</h4><p>La tabla teórica (120nm a 950°C/25min) asume que la oxidación empieza justo al llegar a 950°C. En la práctica real, el O₂ ya fluye durante los ~35 min de rampa de subida — y la oxidación térmica, aunque más lenta a menor temperatura, no es cero durante ese tramo. Ese crecimiento adicional "no contabilizado" durante la rampa es exactamente lo que explica que tu medición real (341-358nm) sea bastante mayor que la cifra de referencia de tabla: en producción real esto se modela añadiendo un "tiempo efectivo" extra al modelo de Deal-Grove para compensar el histórico térmico previo al soak, no solo el tiempo nominal a temperatura final.</p></div>
 </div>
 </section>
 

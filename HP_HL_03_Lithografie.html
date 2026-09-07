@@ -171,9 +171,9 @@
   </div>
   <p style="font-size:0.75rem; color:var(--muted); margin-top:0.5rem;">👉 Nota: a menor λ o mayor NA → estructuras más pequeñas, pero <b>menor</b> profundidad de foco (DOF). Referencia real: ArF 193nm → 0,09 µm; EUV 13,5nm → estructuras &lt;0,02 µm.</p>
 </div>
-<div class="warning-grid">
-  <div class="warning-card"><b>⚠️ Posible error del material oficial</b>La tabla de comparación etiqueta el láser F₂ (157 nm) como "(Extreme) EUV" — el EUV real de producción es 13,5 nm (aparece correcto en diapositivas posteriores del mismo documento). No repetir "F₂=EUV" en el examen.</div>
-  <div class="warning-card"><b>⚠️ Posible inversión en inmersión</b>La diapositiva de apertura numérica da n(aceite)≈1,33 y n(agua)=1,5 — parecen invertidos (agua real ≈1,33; aceite de inmersión ≈1,5-1,7). Confirmar con el profesor antes del examen.</div>
+<div class="grid2">
+  <div class="info-box"><h4>EUV real de producción = 13,5 nm</h4><p>El láser F₂ (157 nm) fue una tecnología histórica de ultravioleta de vacío (VUV), abandonada — no es EUV. El EUV de producción actual es 13,5 nm; usa este valor si te preguntan por EUV en el examen.</p></div>
+  <div class="info-box"><h4>Inmersión: el fluido real es agua ultrapura, no aceite</h4><p>La litografía por inmersión ArF (193nm) usa <b>agua ultrapura</b> como medio, con n≈1,44 <i>a 193nm</i> (más alto que el valor de 1,33 que conoces a longitud de onda visible, por dispersión normal del agua en UV). El "aceite de inmersión" (n≈1,5-1,7) es una técnica distinta de microscopía óptica a luz visible, no de litografía — probablemente el material mezcla ambos conceptos.</p></div>
 </div>
 </section>
 
@@ -221,9 +221,7 @@
 Tu protocolo concluye <i>"Ja, mit Wafer 2 ist sie ausreichend"</i>. Pero en el Slot 2, <b>3 de los 4 valores medidos (x_izq=4, y_izq=4, x_der=3,5 µm) superan la tolerancia calculada de 2,5 µm</b> — solo y_der (2 µm) queda dentro. Con el criterio estricto de que todos los desplazamientos deben quedar dentro de ±2,5 µm, la respuesta más defendible sería <b>"nicht ausreichend"</b> para el Slot 2. El <b>Slot 3</b> es el más cercano a ser realmente suficiente (solo excede ligeramente en x_izq=3 µm).
 <br><br>👉 <b>Antes del examen:</b> confirma con el instructor si el criterio se aplica por eje (X e Y por separado) o de forma combinada/vectorial, y si "Wafer 2" del protocolo corresponde realmente al "Slot 2" de la tabla — esta correspondencia no quedó clara en el documento original.
 </div>
-<div class="warning-grid">
-  <div class="warning-card"><b>⚠️ Valores ilegibles — no adivinar</b>Slot 1: "Überdeckung links Y" tiene un valor tachado (+3,5 con posible "−10" tachado) y "Überdeckung rechts Y" no se pudo leer en el escaneado original. No los repitas como si fueran ciertos.</div>
-</div>
+<p style="font-size:0.78rem; color:var(--muted); margin-top:0.5rem;">📎 Nota de lectura: en el Slot 1, "Überdeckung links Y" y "Überdeckung rechts Y" tienen valores tachados/no legibles en el escaneado original — no se incluyeron en la tabla de arriba para no repetir cifras inciertas como si fueran ciertas.</p>
 </section>
 
 <section>
@@ -232,13 +230,13 @@ Tu protocolo concluye <i>"Ja, mit Wafer 2 ist sie ausreichend"</i>. Pero en el S
 </section>
 
 <section>
-<h2>⚠️ Más puntos no cerrados en clase</h2>
-<div class="warning-grid">
-  <div class="warning-card"><b>Composición del ARC</b>Capa antirreflejante — el profesor no precisó su composición química exacta.</div>
-  <div class="warning-card"><b>Espesor de resina residual (P14 examen)</b>¿50 nm o 250 nm? La solución modelo usa <b>250 nm</b> — usar ese valor.</div>
-  <div class="warning-card"><b>Persistencia de OH⁻ tras el Prebake</b>Mecanismo exacto no aclarado por el profesor.</div>
-  <div class="warning-card"><b>Ancho de estructura del laboratorio</b>~100 nm, sin confirmar oficialmente.</div>
-  <div class="warning-card"><b>Alineación de máscaras en detalle</b>Mecanismo óptico/mecánico no cubierto en profundidad en clase.</div>
+<h2>📎 Aclaraciones adicionales</h2>
+<div class="grid2">
+  <div class="info-box"><h4>Composición típica del ARC</h4><p>Es una resina polimérica orgánica (habitualmente acrilato o similar) con un colorante/cromóforo absorbente sintonizado a la longitud de onda de exposición, más solvente. Se diseña para que su índice de refracción (n) y coeficiente de extinción (k) generen interferencia destructiva con el haz reflejado en el sustrato, suprimiendo la reflexión no deseada — la fórmula exacta es propietaria de cada fabricante, pero esta es la composición funcional estándar de cualquier BARC orgánico.</p></div>
+  <div class="info-box"><h4>Espesor de resina residual — usa 250 nm</h4><p>La solución modelo del examen usa 250 nm de forma consistente; ese es el valor a memorizar.</p></div>
+  <div class="info-box"><h4>Por qué persisten grupos OH⁻ tras el Prebake</h4><p>El Dehydrationsbacken retira sobre todo el agua fisisorbida (unida débilmente por puentes de hidrógeno a capas de agua ya adsorbidas). Pero muchos grupos silanol (Si-OH) están <b>quimisorbidos</b> — forman parte covalente de la propia red del óxido — y requieren temperaturas mucho más altas (típicamente &gt;400-600°C) para eliminarse por completo, muy por encima de los ~100-150°C de un prebake normal. Son precisamente esos OH⁻ remanentes los que reacciona el HMDS a continuación.</p></div>
+  <div class="info-box"><h4>Ancho de estructura del laboratorio</h4><p>~100 nm es una escala razonable para un laboratorio de formación con los equipos descritos (Kontaktbelichter/Stepper de generación anterior) — coherente con los valores de resolución de la tabla de exposición ya vista arriba.</p></div>
+  <div class="info-box"><h4>Cómo funciona la alineación de máscaras</h4><p>Se usan marcas de alineación (Justierkreuze, patrones vernier o "box-in-box") impresas tanto en el wafer como en la máscara. Un sistema óptico de campo dividido (o cámaras separadas) visualiza ambas marcas simultáneamente; la mesa del wafer se ajusta en X, Y y rotación θ (mediante motores/piezoeléctricos de precisión, como el joystick de la Folgebelichtung) hasta que las marcas coinciden — el patrón vernier permite leer desalineamientos de hasta fracciones de micra antes de bloquear la posición y exponer.</p></div>
 </div>
 </section>
 

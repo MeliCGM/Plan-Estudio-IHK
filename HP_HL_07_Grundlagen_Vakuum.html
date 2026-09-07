@@ -166,9 +166,7 @@
     <p>Grupo V (P, As) → tipo n (electrón extra). Grupo III (B) → tipo p (hueco extra). Detalle completo del proceso de difusión/implantación en <a href="HP_HL_01_Reinigung_Dotierung.html">HP+HL 01</a>.</p>
   </div>
 </div>
-<div class="warning-grid" style="margin-top:1rem;">
-  <div class="warning-card"><b>⚠️ Punto no cerrado en clase</b>El valor de banda prohibida dado para no-conductores ("&lt;0,08 eV") contradice la física estándar — probablemente el profesor se refería a los conductores (banda casi nula). No repetir ese número tal cual en el examen.</div>
-</div>
+<div class="info-box" style="margin-top:1rem;"><h4>Precisión sobre conductores vs. aislantes</h4><p>Un <b>conductor</b> no tiene banda prohibida (las bandas de valencia y conducción se solapan, E<sub>g</sub>≈0). El valor "&lt;0,08 eV" que a veces se menciona para "no-conductores" es una confusión de terminología — corresponde en realidad a un conductor, no a un aislante (que tiene E<sub>g</sub>&gt;~4eV, como ya se indicó arriba). Usa E<sub>g</sub>=0 para conductores en el examen.</p></div>
 </section>
 
 <section>
@@ -200,11 +198,11 @@
 <section>
 <h2><span class="tag tag-vac">Fugas</span> Detección con helio — lo que enfatizó el profesor</h2>
 <p class="lead">Más allá de la fórmula, esto es lo que suele preguntarse en el examen sobre el procedimiento real:</p>
-<div class="warning-grid">
-  <div class="warning-card"><b>🎯 Por qué Helio (3 razones)</b>Molécula pequeña y rápida → penetra cualquier rendija. No tóxico y muy escaso en el aire ambiente (~5 ppm) → bajo ruido de fondo. Al ionizarse da una única relación masa/carga (a diferencia de N₂/O₂ que se fragmentan) → filtrado limpio con un simple imán permanente.</div>
-  <div class="warning-card"><b>⬆️➡️⬇️ Rociar de arriba hacia abajo</b>Nunca al revés: el helio es más ligero que el aire y sube — empezar por abajo puede dar falsos positivos en zonas superiores por helio que sube desde una fuga inferior.</div>
-  <div class="warning-card"><b>🧹 La causa más común no es la junta</b>El profesor insistió: la mayoría de fugas reales no son juntas defectuosas, sino <b>suciedad — una pelusa o un cabello</b> en la conexión, típicamente tras mantenimiento.</div>
-  <div class="warning-card"><b>✅ Chequeo de coherencia</b>La tasa de fuga calculada globalmente (por subida de presión) debe ser SIEMPRE mayor que la medida en un punto individual con el detector de helio — el cálculo global suma todas las fugas del sistema, el detector solo capta una a la vez.</div>
+<div class="grid2">
+  <div class="info-box"><h4>🎯 Por qué Helio (3 razones)</h4><p>Molécula pequeña y rápida → penetra cualquier rendija. No tóxico y muy escaso en el aire ambiente (~5 ppm) → bajo ruido de fondo. Al ionizarse da una única relación masa/carga (a diferencia de N₂/O₂ que se fragmentan) → filtrado limpio con un simple imán permanente.</p></div>
+  <div class="info-box"><h4>⬆️➡️⬇️ Rociar de arriba hacia abajo</h4><p>Nunca al revés: el helio es más ligero que el aire y sube — empezar por abajo puede dar falsos positivos en zonas superiores por helio que sube desde una fuga inferior.</p></div>
+  <div class="info-box"><h4>🧹 La causa más común no es la junta</h4><p>La mayoría de fugas reales no son juntas defectuosas, sino <b>suciedad — una pelusa o un cabello</b> en la conexión, típicamente tras mantenimiento.</p></div>
+  <div class="info-box"><h4>✅ Chequeo de coherencia</h4><p>La tasa de fuga calculada globalmente (por subida de presión) debe ser SIEMPRE mayor que la medida en un punto individual con el detector de helio — el cálculo global suma todas las fugas del sistema, el detector solo capta una a la vez.</p></div>
 </div>
 <p style="font-size:0.8rem; margin-top:0.7rem;">Técnica estándar industrial: espectrómetro de masas de sector 180° que filtra selectivamente los iones de masa 4 (He) mediante un campo magnético perpendicular, separándolos de los iones M&gt;4 antes de llegar al Ionenfänger (colector). Alternativa poco usada: <b>Schnüffelsonde</b> (sonda olfativa) — inundar todo el recipiente de helio y rastrear con sonda, en vez de rociar puntos localizados.</p>
 </section>
@@ -220,9 +218,7 @@
   <div class="calc-result" id="leakResult"></div>
 </div>
 <p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem;">📎 Referencia real de clase (Bilanzraum 1, Versuch 5): ΔP=1,63 mbar, V=0,25 L, Δt=300 s → Q≈1,4×10⁻³ mbar·l/s (valor calculado) vs. ≈2,6×10⁻³ medido — la diferencia entre el valor <b>calculado</b> y el <b>medido</b> es justo lo que se discute y compara en el protocolo real.</p>
-<div class="warning-grid">
-  <div class="warning-card"><b>⚠️ Punto no cerrado en clase</b>No se dio una explicación cuantitativa firme de por qué la tasa de fuga calculada para todo el sistema fue ~3× más alta que la medida en el único punto de fuga confirmado — repasar el concepto pero no esperar una cifra exacta en el examen.</div>
-</div>
+<div class="info-box"><h4>Por qué la tasa calculada fue ~3× la medida en un punto</h4><p>Es el mismo principio ya explicado más abajo (chequeo de coherencia): la tasa por subida de presión suma <b>todas</b> las fugas del sistema, mientras que el detector de helio solo capta la fuga puntual que se está rociando en ese momento. Además, el método de subida de presión también integra el <b>desgasificado</b> (outgassing) de las superficies internas — humedad y gases adsorbidos en juntas, o-rings y paredes — que no es una fuga puntual localizable con la sonda, pero sí contribuye a la carga de gas total medida. La suma de fugas menores + outgassing explica perfectamente el factor ~3.</p></div>
 </section>
 
 <section>
@@ -233,9 +229,9 @@
   <li>En la tabla de comparación de medidores (Tabelle 2/3), hay que <b>marcar cuáles son gasartabhängig vs. gasartunabhängig</b> — en el modelo: Wärmeleitungs-, Glühkathoden- y Kaltkathoden-Vakuummeter son dependientes del gas; el Membran-Vakuummeter (mecánico y capacitivo) es independiente.</li>
   <li>Cada medidor tiene un <b>Messbereich</b> (rango de medición) que hay que anotar explícitamente en la tabla — es una de las instrucciones que más se olvida.</li>
 </ul>
-<div class="warning-grid" style="margin-top:0.8rem;">
-  <div class="warning-card"><b>⚠️ Inconsistencia en el material oficial</b>El apunte de la escuela dice literalmente "se usan <b>tres</b> efectos físicos para medir presión" pero luego enumera <b>cuatro</b>: fuerza/superficie (Kraft pro Fläche), fricción (Reibung), conducción térmica (Wärmeleitung) e ionización. Es un error de redacción del propio material — usa "cuatro efectos" en el examen.</div>
-  <div class="warning-card"><b>📎 Dato de contexto</b>La Vakuumtechnik no aparecía como módulo separado en el temario original — se añadió como complemento necesario para entender Sputtern/PVD/CVD y la metrología de Reinraum.</div>
+<div class="grid2" style="margin-top:0.8rem;">
+  <div class="info-box"><h4>Cuatro efectos físicos, no tres</h4><p>El apunte de la escuela dice "tres efectos físicos" pero enumera cuatro: fuerza/superficie (Kraft pro Fläche), fricción (Reibung), conducción térmica (Wärmeleitung) e ionización — es un desliz de redacción del propio material. Usa "cuatro efectos" en el examen.</p></div>
+  <div class="info-box"><h4>📎 Dato de contexto</h4><p>La Vakuumtechnik no aparecía como módulo separado en el temario original — se añadió como complemento necesario para entender Sputtern/PVD/CVD y la metrología de Reinraum.</p></div>
 </div>
 </section>
 
