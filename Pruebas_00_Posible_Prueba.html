@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posible Prueba — Quiz Interactivo | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --pp: #7c2d12;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--pp), #b91c1c); color: white; padding: 1.5rem 1.5rem 1.5rem; text-align: center; position: sticky; top: 0; z-index: 10; }
+  header h1 { font-size: 1.35rem; font-weight: 700; }
+  header p { margin-top: 0.3rem; opacity: 0.9; font-size: 0.85rem; }
+  .progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 8px; margin-top: 0.8rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .progress-bar { background: white; height: 8px; border-radius: 999px; width: 0%; transition: width 0.3s; }
+  .score-line { font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.95; }
+  .controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.7rem; flex-wrap: wrap; }
+  .controls button { padding: 0.4rem 0.9rem; border-radius: 8px; border: none; background: rgba(255,255,255,0.2); color: white; font-size: 0.78rem; cursor: pointer; font-weight: 600; }
+  .controls button:hover { background: rgba(255,255,255,0.35); }
+
+  main { max-width: 760px; margin: 0 auto; padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .q-card { background: var(--card); border-radius: 12px; padding: 1.2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .q-num { font-size: 0.72rem; font-weight: 700; color: var(--pp); text-transform: uppercase; letter-spacing: 0.03em; }
+  .q-text { font-size: 0.95rem; font-weight: 600; margin: 0.4rem 0 0.8rem; }
+  .q-hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.6rem; font-style: italic; }
+  .opt-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    border: 1.5px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem;
+    cursor: pointer; font-size: 0.85rem; transition: all 0.15s;
+  }
+  .opt:hover { border-color: var(--pp); background: #fef2f2; }
+  .opt.checked { border-color: var(--primary); background: #eff6ff; }
+  .opt.correct { border-color: var(--success); background: #d1fae5; font-weight: 600; }
+  .opt.incorrect-checked { border-color: var(--danger); background: #fee2e2; }
+  .opt.missed { border-color: var(--warning); background: #fffbeb; }
+  .opt-box { width: 18px; height: 18px; border: 2px solid var(--muted); border-radius: 4px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+  .opt.checked .opt-box { background: var(--primary); border-color: var(--primary); color: white; }
+  .opt.correct .opt-box { background: var(--success); border-color: var(--success); color: white; }
+  .opt.incorrect-checked .opt-box { background: var(--danger); border-color: var(--danger); color: white; }
+  .verify-btn { margin-top: 0.9rem; padding: 0.5rem 1.1rem; border-radius: 8px; border: none; background: var(--pp); color: white; font-weight: 600; font-size: 0.83rem; cursor: pointer; }
+  .verify-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
+  .feedback { display: none; margin-top: 0.7rem; padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.82rem; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #d1fae5; color: #065f46; }
+  .feedback.bad { background: #fef3c7; color: #92400e; }
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>📝 Posible Prueba — Simulacro IHK</h1>
+<p>46 preguntas de selección múltiple (varias respuestas correctas por pregunta) · marca lo que creas correcto y pulsa "Comprobar"</p>
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="score-line" id="scoreLine">0 / 46 verificadas</div>
+<div class="controls">
+  <button onclick="resetAll()">🔄 Reiniciar todo</button>
+  <button onclick="shuffleQuestions()">🔀 Mezclar orden</button>
+</div>
+</header>
+
+<main id="quizMain"></main>
+
+<footer>Posible Prueba · Simulacro IHK Mikrotechnologe · guarda esta página en tu pantalla de inicio</footer>
+
+<script>
+// Cada pregunta: texto, opciones (texto + correcto true/false)
+const questions = [
+{q:"Arbeitssicherheit: Welche Aussagen sind richtig?", opts:[
+  {t:"Persönliche Schutzausrüstung (PSA) muss je nach Tätigkeit getragen werden", c:true},
+  {t:"Sicherheitsvorkehrungen dürfen bei Zeitdruck entfernt werden", c:false},
+  {t:"Gefahrstoffe müssen entsprechend ihrer Kennzeichnung gehandhabt werden", c:true},
+  {t:"Sicherheitsregeln gelten nur im Reinraum", c:false}
+]},
+{q:"Reinraum: Welche Aussagen sind richtig?", opts:[
+  {t:"Die Partikelanzahl wird kontinuierlich überwacht", c:true},
+  {t:"Temperatur und Luftfeuchte werden geregelt", c:true},
+  {t:"Straßenkleidung darf unter der Reinraumkleidung getragen werden", c:false},
+  {t:"Die Luft wird gefiltert", c:true},
+  {t:"Fenster werden zur Belüftung regelmäßig geöffnet", c:false}
+]},
+{q:"ESD-Schutz: Welche Maßnahmen sind richtig?", opts:[
+  {t:"Isolierende Oberflächen am Arbeitsplatz sind ideal für ESD-Schutz", c:false},
+  {t:"Geerdetes Armband tragen", c:true},
+  {t:"ESD-Matte am Arbeitsplatz verwenden", c:true},
+  {t:"ESD-Schuhe tragen", c:true}
+]},
+{q:"Stoffeigenschaften — welche Materialien sind Metalle?", opts:[
+  {t:"Glas", c:false},
+  {t:"Kupfer", c:true},
+  {t:"Silizium", c:false},
+  {t:"Eisen", c:true},
+  {t:"Aluminium", c:true}
+]},
+{q:"Halbleiter (Silizium) — welche Aussagen sind richtig?", opts:[
+  {t:"Silizium ist ein Halbleiter", c:true},
+  {t:"Die Leitfähigkeit von Silizium liegt zwischen Leiter und Isolator", c:true},
+  {t:"Reines Silizium leitet grundsätzlich besser als Kupfer", c:false},
+  {t:"Durch Dotierung lässt sich die Leitfähigkeit von Silizium verändern", c:true}
+]},
+{q:"Technisches Messen — Längenmessung: welche Geräte werden dafür genutzt?", opts:[
+  {t:"Messschieber", c:true},
+  {t:"Messschraubenokular", c:true},
+  {t:"Multimeter", c:false},
+  {t:"Waage", c:false}
+]},
+{q:"Chemikalien — welche Aussagen sind richtig?", opts:[
+  {t:"Säuren wirken ätzend", c:true},
+  {t:"Das Sicherheitsdatenblatt sollte bekannt sein", c:true},
+  {t:"Chemikalien dürfen in Getränkeflaschen aufbewahrt werden", c:false},
+  {t:"Chemikalienbehälter müssen eindeutig gekennzeichnet sein", c:true}
+]},
+{q:"Elektrische Grundgrößen — welche gehören dazu?", opts:[
+  {t:"Spannung", c:true},
+  {t:"Viskosität", c:false},
+  {t:"Widerstand", c:true},
+  {t:"Dichte", c:false}
+]},
+{q:"Fertigungsprozesse der Mikrotechnologie — welche gehören dazu?", opts:[
+  {t:"Fotolithografie", c:true},
+  {t:"Sandstrahlen von Beton", c:false},
+  {t:"Ätzen", c:true},
+  {t:"Dotieren", c:true}
+]},
+{q:"Qualitätsmanagement — welche Aussagen sind richtig?", opts:[
+  {t:"Messergebnisse müssen nachvollziehbar dokumentiert werden", c:true},
+  {t:"Fehler dürfen verschwiegen werden, wenn das Bauteil trotzdem funktioniert", c:false},
+  {t:"Arbeitsanweisungen unterstützen eine gleichbleibende Qualität", c:true},
+  {t:"Qualitätskontrollen dienen ausschließlich der Endkontrolle", c:false}
+]},
+{q:"Gefahrstoffkennzeichnung (GHS) — welche Aussagen sind richtig?", opts:[
+  {t:"Ermöglicht schnelles Erkennen von Gefahren", c:true},
+  {t:"Das Totenkopf-Symbol steht für akute Toxizität", c:true},
+  {t:"Die Kennzeichnung enthält Hinweise zum sicheren Umgang", c:true},
+  {t:"Interne Chemikalien müssen nicht gekennzeichnet werden", c:false}
+]},
+{q:"Säuren und Laugen — welche Aussagen sind richtig?", opts:[
+  {t:"Wasser hat grundsätzlich einen pH-Wert von 0", c:false},
+  {t:"Beim Verdünnen wird die Säure langsam in Wasser gegeben (nicht umgekehrt)", c:true},
+  {t:"Säuren besitzen häufig einen pH-Wert kleiner als 7", c:true},
+  {t:"Laugen können Haut und Augen verätzen", c:true},
+  {t:"Säuren und Laugen dürfen grundsätzlich gemeinsam gelagert werden", c:false}
+]},
+{q:"Druckgasflaschen — welche Aussagen sind richtig?", opts:[
+  {t:"Müssen gegen Umfallen gesichert werden", c:true},
+  {t:"Schutzkappen schützen das Ventil", c:true},
+  {t:"Leere Flaschen benötigen keine Kennzeichnung mehr", c:false},
+  {t:"Dürfen starker Erwärmung ausgesetzt werden", c:false}
+]},
+{q:"Reinstwasser — welche Aussagen sind richtig?", opts:[
+  {t:"Enthält nur sehr wenige gelöste Stoffe", c:true},
+  {t:"Ist elektrisch besonders leitfähig", c:false},
+  {t:"Verhindert Verunreinigungen auf Wafern", c:true},
+  {t:"Wird häufig zum Spülen nach chemischen Prozessen verwendet", c:true}
+]},
+{q:"Reinraumverhalten — welche Aussagen sind richtig?", opts:[
+  {t:"Essen und Trinken ist im Reinraum gestattet", c:false},
+  {t:"Schmuck sollte möglichst abgelegt werden", c:true},
+  {t:"Papier sollte möglichst vermieden werden", c:true},
+  {t:"Kleidung sollte häufig kräftig ausgeschüttelt werden", c:false},
+  {t:"Bewegungen sollten langsam und ruhig sein", c:true}
+]},
+{q:"Prozessgase — welche werden typischerweise in der Fertigung eingesetzt?", opts:[
+  {t:"Stickstoff", c:true},
+  {t:"Xenon", c:false},
+  {t:"Argon", c:true},
+  {t:"Helium wird ausschließlich zum Heizen von Anlagen verwendet", c:false}
+]},
+{q:"Umweltschutz — welche Aussagen sind richtig?", opts:[
+  {t:"Getrennte Entsorgung von Abfällen", c:true},
+  {t:"Sparsamer Umgang mit Wasser", c:true},
+  {t:"Gefahrstoffe dürfen über das Waschbecken entsorgt werden", c:false},
+  {t:"Energieverbrauch sollte reduziert werden", c:true}
+]},
+{q:"Sicherheitsdatenblatt — welche Informationen enthält es?", opts:[
+  {t:"Börsenpreis des Stoffes", c:false},
+  {t:"Hinweise zur Lagerung", c:true},
+  {t:"Gefahreneigenschaften", c:true},
+  {t:"Erste-Hilfe-Maßnahmen", c:true}
+]},
+{q:"Brandschutz — welche Aussagen sind richtig?", opts:[
+  {t:"Fluchtwege müssen immer frei sein", c:true},
+  {t:"Feuerlöscher dürfen zugestellt werden", c:false},
+  {t:"Der Standort der Notdusche sollte bekannt sein", c:true},
+  {t:"Brände müssen sofort gemeldet werden", c:true}
+]},
+{q:"Verhalten bei Chemikalienunfällen — welche Aussagen sind richtig?", opts:[
+  {t:"Gefahrstoffreste mit Druckluft entfernen", c:false},
+  {t:"Betroffene Hautstellen sofort mit viel Wasser spülen", c:true},
+  {t:"Unfälle unverzüglich melden", c:true},
+  {t:"Verschüttete Chemikalien gemäß Betriebsanweisung beseitigen", c:true}
+]},
+{q:"Aufbau des Siliziums — welche Aussagen sind richtig?", opts:[
+  {t:"Reines Silizium leitet besser als Kupfer", c:false},
+  {t:"Silizium gehört zu den Halbleitern", c:true},
+  {t:"Silizium besitzt vier Valenzelektronen", c:true},
+  {t:"Silizium ist bei Raumtemperatur gasförmig", c:false}
+]},
+{q:"Dotierung — welche Aussagen sind richtig?", opts:[
+  {t:"Dotieren verändert ausschließlich die Farbe des Materials", c:false},
+  {t:"Phosphor erzeugt einen n-leitenden Halbleiter", c:true},
+  {t:"Dotierstoffe liegen in sehr geringen Konzentrationen vor", c:true},
+  {t:"Durch Dotierung lässt sich die Leitfähigkeit gezielt verändern", c:true},
+  {t:"Bor erzeugt einen p-leitenden Halbleiter", c:true}
+]},
+{q:"Wafer — welche Aussagen sind richtig?", opts:[
+  {t:"Wafer bestehen meist aus Einkristallen", c:true},
+  {t:"Der Wafer dient als Ausgangsmaterial für ICs", c:true},
+  {t:"Wafer bestehen ausschließlich aus Aluminium", c:false},
+  {t:"Die Oberfläche muss sehr sauber und eben sein", c:true}
+]},
+{q:"Kristallorientierung — welche Aussagen sind richtig?", opts:[
+  {t:"Bestimmt die Farbe der Reinraumkleidung", c:false},
+  {t:"Beeinflusst elektrische Eigenschaften", c:true},
+  {t:"Beeinflusst bestimmte Ätzprozesse", c:true},
+  {t:"Kann für spätere Prozessschritte wichtig sein", c:true}
+]},
+{q:"Thermische Oxidation — welche Aussagen sind richtig?", opts:[
+  {t:"Auf der Siliziumoberfläche entsteht Siliziumdioxid", c:true},
+  {t:"Das Oxid dient häufig als Isolationsschicht", c:true},
+  {t:"Während der Oxidation wird grundsätzlich Metall abgeschieden", c:false},
+  {t:"Sauerstoff oder Wasserdampf können zur Oxidation eingesetzt werden", c:true}
+]},
+{q:"Fotolithografie — welche Arbeitsschritte gehören typischerweise dazu?", opts:[
+  {t:"Aufbringen eines Fotolacks", c:true},
+  {t:"Belichten durch eine Maske", c:true},
+  {t:"Entwickeln des Fotolacks", c:true},
+  {t:"Schweißen des Wafers", c:false},
+  {t:"Strukturübertragung", c:true}
+]},
+{q:"Ätzverfahren — welche Aussagen sind richtig?", opts:[
+  {t:"Nassätzen erfolgt mit chemischen Lösungen", c:true},
+  {t:"Trockenätzen arbeitet häufig mit festem Pulver", c:false},
+  {t:"Beide Verfahren dienen der gezielten Strukturierung", c:true},
+  {t:"Beim Ätzen wird grundsätzlich Material aufgebracht", c:false}
+]},
+{q:"Dünnschichttechnik — welche Aussagen sind richtig?", opts:[
+  {t:"Dünne Schichten können isolierend sein", c:true},
+  {t:"Dünne Schichten können leitfähig sein", c:true},
+  {t:"Dünne Schichten werden ausschließlich mechanisch aufgeklebt", c:false},
+  {t:"Dünne Schichten können nur wenige Nanometer dick sein", c:true}
+]},
+{q:"Prozessfolge in der Fertigung — welche gehören zu einem typischen Frontend-Ablauf?", opts:[
+  {t:"Oxidation", c:true},
+  {t:"Fotolithografie", c:true},
+  {t:"Strukturierung durch Ätzen", c:true},
+  {t:"Reinigung", c:true},
+  {t:"Lackieren mit Autolack", c:false}
+]},
+{q:"Warum werden Prozessparameter überwacht?", opts:[
+  {t:"Für gleichbleibende Qualität", c:true},
+  {t:"Damit Maschinen lauter arbeiten", c:false},
+  {t:"Um Ausschuss zu vermeiden", c:true},
+  {t:"Um Fertigungsprozesse reproduzierbar zu machen", c:true}
+]},
+{q:"Qualitätsprüfung — welche Aussagen sind richtig?", opts:[
+  {t:"Fehler werden früh erkannt", c:true},
+  {t:"Ausschuss und Nacharbeit werden reduziert", c:true},
+  {t:"Die Kontrolle dient ausschließlich der Dokumentation", c:false},
+  {t:"Prozessabweichungen werden rechtzeitig erkannt", c:true}
+]},
+{q:"Nach einem Ätzprozess werden Rückstände auf dem Wafer entdeckt — was ist sinnvoll?", opts:[
+  {t:"Ignorieren, da meist unwichtig", c:false},
+  {t:"Überprüfung des Ätzprozesses", c:true},
+  {t:"Dokumentation der Abweichung", c:true},
+  {t:"Reinigung des Wafers", c:true}
+]},
+{q:"Elektrische Messungen mit dem Multimeter — was kann gemessen werden?", opts:[
+  {t:"Spannungen", c:true},
+  {t:"Widerstände", c:true},
+  {t:"Strom", c:true},
+  {t:"Es ersetzt grundsätzlich ein Oszilloskop", c:false}
+]},
+{q:"Warum werden Prozessdaten dokumentiert?", opts:[
+  {t:"Für die Rückverfolgbarkeit", c:true},
+  {t:"Für die Qualitätsüberwachung", c:true},
+  {t:"Für die Prozessoptimierung", c:true},
+  {t:"Nur weil es gesetzlich vorgeschrieben ist", c:false}
+]},
+{q:"Elektrische Leiter — welche Materialien gehören dazu?", opts:[
+  {t:"Holz", c:false},
+  {t:"Silber", c:true},
+  {t:"Aluminium", c:true},
+  {t:"Glas", c:false}
+]},
+{q:"Ein beschädigter Wafer wird gefunden — was ist richtig?", opts:[
+  {t:"Ohne Prüfung weiterverarbeiten", c:false},
+  {t:"Vorgesetzten informieren", c:true},
+  {t:"Ursache untersuchen", c:true},
+  {t:"Schaden dokumentieren", c:true}
+]},
+{q:"Ohmsches Gesetz — welche Größen sind daran beteiligt?", opts:[
+  {t:"Spannung", c:true},
+  {t:"Stromstärke", c:true},
+  {t:"Widerstand", c:true},
+  {t:"Frequenz", c:false}
+]},
+{q:"Reinraumklassen — welche Faktoren beeinflussen sie?", opts:[
+  {t:"Sonnenstand", c:false},
+  {t:"Farbe der Reinraumkleidung", c:false},
+  {t:"Luftreinheit", c:true},
+  {t:"Partikelgröße", c:true}
+]},
+{q:"Prozesskontrolle — welche Messgrößen sind typisch?", opts:[
+  {t:"Temperatur", c:true},
+  {t:"Lieblingsfarbe des Anlagenbedieners", c:false},
+  {t:"Prozesszeit", c:true},
+  {t:"Druck", c:true}
+]},
+{q:"Vakuumtechnik — warum wird unter Vakuum gearbeitet?", opts:[
+  {t:"Verunreinigungen werden reduziert", c:true},
+  {t:"Bestimmte Schichtprozesse werden erst dadurch möglich", c:true},
+  {t:"Prozessbedingungen sind besser kontrollierbar", c:true},
+  {t:"Maschinen verbrauchen dadurch grundsätzlich keinen Strom mehr", c:false}
+]},
+{q:"Fehlerquellen bei Messungen — welche sind typisch?", opts:[
+  {t:"Verschmutzte Messmittel", c:true},
+  {t:"Temperaturunterschiede", c:true},
+  {t:"Firmenlogo auf dem Messgerät", c:false},
+  {t:"Falsches Ablesen", c:true}
+]},
+{q:"Arbeitssicherheit (2) — welche Aussagen sind richtig?", opts:[
+  {t:"Defekte Geräte sofort melden", c:true},
+  {t:"Persönliche Schutzausrüstung tragen", c:true},
+  {t:"Betriebsanweisungen beachten", c:true},
+  {t:"Sicherheitsvorschriften nur bei Kontrollen beachten", c:false}
+]},
+{q:"Produktionsqualität — welche Aussagen sind richtig?", opts:[
+  {t:"Kleine Abweichungen können große Auswirkungen haben", c:true},
+  {t:"Qualitätskontrollen verbessern die Prozesssicherheit", c:true},
+  {t:"Jede Abweichung führt zwangsläufig zum Ausschuss", c:false},
+  {t:"Sauberes Arbeiten verbessert die Produktqualität", c:true}
+]},
+{q:"Teamarbeit — welche Aussagen sind richtig?", opts:[
+  {t:"Schichtübergaben sollten vollständig dokumentiert werden", c:true},
+  {t:"Informationen über Prozessabweichungen sollten weitergegeben werden", c:true},
+  {t:"Fehler dürfen verschwiegen werden", c:false},
+  {t:"Gute Kommunikation unterstützt einen störungsfreien Ablauf", c:true}
+]},
+{q:"Produktionsprozesse — welche Aussagen sind richtig?", opts:[
+  {t:"Viele Fertigungsschritte bauen unmittelbar aufeinander auf", c:true},
+  {t:"Fehler früherer Prozessschritte können sich auf spätere auswirken", c:true},
+  {t:"Nach jedem Prozess ist Sauberkeit wichtig", c:true},
+  {t:"Die Reihenfolge der Prozessschritte ist beliebig", c:false}
+]},
+{q:"Berufsbild Mikrotechnologe/in — welche Aufgaben gehören dazu?", opts:[
+  {t:"Bedienen von Fertigungsanlagen", c:true},
+  {t:"Durchführen von Prozesskontrollen", c:true},
+  {t:"Dokumentieren von Arbeitsergebnissen", c:true},
+  {t:"Entwerfen kompletter Gebäudestatik", c:false}
+]}
+];
+
+let order = questions.map((_, i) => i);
+let verifiedCount = 0;
+let correctCount = 0;
+
+function render(){
+  const main = document.getElementById('quizMain');
+  main.innerHTML = '';
+  order.forEach((qi, displayIdx) => {
+    const item = questions[qi];
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.dataset.qi = qi;
+    card.innerHTML = `<div class="q-num">Pregunta ${displayIdx+1} de ${questions.length}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="q-hint">Selecciona todas las que consideres correctas (puede haber varias)</div>
+      <div class="opt-list"></div>
+      <button class="verify-btn">Comprobar</button>
+      <div class="feedback"></div>`;
+    const optList = card.querySelector('.opt-list');
+    item.opts.forEach((opt, oi) => {
+      const div = document.createElement('div');
+      div.className = 'opt';
+      div.dataset.oi = oi;
+      div.innerHTML = `<div class="opt-box"></div><div>${opt.t}</div>`;
+      div.addEventListener('click', () => {
+        if (card.classList.contains('verified')) return;
+        div.classList.toggle('checked');
+      });
+      optList.appendChild(div);
+    });
+    card.querySelector('.verify-btn').addEventListener('click', () => verify(card, qi));
+    main.appendChild(card);
+  });
+}
+
+function verify(card, qi){
+  if (card.classList.contains('verified')) return;
+  card.classList.add('verified');
+  const item = questions[qi];
+  const opts = card.querySelectorAll('.opt');
+  let allCorrect = true;
+  opts.forEach((div, oi) => {
+    const isChecked = div.classList.contains('checked');
+    const isCorrect = item.opts[oi].c;
+    if (isCorrect && isChecked) div.classList.add('correct');
+    else if (!isCorrect && isChecked) { div.classList.add('incorrect-checked'); allCorrect = false; }
+    else if (isCorrect && !isChecked) { div.classList.add('missed'); allCorrect = false; }
+  });
+  card.querySelector('.verify-btn').disabled = true;
+  card.querySelector('.verify-btn').textContent = 'Verificado';
+  const fb = card.querySelector('.feedback');
+  fb.classList.add('show', allCorrect ? 'ok' : 'bad');
+  fb.textContent = allCorrect ? '✅ ¡Correcto! Todas las opciones marcadas bien.' : '⚠️ Revisa: verde=correcta que marcaste, amarillo=correcta que te faltó, rojo=marcaste una incorrecta.';
+  verifiedCount++;
+  if (allCorrect) correctCount++;
+  updateProgress();
+}
+
+function updateProgress(){
+  document.getElementById('progressBar').style.width = Math.round((verifiedCount/questions.length)*100) + '%';
+  document.getElementById('scoreLine').textContent = verifiedCount + ' / ' + questions.length + ' verificadas · ' + correctCount + ' completamente correctas';
+}
+
+function resetAll(){
+  verifiedCount = 0; correctCount = 0;
+  render();
+  updateProgress();
+}
+
+function shuffleQuestions(){
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  resetAll();
+}
+
+render();
+updateProgress();
+</script>
+</body>
+</html>

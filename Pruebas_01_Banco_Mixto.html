@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banco Mixto de Preguntas | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --bm: #4338ca;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--bm), #0369a1); color: white; padding: 1.5rem 1.5rem 2rem; text-align: center; }
+  header h1 { font-size: 1.4rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.88rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; }
+  main { max-width: 800px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.3rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; }
+  p.lead { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.6rem; }
+
+  .q-num { font-size: 0.7rem; font-weight: 700; color: var(--bm); text-transform: uppercase; }
+  .q-text { font-size: 0.9rem; font-weight: 600; margin: 0.3rem 0 0.7rem; }
+  .opt-list { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.8rem; }
+  .opt { border: 1.5px solid var(--border); border-radius: 8px; padding: 0.5rem 0.7rem; cursor: pointer; font-size: 0.83rem; }
+  .opt:hover { background: #eef2ff; border-color: var(--bm); }
+  .opt.correct { border-color: var(--success); background: #d1fae5; font-weight: 600; }
+  .opt.wrong { border-color: var(--danger); background: #fee2e2; }
+  .q-block { border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem; }
+  .q-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .fix-box { border-left: 4px solid var(--warning); background: #fffbeb; border-radius: 8px; padding: 0.8rem 1rem; margin-top: 0.7rem; font-size: 0.83rem; }
+  .fix-box.err { border-left-color: var(--danger); background: #fef2f2; }
+  .fix-box.good { border-left-color: var(--success); background: #f0fdf4; }
+  .fix-box.info { border-left-color: var(--bm); background: #eef2ff; }
+  .fix-box b.title { display: block; margin-bottom: 0.3rem; }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>🎯 Banco Mixto de Preguntas</h1>
+<p>30 preguntas oficiales de examen + corrección de tu examen real resuelto</p>
+<div class="badges">
+  <span class="badge">Dresden Chip Academy — clave oficial</span>
+  <span class="badge">Tu examen del 24 ago corregido</span>
+</div>
+</header>
+
+<main>
+
+<section>
+<h2>🧠 30 preguntas oficiales (selección única)</h2>
+<p class="lead">Clave de respuestas confirmada de la escuela — toca una opción para ver si es correcta.</p>
+<div id="quizContainer"></div>
+</section>
+
+<section>
+<h2>✅ Corrección de tu examen escrito (24 ago, preguntas abiertas)</h2>
+<p class="lead">Encontré varios puntos importantes al revisar tus respuestas de este examen real (Aufwachsen/Abscheiden, Fotolithografie, Ätzen, Metallisierung):</p>
+
+<div class="fix-box good"><b class="title">✅ Correcto — cálculo de tasa de oxidación</b>Aufwachsrate = 0,55µm/0,75h = 550nm/45min = <b>12,2 nm/min</b> — tu cálculo es exacto.</div>
+
+<div class="fix-box"><b class="title">📝 Tabla de gases de oxidación — incompleta</b>Solo rellenaste la columna de Feuchtoxidation (O₂+H₂O, 900°C). La columna de Trockenoxidation quedó vacía — recuerda: solo O₂, sin vapor de agua, produce óxido más denso/puro pero de crecimiento más lento (ver página <a href="HP_HL_02_Oxidation.html">HP+HL 02</a>).</div>
+
+<div class="fix-box err"><b class="title">⚠️ Orden de pasos de fotolitografía — Post Exposure Bake mal ubicado</b>Pusiste el "Post Exposure Bake" como el ÚLTIMO paso (después del Hardbake y control de calidad). El orden correcto es: Reinigung → Dehydrationsbacken → HMDS → Belacken → Softbake → <b>Belichten → Post Exposure Bake → Entwickeln</b> → Hardbake → Kontrolle. El PEB va justo después de exponer y antes de revelar, no al final — repasa la secuencia completa en <a href="HP_HL_03_Lithografie.html">HP+HL 03</a>.</div>
+
+<div class="fix-box good"><b class="title">✅ Correcto — mecanismo del Positivlack</b>Tu explicación de que el DNQ se convierte en ácido carboxílico con UV y luego reacciona con la base del revelador es correcta en esencia.</div>
+
+<div class="fix-box"><b class="title">📝 Definición de viscosidad — sin responder</b>Quedó en blanco. Respuesta: la viscosidad es la resistencia de un fluido a fluir; a mayor viscosidad, más gruesa la capa de resina resultante a igual velocidad de giro.</div>
+
+<div class="fix-box"><b class="title">💡 Homogeneidad del lacado — buena interpretación, falta un término técnico</b>Identificaste correctamente el problema de borde (mayor espesor en el centro en un caso, reborde en el otro), pero la solución estándar para el exceso de resina en el borde tiene nombre propio: <b>EBR (Edge Bead Removal)</b> — una boquilla específica del Beschichter que retira el Randwulst, no "usar disolvente en el borde durante el proceso" como escribiste. Ver <a href="HP_HL_03_Lithografie.html">HP+HL 03</a>.</div>
+
+<div class="fix-box err"><b class="title">⚠️ Error conceptual — Selektivität y anisotropía del grabado húmedo</b>Tu definición de Selektivität es vaga ("relación química entre el medio y la superficie") — la definición correcta y examinable es <b>S = R₁/R₂</b> (cociente de las tasas de grabado entre el material a grabar y el material debajo). Más importante: escribiste que el <b>Nassätzen (grabado húmedo) genera una gran anisotropía</b> — esto es <b>al revés</b>: el grabado húmedo es generalmente <b>isótropo</b> (ataca por igual en todas direcciones, provocando Unterätzung/socavado); el grabado <b>seco</b> es el que típicamente logra alta anisotropía. Repasa esta distinción en <a href="HP_HL_04_Aetzen_Veraschen.html">HP+HL 04</a> antes del examen — es un punto clave que podría costarte puntos.</div>
+
+<div class="fix-box"><b class="title">📝 Selectividad del grabado seco vs. húmedo — sin responder</b>Quedó en blanco.</div>
+
+<div class="fix-box err"><b class="title">⚠️ Metalización Cu vs. Al y electromigración — todo en blanco</b>Estas 3 preguntas no se respondieron. Puntos clave para repasar:
+<ul style="margin: 0.4rem 0 0 1.2rem;">
+<li><b>Ventajas del Cu sobre Al:</b> menor resistividad específica (mejor conductor), mayor resistencia a la electromigración.</li>
+<li><b>Desventajas del Cu:</b> difunde fácilmente en Si/SiO₂ (necesita capa barrera), no se graba con plasma seco convencional (requiere proceso Damascene + CMP en vez de grabado directo) — ver <a href="HP_HL_05_Deposition_Sputtern_CMP.html">HP+HL 05</a>.</li>
+<li><b>Elektromigration:</b> a alta densidad de corriente, los electrones desplazan átomos de la red metálica → huecos (voids) y montículos (Hillocks) → puede romper la pista o causar cortocircuito entre capas.</li>
+</ul>
+</div>
+
+</section>
+
+</main>
+
+<footer>Banco Mixto de Preguntas · IHK Mikrotechnologe · guarda esta página en tu pantalla de inicio</footer>
+
+<script>
+const quiz = [
+{q:"Welche Eigenschaft macht ein Material zu einem Halbleiter?", opts:["Hohe Leitfähigkeit wie Metall","Keine Leitfähigkeit wie Isolator","Leitfähigkeit abhängig von Dotierung","Instabile Kristallstruktur"], correct:2},
+{q:"Welches Material ist der am häufigsten verwendete Halbleiter?", opts:["Germanium","Silizium","Galliumarsenid","Siliziumkarbid"], correct:1},
+{q:"Wofür steht die Abkürzung CMOS?", opts:["Complementary Metal-Oxide-Semiconductor","Coated Metal Oxide Sensor","Combined Memory Output System","Charged Metal Output Semiconductor"], correct:0},
+{q:"Welche Funktion hat Dotierung?", opts:["Erzeugt Wärme","Erhöht die Stromstärke","Verändert die Leitfähigkeit","Erhöht die Spannung"], correct:2},
+{q:"Welche Art von Dotierung erzeugt Elektronenüberschuss?", opts:["P-Dotierung","N-Dotierung","I-Dotierung","Null-Dotierung"], correct:1},
+{q:"Welche Struktur bildet die Grundlage eines MOSFETs?", opts:["Metall-Isolator-Metall","Metall-Oxid-Halbleiter","Halbleiter-Halbleiter","Metall-Metall"], correct:1},
+{q:"Was ist ein Wafer?", opts:["Eine Leitungsschicht","Eine hauchdünne Siliziumscheibe","Eine Plastikfolie","Ein Elektrolyt"], correct:1},
+{q:"Welche Fertigungstechnik definiert die Strukturgröße?", opts:["Doping","Lithografie","Polieren","Packaging"], correct:1},
+{q:"Welcher Lichtbereich wird in der EUV-Lithografie genutzt?", opts:["Infrarot","Sichtbares Licht","Ultraviolett, 13,5 nm","Röntgen"], correct:2},
+{q:"Was macht ein Transistor?", opts:["Wandelt AC in DC","Verstärkt oder schaltet Signale","Speichert Daten dauerhaft","Misst Strom"], correct:1},
+{q:"Welche Technologie wird für moderne CPUs verwendet?", opts:["Bipolartransistoren","MOSFETs","Thyristoren","Relais"], correct:1},
+{q:"Was ist ein Die (Chip-Die)?", opts:["Der gesamte Wafer","Einzelner Chip auf einem Wafer","Lötzinn","Wärmeleitpaste"], correct:1},
+{q:"Welche Schicht wird beim Oxidwachstum erzeugt?", opts:["SiN","SiO2","Cu","Al"], correct:1},
+{q:"Was passiert beim Ätzen (Etching)?", opts:["Entfernen von Material","Auftragen von Metall","Polieren","Dotieren"], correct:0},
+{q:"Was ist CMP?", opts:["Conductive Metal Processing","Chemical Mechanical Polishing","Cathode Metal Plating","Chip Memory Preparation"], correct:1},
+{q:"Welche Methode wird für die Dotierung eingesetzt?", opts:["Ionenimplantation","Laserschneiden","Tempern","Hydrolyse"], correct:0},
+{q:"Was beschreibt die \"Yield\"?", opts:["Anzahl der belichteten Schichten","Anteil funktionsfähiger Chips","Spannung im Transistor","Reinheit des Siliziums"], correct:1},
+{q:"Welcher Gasstoff wird für die Reinigung in der Lithografie genutzt?", opts:["Sauerstoff","Stickstoff","Helium","Kohlenstoff"], correct:1},
+{q:"Was ist ein Photomask?", opts:["Lötmaske","Strukturvorlage für Lithografie","Wafer-Gravur","Polierschicht"], correct:1},
+{q:"Woraus besteht ein typischer Siliziumwafer?", opts:["Polykristallin","Einkristall-Silizium","Sand","Glas"], correct:1},
+{q:"Welches Bauteil basiert auf einem p-n-Übergang?", opts:["Kondensator","Diode","Spule","Widerstand"], correct:1},
+{q:"Wie viele nm hat ein Mikrometer?", opts:["10","100","1.000","10.000"], correct:2},
+{q:"Welche Defekte entstehen häufig durch Partikel im Reinraum?", opts:["Elektronische Interferenzen","Stromschwankungen","Kurzschlüsse / Unterbrechungen im Muster","Oxidationsprobleme"], correct:2},
+{q:"Was ist ein Reticle?", opts:["Der gesamte Wafer","Belichtungsschablone für einen Waferbereich","Reinigungsgerät","Poliertuch"], correct:1},
+{q:"Welcher Prozess glättet unebene Schichten?", opts:["Annealing","CMP","Ionenimplantation","Deposition"], correct:1},
+{q:"Welche Aufgabe hat ein Scribe Line (Sägelinie)?", opts:["Leitungen verbinden","Chip testen","Platz zum Zerschneiden des Wafers","Wafer reinigen"], correct:2},
+{q:"Was bedeutet Annealing?", opts:["Aufbringen von Metall","Belichten der Struktur","Erwärmung zur Aktivierung der Dotierung","Entfernen von Photoresist"], correct:2},
+{q:"Welche Technik nutzt man, um Photoresist zu entfernen?", opts:["Stripping","Belichtung","Implantation","Metallisierung"], correct:0},
+{q:"Warum werden Siliziumwafer poliert?", opts:["Um den Oxidprozess zu verbessern","Aus optischen Gründen","Für atomar glatte Oberflächen für Lithografie","Zur Wärmeableitung"], correct:2},
+{q:"Welche Funktion hat der Source-Kontakt im Transistor?", opts:["Steuert das Signal","Führt Elektronen oder Löcher in den Kanal ein","Schaltet den Transistor","Leitet Wärme ab"], correct:1}
+];
+const qc = document.getElementById('quizContainer');
+quiz.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'q-block';
+  div.innerHTML = `<div class="q-num">Pregunta ${i+1}</div><div class="q-text">${item.q}</div><div class="opt-list"></div>`;
+  const optsDiv = div.querySelector('.opt-list');
+  item.opts.forEach((opt, j) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      optsDiv.querySelectorAll('.opt').forEach((b, k) => {
+        b.disabled = true;
+        if (k === item.correct) b.classList.add('correct');
+        else if (b === btn) b.classList.add('wrong');
+      });
+    });
+    optsDiv.appendChild(btn);
+  });
+  qc.appendChild(div);
+});
+</script>
+</body>
+</html>
