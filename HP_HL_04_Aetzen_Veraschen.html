@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HP+HL 04 — Ätzen &amp; Veraschen | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --etz: #15803d; --plasma: #7c2d92;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--etz), var(--plasma)); color: white; padding: 1.5rem 1.5rem 2rem; text-align: center; }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.9rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; }
+  main { max-width: 920px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1.1rem 0 0.5rem; color: var(--primary-dark); }
+  p.lead { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.8rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; color: white; }
+  .tag-etz { background: var(--etz); } .tag-plasma { background: var(--plasma); } .tag-prac { background: #059669; }
+
+  .iso-toggle { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
+  .iso-box { flex: 1; text-align: center; padding: 1rem; border-radius: 12px; border: 2px solid var(--border); cursor: pointer; }
+  .iso-box.active { border-color: var(--etz); background: #f0fdf4; }
+  .iso-shape { width: 90px; height: 50px; margin: 0.5rem auto; position: relative; }
+  .mask-bar { position:absolute; top:0; left:15%; width:70%; height:10px; background:#475569; }
+  .etch-iso { position:absolute; top:10px; left:5%; width:90%; height:40px; background:#86efac; border-radius: 0 0 40px 40px / 0 0 20px 20px; clip-path: ellipse(45% 100% at 50% 0%); }
+  .etch-aniso { position:absolute; top:10px; left:22%; width:56%; height:40px; background:#86efac; }
+  .iso-label { font-size: 0.8rem; font-weight: 600; margin-top: 0.4rem; }
+  .iso-text { display: none; margin-top: 0.8rem; font-size: 0.83rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.8rem; }
+  .iso-text.show { display: block; }
+
+  .formula-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .formula-card { background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 10px; padding: 0.7rem; text-align: center; }
+  .formula-card .f { font-family: 'Consolas', monospace; font-size: 0.95rem; font-weight: 700; color: var(--etz); }
+  .formula-card .l { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+
+  table.data { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.78rem; }
+  table.data th { background: #f3f4f6; padding: 0.4rem 0.55rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  table.data td { padding: 0.38rem 0.55rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.data tr:hover td { background: #f9fafb; }
+  td.ok { color: var(--success); font-weight: 700; } td.bad { color: var(--danger); font-weight: 700; }
+
+  .reaction-box { background: #1e1b2e; color: #bbf7d0; font-family: 'Consolas', monospace; font-size: 0.8rem; padding: 0.7rem 1rem; border-radius: 8px; margin-top: 0.5rem; }
+  .reaction-box.errata { text-decoration: line-through; opacity: 0.7; background: #451a1a; color: #fca5a5; }
+
+  .fix-box { border-left: 4px solid var(--warning); background: #fffbeb; border-radius: 8px; padding: 0.8rem 1rem; margin-top: 0.7rem; font-size: 0.83rem; }
+  .fix-box.err { border-left-color: var(--danger); background: #fef2f2; }
+  .fix-box.good { border-left-color: var(--success); background: #f0fdf4; }
+  .fix-box b.title { display: block; margin-bottom: 0.3rem; }
+
+  .warning-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .warning-card { border: 2px solid var(--warning); background: #fffbeb; border-radius: 10px; padding: 0.7rem; font-size: 0.78rem; }
+  .warning-card b { display: block; margin-bottom: 0.2rem; }
+
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .flip-card { height: 122px; perspective: 600px; cursor: pointer; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 0.73rem; }
+  .flip-front { background: var(--etz); color: white; font-weight: 700; }
+  .flip-back { background: #f0fdf4; border: 2px solid var(--etz); transform: rotateY(180deg); }
+  .flip-back .es { font-weight: 700; color: var(--success); }
+  .flip-back .en { font-style: italic; color: var(--muted); font-size: 0.65rem; margin-top: 0.2rem; }
+  .flip-back .note { font-size: 0.6rem; color: var(--text); margin-top: 0.25rem; }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>⚗️ Ätzen &amp; Veraschen</h1>
+<p>HL07 (teoría) + Lackveraschen (plasma O₂) + Nassätzen (BHF/SiO₂) · Grabado húmedo y seco</p>
+<div class="badges">
+  <span class="badge">HL07 Ätzen</span>
+  <span class="badge">Protokoll Veraschen corregido</span>
+</div>
+</header>
+
+<main>
+
+<section>
+<h2><span class="tag tag-etz">Teoría</span> Isótropo vs. anisótropo</h2>
+<p class="lead">Toca cada tipo para ver el perfil de grabado bajo la máscara:</p>
+<div class="iso-toggle">
+  <div class="iso-box active" id="isoBox" onclick="showIso('iso')">
+    <div class="iso-shape"><div class="mask-bar"></div><div class="etch-iso"></div></div>
+    <div class="iso-label">Isótropo (húmedo)</div>
+  </div>
+  <div class="iso-box" id="anisoBox" onclick="showIso('aniso')">
+    <div class="iso-shape"><div class="mask-bar"></div><div class="etch-aniso"></div></div>
+    <div class="iso-label">Anisótropo (seco)</div>
+  </div>
+</div>
+<div class="iso-text show" id="isoText">Material eliminado por igual en todas direcciones → provoca <b>Unterätzung</b> (socavado bajo el borde de la máscara). Típico del grabado húmedo (Nassätzen).</div>
+<div class="iso-text" id="anisoText">Material eliminado preferentemente en dirección vertical → paredes rectas y empinadas, sin socavar la máscara. Típico del grabado seco (Trockenätzen).</div>
+
+<h3>Fórmulas clave</h3>
+<div class="formula-grid">
+  <div class="formula-card"><div class="f">R = Δd / t</div><div class="l">Ätzrate (tasa de grabado)</div></div>
+  <div class="formula-card"><div class="f">S = R₁ / R₂</div><div class="l">Selektivität (selectividad)</div></div>
+  <div class="formula-card"><div class="f">A = 1 − R_lat/R_vert</div><div class="l">Anisotropiefaktor</div></div>
+</div>
+
+<h3>Nass- vs. Trockenätzen</h3>
+<table class="data">
+<tr><th></th><th>Nassätzen</th><th>Trockenätzen</th></tr>
+<tr><td>Estructuras</td><td>&gt; 0,5 µm</td><td>Cualquier ancho</td></tr>
+<tr><td>Mecanismo</td><td>Ácidos/bases (Säuren/Laugen)</td><td>Iones acelerados + gases reactivos</td></tr>
+<tr><td>Perfil</td><td>Generalmente isótropo</td><td>Generalmente anisótropo</td></tr>
+</table>
+<h3>3 variantes de Trockenätzen</h3>
+<table class="data">
+<tr><th></th><th>Selectividad/Tasa</th><th>Perfil</th><th>Ejemplo</th></tr>
+<tr><td><b>Physikalisch</b></td><td>Baja</td><td>Muy anisótropo</td><td>Ionenstrahlätzen</td></tr>
+<tr><td><b>Chemisch</b></td><td>Alta</td><td>Isótropo</td><td>Plasmaätzen</td></tr>
+<tr style="background:#f0fdf4;"><td><b>RIE (físico-químico)</b></td><td>Suficiente + alta tasa</td><td>Isótropo o anisótropo según parámetros</td><td><b>El método más importante en producción</b></td></tr>
+</table>
+</section>
+
+<section>
+<h2><span class="tag tag-plasma">Plasma</span> Jaula de Faraday del TEPLA 200</h2>
+<p class="lead">Gas ionizado, eléctricamente conductor. La jaula del TEPLA 200 confirma que el veraschen es un proceso predominantemente <b>químico/isótropo</b>:</p>
+<div class="warning-grid">
+  <div class="warning-card"><b>Sin jaula</b>Plasma se expande libremente por toda la cámara — "todo brilla". Ataque también físico/iónico.</div>
+  <div class="warning-card"><b>Con jaula (usada en la práctica)</b>Plasma queda confinado al borde exterior — la jaula bloquea iones/electrones cargados y solo deja pasar <b>radicales neutros</b> hacia el wafer → ataque puramente químico.</div>
+</div>
+</section>
+
+<section>
+<h2>📋 Práctica — Lackveraschen (Versuch 1, TEPLA 200) + Nassätzen (Versuch 2, BHF)</h2>
+<p class="lead">Parámetros estándar Versuch 1: Gas O₂, 0,75 mbar, 250W, con jaula.</p>
+<table class="data">
+<tr><th>Teilversuch</th><th>Fijo</th><th>Variable</th></tr>
+<tr><td>1 — tiempo</td><td>250W / 0,75mbar</td><td>10,15,20,25,30 min</td></tr>
+<tr><td>2 — potencia</td><td>0,75mbar / 10min</td><td>200,220,250,270,300 W</td></tr>
+<tr><td>3 — presión</td><td>300W / 15min</td><td>0,3,0,45,0,6,0,75,0,9 mbar</td></tr>
+</table>
+
+<h3>✅ Revisión de tu protocolo (Versuch 1 — Lackveraschen)</h3>
+<div class="fix-box good"><b class="title">✅ Todas las preguntas teóricas correctas</b>Definición de plasma, cómo se genera, diferencia químico/físico, definición de Ätzrate, 3 parámetros que determinan la tasa (potencia, presión/flujo, tiempo).</div>
+<div class="fix-box err"><b class="title">⚠️ Teilversuch 1 — tasas inestables (a discutir con el instructor)</b>Tus tasas: 4,5 / 8,1 / 5,4 / 17,0 / 20,3 nm/min para 10-30 min. Contradice tu propia predicción teórica (a potencia/presión fijas, la tasa debería ser constante). Posibles causas: plasma inestable, o mayor error de medición cuando queda poca resina (a 25-30 min).</div>
+<div class="fix-box good"><b class="title">✅ Teilversuch 2 — correcto</b>Tasas 3,2/2,9/4,4/5,7/7,7 nm/min para 200-300W — tendencia creciente con la potencia, como se espera. Concluiste correctamente que la potencia es el parámetro de mayor influencia.</div>
+<div class="fix-box err"><b class="title">⚠️ Teilversuch 3 — anomalía en tu conclusión de "presión óptima"</b>Tasas 17,1/12,5/9,4/20,4/7,3 nm/min para 0,3-0,9mbar. El salto a 20,4 nm/min en 0,75mbar rompe la tendencia decreciente y parece un dato atípico — basaste tu conclusión de "presión óptima" en este pico, no en la tendencia física esperada. Nota: 0,75mbar es también el valor fijo usado en los Teilversuche 1 y 2 — confirma con el instructor si no hubo una confusión con ese valor estándar.</div>
+
+<h3>✅ Revisión de tu protocolo (Versuch 2 — Nassätzen con BHF)</h3>
+<div class="fix-box good"><b class="title">✅ El mejor resultado de todo el protocolo</b>Definición isótropo/anisótropo, selectividad, composición de BHF (HF+NH₄F), EPP — todo correcto. Teilversuch 1 (4min, 2 obleas): 8,0 y 7,5 nm/min. Teilversuch 2 (4/6/8/10min): 7,5/7,7/6,9/6,9 nm/min — <b>prácticamente constante (~7 nm/min)</b>, confirma perfectamente la teoría de tasa lineal limitada por reacción.</div>
+<div class="reaction-box errata">SiO₂ + HF → H₂SiF₆ + H₂O ← ❌ como escribiste (sin balancear)</div>
+<div class="reaction-box">SiO₂ + 6 HF → H₂SiF₆ + 2 H₂O ← ✅ versión correcta</div>
+<div class="fix-box err"><b class="title">⚠️ Ecuación química sin balancear</b>Faltan los coeficientes 6 y 2. Necesitas 6 moléculas de HF para liberar los 6 flúor del H₂SiF₆ y los 2 oxígenos como 2 H₂O. Aprende la versión balanceada para el examen.</div>
+</section>
+
+<section>
+<h2>🗂️ Vocabulario clave</h2>
+<div class="flip-grid" id="vocabGrid"></div>
+</section>
+
+<section>
+<h2>⚠️ Puntos no cerrados en clase</h2>
+<div class="warning-grid">
+  <div class="warning-card"><b>Ángulo KOH: 54,7° vs. "63°" mencionado en clase</b>Confirmado: ninguna de las 4 fuentes escritas de esta práctica (teoría de 16 diapositivas, Versuchsanleitung, ambos protocolos) menciona KOH ni ningún ángulo cristalográfico — esta práctica usa BHF sobre SiO₂, no KOH sobre Si. El "63°" probablemente viene de una explicación oral aparte. <b>Usa 54,7° (=arccos 1/√3) para el examen</b> — es el ángulo geométrico entre planos (111)/(100), no depende del químico usado.</div>
+  <div class="warning-card"><b>Ángulo del Unterätzen isotrópico</b>No cuantificado en ninguna fuente — solo descripción cualitativa (perfil redondeado, sin ángulo único).</div>
+  <div class="warning-card"><b>CO₂ snow jet</b>Mencionado en el temario original pero no cubierto en ninguna fuente revisada — posible laguna real, repasar si aparece en el temario oficial.</div>
+</div>
+</section>
+
+</main>
+
+<footer>HP+HL 04 · Ätzen &amp; Veraschen · guarda esta página en tu pantalla de inicio</footer>
+
+<script>
+function showIso(which){
+  document.getElementById('isoBox').classList.toggle('active', which==='iso');
+  document.getElementById('anisoBox').classList.toggle('active', which==='aniso');
+  document.getElementById('isoText').classList.toggle('show', which==='iso');
+  document.getElementById('anisoText').classList.toggle('show', which==='aniso');
+}
+
+const vocab = [
+  {de:'das Ätzen', es:'grabado', en:'etching', note:'Abtrag con reactivos y/o partículas de alta energía.'},
+  {de:'die Ätzrate', es:'tasa de grabado', en:'etch rate', note:'R = Δd/Ätzzeit.'},
+  {de:'die Selektivität', es:'selectividad', en:'selectivity', note:'S = R₁/R₂.'},
+  {de:'isotrop / anisotrop', es:'isótropo / anisótropo', en:'isotropic / anisotropic', note:'Isótropo→Unterätzung; anisótropo→paredes rectas.'},
+  {de:'das Nassätzen', es:'grabado húmedo', en:'wet etching', note:'>0,5µm, generalmente isótropo.'},
+  {de:'das Trockenätzen', es:'grabado seco', en:'dry etching', note:'Generalmente anisótropo.'},
+  {de:'das RIE', es:'grabado por iones reactivos', en:'reactive ion etching', note:'Método más importante en producción.'},
+  {de:'das Plasma', es:'plasma', en:'plasma', note:'Gas ionizado, eléctricamente conductor.'},
+  {de:'der Faradaysche Käfig', es:'jaula de Faraday', en:'Faraday cage', note:'Bloquea iones/electrones, deja pasar radicales neutros.'},
+  {de:'das Veraschen', es:'veraschado (plasma)', en:'ashing', note:'Plasma de O₂ elimina resina químicamente.'},
+  {de:'die Unterätzung', es:'socavado', en:'undercut', note:'Consecuencia del grabado isótropo.'},
+  {de:'BHF', es:'HF tamponado', en:'buffered HF', note:'HF+NH₄F; SiO₂+6HF→H₂SiF₆+2H₂O.'},
+  {de:'die Fremdotierung', es:'dopaje cruzado', en:'cross-doping', note:'Motivo de separar baños dotiert/undotiert.'},
+  {de:'der KOH-Ätzwinkel', es:'ángulo de grabado KOH', en:'KOH etch angle', note:'54,7° (111)/(100) — geométrico, no depende del químico.'}
+];
+const vg = document.getElementById('vocabGrid');
+vocab.forEach(v => {
+  const card = document.createElement('div');
+  card.className = 'flip-card';
+  card.innerHTML = `<div class="flip-inner">
+    <div class="flip-front">${v.de}</div>
+    <div class="flip-back"><span class="es">${v.es}</span><span class="en">${v.en}</span><span class="note">${v.note}</span></div>
+  </div>`;
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+  vg.appendChild(card);
+});
+</script>
+</body>
+</html>

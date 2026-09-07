@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HP+HL 07 — Grundlagen, Historisches &amp; Vakuumtechnik | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --hl: #475569; --vac: #0e7490;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--hl), var(--vac)); color: white; padding: 1.5rem 1.5rem 2rem; text-align: center; }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.9rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; }
+  .progress-container { background: rgba(255,255,255,0.3); border-radius: 999px; height: 8px; margin-top: 1rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .progress-bar { background: white; height: 8px; border-radius: 999px; width: 0%; transition: width 0.5s; }
+  main { max-width: 860px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--primary-dark); }
+  p.lead { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.8rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; color: white; }
+  .tag-hist { background: #7c3aed; } .tag-fund { background: var(--hl); } .tag-vac { background: var(--vac); }
+
+  /* timeline */
+  .timeline { position: relative; margin-top: 1rem; padding-left: 1.4rem; border-left: 3px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 1.1rem; cursor: pointer; }
+  .tl-item::before { content: ''; position: absolute; left: -1.98rem; top: 0.15rem; width: 12px; height: 12px; border-radius: 50%; background: #7c3aed; border: 2px solid white; box-shadow: 0 0 0 2px #7c3aed; }
+  .tl-year { font-weight: 700; color: #7c3aed; font-size: 0.85rem; }
+  .tl-title { font-weight: 600; font-size: 0.92rem; }
+  .tl-detail { display: none; font-size: 0.82rem; color: var(--muted); margin-top: 0.3rem; padding: 0.5rem 0.7rem; background: #faf5ff; border-radius: 8px; border: 1px solid #e9d5ff; }
+  .tl-item.open .tl-detail { display: block; }
+
+  /* band diagram / doping (reuse pattern) */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+  .info-box { border: 2px solid var(--border); border-radius: 10px; padding: 0.9rem; }
+  .info-box h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--primary-dark); }
+  .info-box p { font-size: 0.82rem; }
+
+  /* vacuum regime slider */
+  .vac-scale { position: relative; height: 60px; margin: 1rem 0 2.2rem; background: linear-gradient(90deg, #dbeafe, #bfdbfe, #93c5fd, #60a5fa); border-radius: 8px; }
+  .vac-zone { position: absolute; top: 0; bottom: 0; border-right: 2px dashed rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; color: #1e3a8a; text-align: center; padding: 0 2px; cursor: pointer; }
+  .vac-zone span.exp { display:block; font-size: 0.62rem; font-weight: 400; }
+  .vac-label { position: absolute; bottom: -22px; font-size: 0.65rem; color: var(--muted); }
+  .vac-detail { display: none; margin-top: 0.6rem; font-size: 0.82rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.7rem; }
+  .vac-detail.show { display: block; }
+
+  table.data { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.8rem; }
+  table.data th { background: #f3f4f6; padding: 0.45rem 0.6rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  table.data td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.data tr:hover td { background: #f9fafb; }
+  .mono { font-family: 'Consolas', monospace; }
+
+  /* leak rate calc */
+  .calc-box { background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 10px; padding: 1rem; margin-top: 0.8rem; }
+  .calc-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; }
+  .calc-row label { font-size: 0.8rem; font-weight: 600; min-width: 130px; }
+  .calc-row input { width: 90px; padding: 0.3rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; }
+  .calc-result { margin-top: 0.6rem; font-size: 0.9rem; font-weight: 700; color: var(--success); }
+
+  /* flip cards vocab */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .flip-card { height: 115px; perspective: 600px; cursor: pointer; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; padding: 0.6rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 0.78rem; }
+  .flip-front { background: var(--vac); color: white; font-weight: 700; }
+  .flip-back { background: #f0fdfa; border: 2px solid var(--vac); transform: rotateY(180deg); }
+  .flip-back .es { font-weight: 700; color: var(--success); }
+  .flip-back .en { font-style: italic; color: var(--muted); font-size: 0.7rem; margin-top: 0.2rem; }
+  .flip-back .note { font-size: 0.66rem; color: var(--text); margin-top: 0.3rem; }
+
+  /* quiz */
+  .quiz-item { border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.7rem; }
+  .quiz-q { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.5rem; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 0.4rem; }
+  .quiz-opt { text-align: left; border: 1px solid var(--border); background: white; border-radius: 8px; padding: 0.5rem 0.7rem; font-size: 0.83rem; cursor: pointer; }
+  .quiz-opt:hover { background: #f9fafb; }
+  .quiz-opt.correct { background: #d1fae5; border-color: var(--success); font-weight: 600; }
+  .quiz-opt.wrong { background: #fee2e2; border-color: var(--danger); }
+  .quiz-fb { display: none; margin-top: 0.5rem; font-size: 0.8rem; padding: 0.5rem 0.7rem; border-radius: 8px; background: #f0f9ff; }
+  .quiz-fb.show { display: block; }
+
+  .warning-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .warning-card { border: 2px solid var(--warning); background: #fffbeb; border-radius: 10px; padding: 0.7rem; font-size: 0.78rem; }
+  .warning-card b { display: block; margin-bottom: 0.2rem; }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>🕰️ Fundamentos, Historia &amp; Vakuumtechnik</h1>
+<p>HL 01+02 (Grundlagen/Historisches) + Vakuumtechnik · Base teórica de todo el temario HP</p>
+<div class="badges">
+  <span class="badge">HL01–02</span>
+  <span class="badge">Vakuumtechnik</span>
+  <span class="badge">Mikrotechnologe IHK</span>
+</div>
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+
+<main>
+
+<section>
+<h2><span class="tag tag-hist">Historia</span> De la válvula al chip en Dresden</h2>
+<p class="lead">Toca cada hito para expandir el detalle. Es la base de la primera pregunta típica de examen ("nombra los hitos clave de la microelectrónica").</p>
+<div class="timeline" id="timeline">
+  <div class="tl-item">
+    <div class="tl-year">1904–1940s</div>
+    <div class="tl-title">Era de la válvula de vacío (Elektronenröhre)</div>
+    <div class="tl-detail">Los primeros amplificadores y conmutadores electrónicos usaban tubos de vacío (diodo de Fleming 1904, tríodo de Lee de Forest 1906). Grandes, frágiles, con alto consumo y calor — el problema que el transistor resolvería.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year">1947</div>
+    <div class="tl-title">Transistor de punto de contacto — Bell Labs</div>
+    <div class="tl-detail">Bardeen, Brattain y Shockley (Premio Nobel 1956) construyen el primer transistor funcional sobre germanio. Nace la posibilidad de amplificar/conmutar sin válvulas de vacío.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year">1954</div>
+    <div class="tl-title">Primer transistor de silicio comercial (Texas Instruments)</div>
+    <div class="tl-detail">El silicio reemplaza al germanio: banda prohibida mayor (1,12 eV vs 0,66 eV) → funciona a temperaturas más altas y es más estable. Desde aquí el silicio domina la industria.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year">1958–1959</div>
+    <div class="tl-title">Circuito integrado + proceso planar</div>
+    <div class="tl-detail">Kilby (Texas Instruments, 1958) demuestra el primer CI. Noyce (Fairchild) y Hoerni introducen el <b>proceso planar</b> (1959): óxido protector + fotolitografía sobre una oblea plana — la base directa de TODO lo que se hace hoy en HP (oxidación, litografía, dopaje selectivo).</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year">1965</div>
+    <div class="tl-title">Ley de Moore</div>
+    <div class="tl-detail">Gordon Moore predice que el número de transistores por chip se duplica cada ~18-24 meses. Motor histórico de la miniaturización (de µm a nm).</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year">1969</div>
+    <div class="tl-title">Zentrum Mikroelektronik Dresden (ZMD)</div>
+    <div class="tl-detail">Origen de la microelectrónica en Dresden en la época de la RDA — antecedente directo del clúster "Silicon Saxony" actual.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year">1990s–hoy</div>
+    <div class="tl-title">Silicon Saxony</div>
+    <div class="tl-detail">Tras la reunificación: Siemens/Infineon construye fabs en Dresden (1994+), AMD instala Fab 30/36 (después GlobalFoundries, 1999+), y en 2023 se anuncia ESMC (TSMC/Bosch/Infineon/NXP) — hoy Dresden es el mayor clúster de semiconductores de Europa.</div>
+  </div>
+</div>
+</section>
+
+<section>
+<h2><span class="tag tag-fund">Fundamentos</span> Silicio, banda prohibida y dopaje — repaso rápido</h2>
+<p class="lead">Ya cubierto en detalle en <a href="FASE2_LF2_Chemie_LF4_Reinraum.html">FASE2 (LF2 Chemie)</a> — aquí solo el resumen que enlaza con Vakuum y con el resto de HP.</p>
+<div class="grid2">
+  <div class="info-box">
+    <h4>Modelo de bandas</h4>
+    <p>Aislante: E<sub>g</sub> &gt; ~4 eV. Semiconductor: E<sub>g</sub> ≈ 0,5–3 eV (Si = 1,12 eV; Ge = 0,66 eV; GaAs = 1,42 eV). Conductor: bandas solapadas, sin E<sub>g</sub>.</p>
+  </div>
+  <div class="info-box">
+    <h4>Dopaje (repaso)</h4>
+    <p>Grupo V (P, As) → tipo n (electrón extra). Grupo III (B) → tipo p (hueco extra). Detalle completo del proceso de difusión/implantación en <a href="HP_HL_01_Reinigung_Dotierung.html">HP+HL 01</a>.</p>
+  </div>
+</div>
+<div class="warning-grid" style="margin-top:1rem;">
+  <div class="warning-card"><b>⚠️ Punto no cerrado en clase</b>El valor de banda prohibida dado para no-conductores ("&lt;0,08 eV") contradice la física estándar — probablemente el profesor se refería a los conductores (banda casi nula). No repetir ese número tal cual en el examen.</div>
+</div>
+</section>
+
+<section>
+<h2><span class="tag tag-vac">Vakuumtechnik</span> ¿Por qué hace falta vacío en la FAB?</h2>
+<p class="lead">Casi todos los procesos HP (sputtering, CVD, implantación, SEM) requieren vacío para evitar colisiones de partículas con moléculas de aire y contaminación. Toca cada franja de la escala para ver bombas y medidores típicos de ese rango.</p>
+<div class="vac-scale" id="vacScale">
+  <div class="vac-zone" data-zone="grob" style="left:0%; width:20%; background:rgba(29,78,216,0.15);">Grob<span class="exp">1000–1 mbar</span></div>
+  <div class="vac-zone" data-zone="fein" style="left:20%; width:20%; background:rgba(29,78,216,0.30);">Fein<span class="exp">1–10⁻³ mbar</span></div>
+  <div class="vac-zone" data-zone="hoch" style="left:40%; width:25%; background:rgba(29,78,216,0.5);">Hoch (HV)<span class="exp">10⁻³–10⁻⁷ mbar</span></div>
+  <div class="vac-zone" data-zone="uhv" style="left:65%; width:35%; background:rgba(29,78,216,0.75); color:white;">Ultrahoch (UHV)<span class="exp">&lt; 10⁻⁷ mbar</span></div>
+</div>
+<div class="vac-detail" id="vacGrob"><b>Grobvakuum:</b> flujo continuo (Kontinuumströmung). Bombas: de desplazamiento — Hubkolben, <b>Drehschieber</b> (rotativa de paletas, con Gasballastventil para evitar condensación de humedad en el aceite), Wälzkolben (Roots). Medidores: manómetro de membrana mecánico (hasta ~1 mbar).</div>
+<div class="vac-detail" id="vacFein"><b>Feinvakuum:</b> transición, flujo de Knudsen. Suele ser el punto de trabajo de la bomba de prevacío (Vorvakuumpumpe) antes de encender la de alto vacío. Medidor típico: <b>Pirani</b> (Wärmeleitvakuummeter) — depende del gas, usa puente de Wheatstone.</div>
+<div class="vac-detail" id="vacHoch"><b>Hochvakuum:</b> flujo molecular. Bombas cinéticas: <b>Turbomolekularpumpe</b> (60.000–100.000 rpm, cojinete magnético sin contacto — nunca arrancar desde presión atmosférica, necesita bomba de prevacío). Medidores: manómetro capacitivo de membrana (hasta 10⁻⁵ mbar, independiente del gas), ionización de cátodo caliente/frío (dependientes del gas).</div>
+<div class="vac-detail" id="vacUhv"><b>Ultrahochvakuum:</b> bombas gasbindende: <b>Ionen-Getter-Pumpe</b> (titanio como sacrificio, casi sin desgaste) y <b>Kryopumpe</b> (&lt; −270 °C, circuito de helio). Este rango es el que usan SEM, implantador de iones de alta energía y algunos PVD.</div>
+<p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem;">👉 Clave de examen: <b>gasartabhängig</b> (depende del tipo de gas: Pirani, Glühkathoden) vs. <b>gasartunabhängig</b> (independiente: manómetro capacitivo de membrana) — pregunta recurrente.</p>
+</section>
+
+<section>
+<h2><span class="tag tag-vac">Práctica</span> Leckrate — calcula tú mismo</h2>
+<p class="lead">Fórmula real usada en el protocolo de "Versuch 5" (Lecksuche/Lecktester): <span class="mono">Q = ΔP·V / Δt</span>. Introduce tus propios valores para practicar antes del protocolo.</p>
+<div class="calc-box">
+  <div class="calc-row"><label>ΔP (mbar):</label><input type="number" id="dp" value="1.63" step="0.01"></div>
+  <div class="calc-row"><label>V (litros):</label><input type="number" id="vol" value="0.25" step="0.01"></div>
+  <div class="calc-row"><label>Δt (segundos):</label><input type="number" id="dt" value="300" step="1"></div>
+  <button onclick="calcLeak()" style="padding:0.4rem 1rem; border-radius:8px; border:none; background:var(--vac); color:white; font-weight:600; cursor:pointer;">Calcular Leckrate</button>
+  <div class="calc-result" id="leakResult"></div>
+</div>
+<p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem;">📎 Referencia real de clase (Bilanzraum 1, Versuch 5): ΔP=1,63 mbar, V=0,25 L, Δt=300 s → Q≈1,4×10⁻³ mbar·l/s (valor calculado) vs. ≈2,6×10⁻³ medido — la diferencia entre el valor <b>calculado</b> y el <b>medido</b> es justo lo que se discute y compara en el protocolo real.</p>
+<div class="warning-grid">
+  <div class="warning-card"><b>⚠️ Punto no cerrado en clase</b>No se dio una explicación cuantitativa firme de por qué la tasa de fuga calculada para todo el sistema fue ~3× más alta que la medida en el único punto de fuga confirmado — repasar el concepto pero no esperar una cifra exacta en el examen.</div>
+</div>
+</section>
+
+<section>
+<h2>📋 Modelo de referencia — Protokoll de Vakuumtechnik</h2>
+<p class="lead">El protocolo modelo de la escuela (Versuch 2 "Druckmessgeräte" + Versuch 5 "Lecksuche") muestra exactamente cómo se rellenan las tablas y la curva de Abpumpkurve en papel logarítmico. Puntos clave a replicar en tu propio protocolo:</p>
+<ul style="margin-left:1.2rem; font-size:0.85rem; display:flex; flex-direction:column; gap:0.4rem;">
+  <li>La <b>Abpumpkurve</b> (curva de vaciado) se traza en papel <b>log-log</b>: eje X = tiempo (min), eje Y = presión (mbar, escala logarítmica 10⁰ a 10⁻⁶). La curva típica cae rápido al inicio (Grobvakuum) y se aplana al entrar en Feinvakuum/Hochvakuum.</li>
+  <li>En la tabla de comparación de medidores (Tabelle 2/3), hay que <b>marcar cuáles son gasartabhängig vs. gasartunabhängig</b> — en el modelo: Wärmeleitungs-, Glühkathoden- y Kaltkathoden-Vakuummeter son dependientes del gas; el Membran-Vakuummeter (mecánico y capacitivo) es independiente.</li>
+  <li>Cada medidor tiene un <b>Messbereich</b> (rango de medición) que hay que anotar explícitamente en la tabla — es una de las instrucciones que más se olvida.</li>
+</ul>
+</section>
+
+<section>
+<h2>🧠 Autoevaluación — Test de fundamentos (modelo IHK)</h2>
+<p class="lead">Basado en el test oficial de fundamentos de la escuela. Elige tu respuesta y verás al instante si es correcta.</p>
+<div id="quizContainer"></div>
+</section>
+
+<section>
+<h2>🗂️ Vocabulario clave — Vakuumtechnik</h2>
+<div class="flip-grid" id="vocabGrid"></div>
+</section>
+
+</main>
+
+<footer>HP+HL 07 · Grundlagen, Historisches &amp; Vakuumtechnik · guarda esta página en tu pantalla de inicio</footer>
+
+<script>
+// timeline toggle
+document.querySelectorAll('.tl-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('open'));
+});
+
+// vacuum scale toggle
+const zoneMap = { grob: 'vacGrob', fein: 'vacFein', hoch: 'vacHoch', uhv: 'vacUhv' };
+document.querySelectorAll('.vac-zone').forEach(z => {
+  z.addEventListener('click', () => {
+    document.querySelectorAll('.vac-detail').forEach(d => d.classList.remove('show'));
+    document.getElementById(zoneMap[z.dataset.zone]).classList.add('show');
+  });
+});
+
+// leak rate calculator
+function calcLeak(){
+  const dp = parseFloat(document.getElementById('dp').value);
+  const v = parseFloat(document.getElementById('vol').value);
+  const dt = parseFloat(document.getElementById('dt').value);
+  const q = (dp*v)/dt;
+  document.getElementById('leakResult').textContent = 'Q = ' + q.toExponential(3) + ' mbar·l/s';
+}
+calcLeak();
+
+// vocab flip cards
+const vocab = [
+  {de:'das Vakuum', es:'vacío', en:'vacuum', note:'Del latín vacuus.'},
+  {de:'der Rezipient', es:'cámara de vacío', en:'vessel/chamber', note:'Sinónimo de Kammer.'},
+  {de:'Grob-/Fein-/Hoch-/Ultrahochvakuum', es:'vacío grueso/fino/alto/ultra alto', en:'rough/medium/high/ultra-high vacuum', note:'Grob hasta 1 mbar; HV hasta 10⁻⁷.'},
+  {de:'die mittlere freie Weglänge', es:'camino libre medio', en:'mean free path', note:'Distancia antes de chocar con otra molécula.'},
+  {de:'die Drehschieberpumpe', es:'bomba rotativa de paletas', en:'rotary vane pump', note:'Bomba de prevacío, trabaja con aceite.'},
+  {de:'die Turbomolekularpumpe', es:'bomba turbomolecular', en:'turbomolecular pump', note:'60.000-100.000 rpm, cojinete magnético.'},
+  {de:'die Ionen-Getter-Pumpe', es:'bomba iónica getter', en:'ion getter pump', note:'Usa titanio como sacrificio.'},
+  {de:'die Kryopumpe', es:'criobomba', en:'cryopump', note:'< -270°C, circuito de helio.'},
+  {de:'die Leckrate', es:'tasa de fuga', en:'leak rate', note:'Q = ΔP·V/Δt.'},
+  {de:'der Helium-Lecktester', es:'detector de fugas por helio', en:'helium leak detector', note:'Estándar en la industria.'},
+  {de:'das Wärmeleitvakuummeter (Pirani)', es:'manómetro Pirani', en:'Pirani gauge', note:'Depende del gas, puente de Wheatstone.'},
+  {de:'gasartabhängig / -unabhängig', es:'dependiente / independiente del gas', en:'gas-species dependent/independent', note:'Membran-Vakuummeter = independiente.'},
+  {de:'ausheizen', es:'desgasificar por calentamiento', en:'bakeout', note:'Libera moléculas adheridas a superficies.'},
+  {de:'der Bilanzraum', es:'tramo de balance del sistema', en:'test volume/segment', note:'[A CONFIRMAR] término inglés exacto.'}
+];
+const vg = document.getElementById('vocabGrid');
+vocab.forEach(v => {
+  const card = document.createElement('div');
+  card.className = 'flip-card';
+  card.innerHTML = `<div class="flip-inner">
+    <div class="flip-front">${v.de}</div>
+    <div class="flip-back"><span class="es">${v.es}</span><span class="en">${v.en}</span><span class="note">${v.note}</span></div>
+  </div>`;
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+  vg.appendChild(card);
+});
+
+// quiz (modelo IHK, basado en el test oficial de fundamentos)
+const quiz = [
+  {
+    q: '¿Por qué el silicio reemplazó al germanio como material dominante en 1954?',
+    opts: ['Es más barato de extraer', 'Tiene mayor banda prohibida y funciona a temperaturas más altas', 'Es más fácil de dopar tipo n', 'No necesita oxidación'],
+    correct: 1
+  },
+  {
+    q: '¿Qué invento de 1959 es la base directa de todos los procesos HP actuales (oxidación + litografía selectiva)?',
+    opts: ['El circuito integrado de Kilby', 'El proceso planar (Hoerni/Noyce)', 'La ley de Moore', 'El transistor de punto de contacto'],
+    correct: 1
+  },
+  {
+    q: 'Un manómetro es "gasartabhängig". ¿Qué significa?',
+    opts: ['Que solo funciona en Ultrahochvakuum', 'Que su lectura depende del tipo de gas presente', 'Que necesita bomba de prevacío', 'Que mide presión positiva, no vacío'],
+    correct: 1
+  },
+  {
+    q: '¿Cuál de estos medidores es gasartunabhängig (independiente del gas)?',
+    opts: ['Pirani (Wärmeleitvakuummeter)', 'Glühkathoden-Ionisationsvakuummeter', 'Membran-Vakuummeter (capacitivo)', 'Kaltkathoden-Ionisationsvakuummeter'],
+    correct: 2
+  },
+  {
+    q: '¿Por qué nunca se debe arrancar una Turbomolekularpumpe directamente desde presión atmosférica?',
+    opts: ['Porque se rompe el rotor por la fricción con el gas a esa densidad', 'Porque consume demasiada corriente', 'Porque contamina el aceite', 'Porque no genera suficiente vacío'],
+    correct: 0
+  },
+  {
+    q: 'La fórmula de la tasa de fuga (Leckrate) es:',
+    opts: ['Q = P·V·t', 'Q = ΔP·V / Δt', 'Q = ΔP / V·t', 'Q = V / (ΔP·Δt)'],
+    correct: 1
+  }
+];
+const qc = document.getElementById('quizContainer');
+quiz.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'quiz-item';
+  div.innerHTML = `<div class="quiz-q">${i+1}. ${item.q}</div><div class="quiz-opts"></div>`;
+  const optsDiv = div.querySelector('.quiz-opts');
+  item.opts.forEach((opt, j) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      optsDiv.querySelectorAll('.quiz-opt').forEach((b, k) => {
+        b.disabled = true;
+        if (k === item.correct) b.classList.add('correct');
+        else if (b === btn) b.classList.add('wrong');
+      });
+      updateProgress();
+    });
+    optsDiv.appendChild(btn);
+  });
+  qc.appendChild(div);
+});
+
+function updateProgress(){
+  const total = document.querySelectorAll('.quiz-opt').length / 4;
+  const answered = document.querySelectorAll('.quiz-opt:disabled').length / 4;
+  document.getElementById('progressBar').style.width = Math.round((answered/total)*100) + '%';
+}
+</script>
+</body>
+</html>

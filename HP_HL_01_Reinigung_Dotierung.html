@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HP+HL 01 — Reinigung &amp; Dotierung/Diffusion | IHK Mikrotechnologe</title>
+<style>
+  :root {
+    --primary: #1a56db; --primary-dark: #1e429f;
+    --success: #0e9f6e; --warning: #e3a008; --danger: #e02424;
+    --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --rein: #0891b2; --dot: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a.backlink { display: inline-block; margin: 0.8rem 0 0 1rem; color: white; text-decoration: none; font-size: 0.85rem; opacity: 0.9; }
+  header { background: linear-gradient(135deg, var(--rein), var(--dot)); color: white; padding: 1.5rem 1.5rem 2rem; text-align: center; }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { margin-top: 0.4rem; opacity: 0.9; font-size: 0.9rem; }
+  .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; }
+  main { max-width: 900px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1.1rem 0 0.5rem; color: var(--primary-dark); }
+  p.lead { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.8rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; color: white; }
+  .tag-rein { background: var(--rein); } .tag-dot { background: var(--dot); } .tag-prac { background: #059669; }
+
+  ul.plain { margin-left: 1.1rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .contam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .contam-card { border: 2px solid var(--border); border-radius: 10px; padding: 0.8rem; cursor: pointer; transition: all .2s; }
+  .contam-card:hover { border-color: var(--rein); transform: translateY(-2px); }
+  .contam-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .contam-card p { font-size: 0.76rem; color: var(--muted); display: none; }
+  .contam-card.open p { display: block; }
+  .contam-card .num { display:inline-block; width:22px; height:22px; border-radius:50%; background:var(--rein); color:white; text-align:center; font-size:0.72rem; line-height:22px; margin-right:0.3rem; }
+
+  table.data { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.8rem; }
+  table.data th { background: #f3f4f6; padding: 0.45rem 0.6rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  table.data td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.data tr:hover td { background: #f9fafb; }
+  .sc-highlight1 td:first-child { border-left: 4px solid var(--rein); }
+  .sc-highlight2 td:first-child { border-left: 4px solid var(--dot); }
+
+  .flow { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.8rem; }
+  .flow-step { background: #ecfeff; border: 2px solid var(--rein); border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.78rem; font-weight: 600; }
+  .flow-arrow { color: var(--muted); font-size: 1.1rem; }
+
+  .diffusion-toggle { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .diffusion-toggle button { flex: 1; padding: 0.6rem; border-radius: 8px; border: 2px solid var(--border); background: white; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .diffusion-toggle button.active { border-color: var(--dot); background: #faf5ff; color: var(--dot); }
+  .diffusion-panel { display: none; margin-top: 0.8rem; font-size: 0.83rem; }
+  .diffusion-panel.show { display: block; }
+
+  .implanter-chain { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.8rem; }
+  .implanter-step { display: flex; align-items: center; gap: 0.6rem; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+  .implanter-step .n { background: var(--dot); color: white; width: 22px; height: 22px; border-radius: 50%; text-align: center; line-height: 22px; font-size: 0.72rem; flex-shrink: 0; }
+
+  .reaction-box { background: #1e1b2e; color: #e9d5ff; font-family: 'Consolas', monospace; font-size: 0.8rem; padding: 0.8rem 1rem; border-radius: 8px; margin-top: 0.6rem; overflow-x: auto; white-space: pre; }
+
+  .warning-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.7rem; margin-top: 0.8rem; }
+  .warning-card { border: 2px solid var(--warning); background: #fffbeb; border-radius: 10px; padding: 0.7rem; font-size: 0.78rem; }
+  .warning-card b { display: block; margin-bottom: 0.2rem; }
+  .info-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 0.82rem; margin-top: 0.6rem; }
+
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+  .flip-card { height: 120px; perspective: 600px; cursor: pointer; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 0.75rem; }
+  .flip-front { background: var(--dot); color: white; font-weight: 700; }
+  .flip-back { background: #faf5ff; border: 2px solid var(--dot); transform: rotateY(180deg); }
+  .flip-back .es { font-weight: 700; color: var(--success); }
+  .flip-back .en { font-style: italic; color: var(--muted); font-size: 0.68rem; margin-top: 0.2rem; }
+  .flip-back .note { font-size: 0.64rem; color: var(--text); margin-top: 0.25rem; }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 1rem 0 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+<a class="backlink" href="index.html">‹ Volver al índice</a>
+<h1>🧼 Reinigung &amp; Dotierung/Diffusion</h1>
+<p>HL04+HL08 (teoría) + VE1 (práctica) · Primer paso del proceso de fabricación</p>
+<div class="badges">
+  <span class="badge">HL04 Reinigung</span>
+  <span class="badge">HL08 Dotierung</span>
+  <span class="badge">HP VE1</span>
+</div>
+</header>
+
+<main>
+
+<section>
+<h2><span class="tag tag-rein">Reinigung</span> ¿Por qué limpiar una oblea?</h2>
+<p class="lead">Concepto examinable clave: el 100% limpio no existe ni es necesario — lo decisivo es la <b>Tolerierbarkeit der Kontamination</b> (tolerabilidad de la contaminación), que depende del paso siguiente del proceso. Toca cada tipo de contaminación.</p>
+<div class="contam-grid" id="contamGrid">
+  <div class="contam-card"><h4><span class="num">1</span>Partikelverunreinigungen</h4><p>De gases, líquidos o sólidos (abrasión). Causan puntos débiles en capas, defectos de grabado, fallo inmediato del componente.</p></div>
+  <div class="contam-card"><h4><span class="num">2</span>Organische Verunreinigungen</h4><p>Restos de plasma, sputtering, resina no eliminada. Mala adherencia de resina, menor rigidez dieléctrica del óxido, degradación a largo plazo.</p></div>
+  <div class="contam-card"><h4><span class="num">3</span>Atomare Verunreinigungen</h4><p>Metales pesados (Au, Ag, Cu, Zn, Cr, Ni, Co, Cd). Se incorporan a la red de Si → trampas electrónicas profundas.</p></div>
+  <div class="contam-card"><h4><span class="num">4</span>Ionische Verunreinigungen</h4><p>Alcalinos (Na, K) desde revelador o sudor de manos. Degradan estabilidad a largo plazo del componente.</p></div>
+</div>
+
+<h3>Métodos de limpieza</h3>
+<div class="flow">
+  <div class="flow-step">Mecánicos: Abblasen / Abspülen+US / Bürsten</div>
+  <span class="flow-arrow">·</span>
+  <div class="flow-step" style="border-color:var(--dot); background:#faf5ff;">Químicos: Tauchreinigung / Sprühschleudern</div>
+</div>
+<p style="font-size:0.8rem; margin-top:0.5rem; color:var(--muted);">Mecánicos → desprenden partículas adheridas. Químicos → disuelven contaminación atómica/molecular/iónica y hacen "unterätzen" (ataque ligero a la superficie) para desprender partículas.</p>
+
+<h3>SC1 y SC2 (Standard Clean = RCA = Huang A&amp;B = Kernsche Reinigung)</h3>
+<table class="data">
+<tr><th></th><th>Composición</th><th>Condición (teoría / práctica real)</th><th>Elimina</th></tr>
+<tr class="sc-highlight1"><td><b>SC1</b></td><td>NH₄OH : H₂O₂ : H₂O</td><td>1:1:5–1:2:7, 10-20 min, 35-85°C con US / <b>práctica: 1:1:5, 15 min, 65°C con US</b></td><td>Orgánicos + metales pesados (complejación)</td></tr>
+<tr class="sc-highlight2"><td><b>SC2</b></td><td>HCl : H₂O₂ : H₂O</td><td>1:1:6–1:2:8, 10-20 min, 35-85°C con US / <b>práctica: 1:1:5, 10 min, 65°C</b></td><td>Alcalinos (cloruros) + metales pesados</td></tr>
+</table>
+<div class="info-note">💡 <b>Pregunta de examen confirmada:</b> ¿por qué H₂O₂ en SC1/SC2? Por su fuerte poder oxidante genera una fina capa de óxido protector en la superficie, de modo que el ácido/base de la solución ataca la contaminación, no el wafer.</div>
+
+<h3>Ultrasonido y secado</h3>
+<p style="font-size:0.84rem;">El ultrasonido (US) vibra el líquido → genera <b>burbujas de cavitación</b> → implosionan en la superficie → efecto mecánico que desprende partículas. Cuidado: la resonancia propia del wafer (Eigenresonanz) puede anular el efecto si coincide con la frecuencia del US.</p>
+<p style="font-size:0.84rem; margin-top:0.5rem;"><b>Secado:</b> (1) <b>SRD</b> (Spin Rinse Dry) — gira + rocía con agua DI + seca con N₂. (2) <b>Marangoni</b> — el wafer se eleva de un baño de agua DI mientras vapor de IPA/N₂ inunda la zona superior, rompiendo el menisco de agua para no dejar residuo (más sofisticado que SRD).</p>
+</section>
+
+<section>
+<h2><span class="tag tag-dot">Dotierung</span> Difusión vs. Implantación iónica</h2>
+<p class="lead">Dos vías para introducir átomos dopantes (Fremdatome) y modificar la conductividad. Compara ambas:</p>
+<div class="diffusion-toggle">
+  <button class="active" onclick="showDiff('diff')">🔥 Diffusion (alta T°)</button>
+  <button onclick="showDiff('impl')">⚡ Implantation (alto vacío)</button>
+</div>
+<div class="diffusion-panel show" id="panel-diff">
+  <p><b>Fuentes de difusión:</b> gaseosas (B₂H₆, PH₃) · líquidas (POCl₃, BBr₃, vía bubbler) · sólidas (BSG/PSG, "Quellscheiben" entre wafers).</p>
+  <p style="margin-top:0.5rem;"><b>Fuente agotable vs. inagotable:</b> agotable = concentración superficial baja con el tiempo pero sube la profundidad; inagotable = concentración superficial constante (se repone continuamente).</p>
+  <p style="margin-top:0.5rem;"><b>Diffusionskoeffizient:</b> As difunde más lento que P o B (dato de clase).</p>
+  <h3>POCl₃ — proceso de 2 etapas</h3>
+  <ol style="margin-left:1.2rem; font-size:0.83rem;">
+    <li><b>Vorbelegung (pre-deposición):</b> se forma PSG sobre la superficie expuesta (POCl₃+O₂).</li>
+    <li><b>Eindiffusion:</b> el P del PSG difunde hacia el silicio, creando la región n dentro del sustrato p.</li>
+  </ol>
+  <div class="reaction-box">4 POCl₃ + 3 O₂ → 2 P₂O₅ + 6 Cl₂
+2 P₂O₅ + SiO₂ → P₂O₅·SiO₂ (fundido/"Schmelze")
+2 P₂O₅ (en PSG) + 9 Si → 4 SiP + 5 SiO₂</div>
+  <p style="font-size:0.76rem; color:var(--muted); margin-top:0.4rem;">⚠️ El Cl₂ liberado en la 1ª reacción es subproducto gaseoso — destino no explicado en clase (ver dudas).</p>
+  <p style="margin-top:0.6rem; font-size:0.84rem;"><b>Rampa térmica típica:</b> +10°C/min hasta ~900°C (introducción del dopante) → sube a ~1200°C (difusión propiamente dicha). El SiO₂ actúa como máscara: donde hay óxido, no hay dopaje.</p>
+</div>
+<div class="diffusion-panel" id="panel-impl">
+  <p>Bombardeo con iones acelerados en <b>alto vacío</b>. El haz de iones = corriente medible → dosimetría exacta.</p>
+  <h3>Cadena del implantador</h3>
+  <div class="implanter-chain">
+    <div class="implanter-step"><span class="n">1</span>Fuente de gas de dotación (ej. BF₃) — se ioniza y disocia</div>
+    <div class="implanter-step"><span class="n">2</span>Extraktionssystem — extrae y preacelera los iones</div>
+    <div class="implanter-step"><span class="n">3</span>Massenseparator — filtra por masa (campo electromagnético)</div>
+    <div class="implanter-step"><span class="n">4</span>Ionenbeschleuniger — acelera (100.000–200.000 V)</div>
+    <div class="implanter-step"><span class="n">5</span>Quadrupollinse — enfoca el haz</div>
+    <div class="implanter-step"><span class="n">6</span>Ablenksystem — dirige el haz hacia el wafer</div>
+  </div>
+  <p style="margin-top:0.6rem; font-size:0.83rem;"><b>Ventajas:</b> homogeneidad/reproducibilidad, proceso rápido, sin carga térmica, T° ambiente (solo resina como máscara), límites de implantación definidos.</p>
+  <p style="margin-top:0.4rem; font-size:0.83rem;"><b>Problemas:</b> daños por radiación en la red (requieren recocido/Ausheilen o RTA) + <b>Channeling</b> (penetración excesiva por alineación cristalina).</p>
+  <p style="margin-top:0.4rem; font-size:0.83rem;"><b>Contramedidas al Channeling:</b> (1) ángulo definido del wafer respecto al haz, (2) STROX (óxido de dispersión amorfo), (3) pre-amorfización de la superficie.</p>
+  <p style="margin-top:0.4rem; font-size:0.83rem;"><b>Tipos:</b> Mittelstrom (MC) / Hochstrom (HC) / Hochenergie (HE) — solo nombrados, sin parámetros exactos (ver dudas). Single-Wafer vs. Batch (disco rotatorio).</p>
+</div>
+</section>
+
+<section>
+<h2><span class="tag tag-prac">Práctica VE1</span> Lo que se hizo en el laboratorio</h2>
+<p class="lead">⚠️ No hay protocolo relleno del usuario disponible para esta práctica — aquí solo el procedimiento oficial, para tenerlo claro antes de la próxima vez que se repita en clase.</p>
+<h3>Parte A — Reinigung por inmersión</h3>
+<ol style="margin-left:1.2rem; font-size:0.85rem; display:flex; flex-direction:column; gap:0.3rem;">
+  <li>EPP obligatorio: guantes RR, delantal de teflón, cubrezapatos, protección facial, guantes para ácidos.</li>
+  <li><b>Schräglichtkontrolle inicial</b> (luz rasante) — documentar estado de cada disco antes de limpiar.</li>
+  <li>SC1 (1:1:5, 15 min, 65°C, US) → enjuague DI 10 min.</li>
+  <li>SC2 (1:1:5, 10 min, 65°C, US) → enjuague DI 10 min.</li>
+  <li>Secado por centrifugado, 30 s.</li>
+  <li><b>Schräglichtkontrolle final</b> — comparar con el estado inicial (tabla: nº disco / antes / después).</li>
+</ol>
+<h3>Parte B — Difusión de fósforo (dopaje tipo n)</h3>
+<ol style="margin-left:1.2rem; font-size:0.85rem; display:flex; flex-direction:column; gap:0.3rem;">
+  <li><b>Vierspitzenmessung inicial</b> (FPP5000 Four Point Probe): R, Flächenwiderstand, tipo p/n — antes del proceso.</li>
+  <li>Reinigung SC1/SC2 (igual que Parte A) previa al horno.</li>
+  <li>Horno de difusión <b>Centrotherm E1200</b>: rampa (Ramp-up) → estabilización → Vorbelegung (~1000°C) → Eindiffusion (~1050-1080°C) → Ramp-down. Ciclo total ejemplo: ~350 min.</li>
+  <li>Documentación: hora, T° por zona (carga/media/gas), T° del bubbler, caudales de N₂/O₂/N₂-portador.</li>
+  <li>Litografía + control óptico → grabado húmedo del PSG → eliminación de resina.</li>
+  <li><b>Vierspitzenmessung final</b> — comparar con el estado inicial.</li>
+</ol>
+<div class="info-note">📎 Resultado dimensional del ejemplo de clase: espesor de wafer 525 µm, profundidad de dopaje lograda ≈ 1,6 µm.</div>
+</section>
+
+<section>
+<h2>🗂️ Vocabulario clave</h2>
+<div class="flip-grid" id="vocabGrid"></div>
+</section>
+
+<section>
+<h2>⚠️ Puntos no cerrados en clase</h2>
+<div class="warning-grid">
+  <div class="warning-card"><b>Destino del Cl₂/subproductos</b>No se explicó si el Cl₂ (de la reacción POCl₃) o el bromuro análogo se extraen por Absaugung, se neutralizan o se liberan de otra forma.</div>
+  <div class="warning-card"><b>Rol exacto del O₂ extra</b>Se entiende que oxida el POCl₃ a P₂O₅, pero no se detalló proporción/rol más allá de la ecuación.</div>
+  <div class="warning-card"><b>Solubilidad máxima de B/P en Si</b>El profesor confirmó que existe un límite pero no dio cifras concretas.</div>
+  <div class="warning-card"><b>Diferencia MC/HC/HE implantador</b>Solo nombrados por corriente/energía, sin parámetros ni casos de uso.</div>
+  <div class="warning-card"><b>Orden Vorbelegung vs. Feinoxidation</b>Secuencia exacta con PSG no confirmada con precisión temporal.</div>
+  <div class="warning-card"><b>Br en difusión de B (BBr₃)</b>No confirmado si difunde de forma medible junto al boro.</div>
+  <div class="warning-card"><b>Pt como barrera de difusión de Au</b>El propio docente dijo no saber el mecanismo exacto.</div>
+</div>
+</section>
+
+</main>
+
+<footer>HP+HL 01 · Reinigung &amp; Dotierung/Diffusion · guarda esta página en tu pantalla de inicio</footer>
+
+<script>
+document.querySelectorAll('.contam-card').forEach(c => c.addEventListener('click', () => c.classList.toggle('open')));
+
+function showDiff(which){
+  document.querySelectorAll('.diffusion-toggle button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.diffusion-panel').forEach(p => p.classList.remove('show'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + which).classList.add('show');
+}
+
+const vocab = [
+  {de:'die Nassreinigung', es:'limpieza química húmeda', en:'wet cleaning', note:'Se opone a limpieza física (soplado N₂).'},
+  {de:'die Tolerierbarkeit der Kontamination', es:'tolerabilidad de la contaminación', en:'contamination tolerability', note:'100% limpio no es alcanzable ni necesario.'},
+  {de:'Standard Clean (SC1/SC2)', es:'limpieza estándar SC1/SC2', en:'Standard Clean (SC1/SC2)', note:'= RCA = Huang A&B = Kernsche Reinigung.'},
+  {de:'das H₂O₂', es:'peróxido de hidrógeno', en:'hydrogen peroxide', note:'Forma óxido protector — pregunta de examen confirmada.'},
+  {de:'die Komplexbildung', es:'formación de complejos', en:'complexation', note:'Disuelve metales pesados en SC1/SC2.'},
+  {de:'die Kavitation', es:'cavitación', en:'cavitation', note:'Burbujas del US implosionan en la superficie.'},
+  {de:'das Marangoni-Verfahren', es:'secado Marangoni', en:'Marangoni drying', note:'Vapor de IPA rompe el menisco de agua.'},
+  {de:'die Diffusion', es:'difusión (dopaje)', en:'diffusion (doping)', note:'Fuente sólida/líquida/gaseosa + alta T°.'},
+  {de:'erschöpfliche/unerschöpfliche Quelle', es:'fuente agotable/inagotable', en:'exhaustible/inexhaustible source', note:'Agotable: concentración baja, profundidad sube.'},
+  {de:'der Diffusionskoeffizient', es:'coeficiente de difusión', en:'diffusion coefficient', note:'As difunde más lento que P o B.'},
+  {de:'POCl₃ / BBr₃', es:'oxicloruro de fósforo / tribromuro de boro', en:'phosphorus oxychloride / boron tribromide', note:'Fuentes líquidas vía bubbler.'},
+  {de:'die Vorbelegung', es:'predeposición', en:'pre-deposition', note:'Saturación superficial del dopante.'},
+  {de:'die Ionenimplantation', es:'implantación iónica', en:'ion implantation', note:'100.000-200.000 V, alto vacío.'},
+  {de:'der Massenseparator', es:'separador de masas', en:'mass separator', note:'Filtra iones por masa (campo electromagnético).'},
+  {de:'das Channeling', es:'canalización', en:'channeling', note:'Penetración excesiva por alineación cristalina.'},
+  {de:'das Streuoxid (STROX)', es:'óxido de dispersión', en:'scatter oxide', note:'Capa amorfa que evita el channeling.'},
+  {de:'die Strahlenschäden', es:'daños por radiación', en:'radiation/lattice damage', note:'Requieren Ausheilen (recocido/RTA).'}
+];
+const vg = document.getElementById('vocabGrid');
+vocab.forEach(v => {
+  const card = document.createElement('div');
+  card.className = 'flip-card';
+  card.innerHTML = `<div class="flip-inner">
+    <div class="flip-front">${v.de}</div>
+    <div class="flip-back"><span class="es">${v.es}</span><span class="en">${v.en}</span><span class="note">${v.note}</span></div>
+  </div>`;
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+  vg.appendChild(card);
+});
+</script>
+</body>
+</html>
